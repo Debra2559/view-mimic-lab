@@ -4,7 +4,7 @@ import {
   ArrowBigUp,
   ChevronDown,
   ChevronLeft,
-  Globe2,
+  ChevronRight,
   Headphones,
   MessageCircle,
   MoreVertical,
@@ -125,43 +125,21 @@ function AnswerPage() {
         <p className="mt-3 text-[16px] text-muted-foreground">{post.questionMeta}</p>
 
         {story && (
-          <section
-            className="mt-5 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary-soft/70 to-primary-soft/20 p-4"
-            aria-label="这个问题的世界线"
+          <button
+            type="button"
+            onClick={() => setStoryId(post.storyId!)}
+            className="mt-5 flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-r from-primary-soft/60 to-primary-soft/20 p-4 text-left"
+            aria-label={story.portal.action}
           >
-            <p className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-primary">
-              <Globe2 className="size-4" />
-              本问题已生成 1 条世界线
-            </p>
-            <p className="mt-2 text-[16px] font-semibold leading-snug">
-              这条世界线由本题的 {contributors.length} 个回答共同长成
-            </p>
-            <ul className="mt-3 space-y-2">
-              {contributors.map((person) => (
-                <li key={person.id} className="flex items-center gap-2.5">
-                  {person.avatar ? (
-                    <img src={person.avatar} alt="" className="size-7 shrink-0 rounded-full object-cover" />
-                  ) : (
-                    <span
-                      className={`grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[12px] font-bold text-white ${person.accent}`}
-                      aria-hidden="true"
-                    >
-                      {person.author.slice(0, 1)}
-                    </span>
-                  )}
-                  <span className="shrink-0 text-[14px] font-medium">{person.author}</span>
-                  <span className="min-w-0 flex-1 truncate text-[13px] text-muted-foreground">{person.stance}</span>
-                </li>
-              ))}
-            </ul>
-            <Button
-              onClick={() => setStoryId(post.storyId!)}
-              className="mt-4 h-11 w-full rounded-full text-[16px] font-semibold"
-            >
-              <Sparkles className="size-[18px]" />
-              穿过这些回答，进入那个世界
-            </Button>
-          </section>
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+              <Sparkles className="size-6" strokeWidth={1.8} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-semibold tracking-wide text-primary">{story.portal.title}</p>
+              <p className="mt-0.5 truncate text-[16px] font-semibold">{story.portal.action}</p>
+            </div>
+            <ChevronRight className="size-5 shrink-0 text-primary" />
+          </button>
         )}
       </header>
 
@@ -217,12 +195,7 @@ function AnswerPage() {
 
       {post.otherAnswers.length > 0 && (
         <section className="border-t-8 border-muted px-5 pb-10 pt-6 sm:px-8" aria-label="全部回答">
-          <h2 className="text-[19px] font-bold">
-            全部 {contributors.length} 个回答
-            {story && (
-              <span className="ml-2 align-middle text-[13px] font-medium text-primary">都参与构成了这条世界线</span>
-            )}
-          </h2>
+          <h2 className="text-[19px] font-bold">全部 {contributors.length} 个回答</h2>
           <ul className="mt-4 space-y-4">
             {post.otherAnswers.map((answer) => (
               <OtherAnswer key={answer.id} answer={answer} />
@@ -235,7 +208,7 @@ function AnswerPage() {
               className="mt-6 h-12 w-full rounded-full border-primary/40 text-[16px] font-semibold text-primary hover:text-primary"
             >
               <Sparkles className="size-[18px]" />
-              带着这些视角，进入世界
+              进入这个世界
             </Button>
           )}
         </section>
