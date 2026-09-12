@@ -120,7 +120,48 @@ function AnswerPage() {
       <header className="border-b border-border px-5 pb-6 pt-6 sm:px-8">
         <h1 className="text-[25px] font-bold leading-[1.35]">{post.title}</h1>
         <p className="mt-3 text-[16px] text-muted-foreground">{post.questionMeta}</p>
+
+        {story && (
+          <section
+            className="mt-5 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary-soft/70 to-primary-soft/20 p-4"
+            aria-label="这个问题的世界线"
+          >
+            <p className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-primary">
+              <Globe2 className="size-4" />
+              本问题已生成 1 条世界线
+            </p>
+            <p className="mt-2 text-[16px] font-semibold leading-snug">
+              这条世界线由本题的 {contributors.length} 个回答共同长成
+            </p>
+            <ul className="mt-3 space-y-2">
+              {contributors.map((person) => (
+                <li key={person.id} className="flex items-center gap-2.5">
+                  {person.avatar ? (
+                    <img src={person.avatar} alt="" className="size-7 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <span
+                      className={`grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[12px] font-bold text-white ${person.accent}`}
+                      aria-hidden="true"
+                    >
+                      {person.author.slice(0, 1)}
+                    </span>
+                  )}
+                  <span className="shrink-0 text-[14px] font-medium">{person.author}</span>
+                  <span className="min-w-0 flex-1 truncate text-[13px] text-muted-foreground">{person.stance}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              onClick={() => setStoryId(post.storyId!)}
+              className="mt-4 h-11 w-full rounded-full text-[16px] font-semibold"
+            >
+              <Sparkles className="size-[18px]" />
+              穿过这些回答，进入那个世界
+            </Button>
+          </section>
+        )}
       </header>
+
 
       <article className="px-5 pb-8 pt-7 sm:px-8">
         <section className="flex items-center gap-3" aria-label="作者信息">
