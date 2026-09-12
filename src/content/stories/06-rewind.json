@@ -114,7 +114,24 @@
           "speaker": "narrator",
           "text": "你终于走出了那一天。而她，从来都不知道自己被救了四十七次。"
         }
-      ]
+      ],
+      "next": {
+        "prompt": "循环停下之后，时间又开始往前走了。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "把这一天里学到的，全都用在明天。",
+            "innerVoice": "重来过的人，没资格再糊弄。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "先好好睡一觉，明天再说。",
+            "innerVoice": "我已经过了太多个今天。",
+            "ending": "AB"
+          }
+        ]
+      }
     },
     "B": {
       "title": "放过自己的那一天",
@@ -132,6 +149,83 @@
         {
           "speaker": "narrator",
           "text": "第二天七点零三分，闹钟准时响起。循环没有停。只是从这一次开始，它变得很难熬。"
+        }
+      ],
+      "next": {
+        "prompt": "循环还在继续。第 47 次醒来，你开始怀疑它想要什么。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "去做那件你一直不敢做的事。",
+            "innerVoice": "反正明天会重置，不是吗。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "把每一次循环都记录下来，找出变量。",
+            "innerVoice": "总有一处，是我一直没改过的。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "只剩一次的那天",
+      "summary": "知道一天可以重来的人，才明白它不能重来有多贵。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你把循环里试过的每种做法排了个序，第二天照着最好的那种活。"
+        },
+        {
+          "speaker": "luzhao",
+          "expression": "relieved",
+          "text": "你今天不太一样。像是把一年的练习，压进了一天。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "睡过去的明天",
+      "summary": "循环教会你的事，一觉就能忘掉一半。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你睡到下午三点。醒来时，昨天那些答案已经模糊了。"
+        },
+        {
+          "speaker": "luzhao",
+          "expression": "tense",
+          "text": "我们都以为还有下一次。直到某一天真的没有了。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "反正会重置",
+      "summary": "没有代价的人生，也没有分量。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你做了所有想做又不敢做的事。第 48 次醒来，一切照旧，包括你的空。"
+        },
+        {
+          "speaker": "luzhao",
+          "expression": "tense",
+          "text": "你玩了四十七天。有没有哪一天，是你真想留下的？"
+        }
+      ]
+    },
+    "BB": {
+      "title": "第 63 本笔记",
+      "summary": "答案往往藏在你唯一没改过的那件事里。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你翻到第 63 本笔记，发现每一次循环里，你都跳过了同一个电话。"
+        },
+        {
+          "speaker": "luzhao",
+          "expression": "relieved",
+          "text": "第 64 次醒来，你先拨了那个号码。然后钟走到了 24:00 之后。"
         }
       ]
     }

@@ -47,6 +47,7 @@ export function getHubEntries(): HubEntry[] {
   return [...generated, ...HUB_ENTRIES];
 }
 
+/** 只统计终局（没有后续岔路的结局） */
 export function getEndingCount(id: string): number {
-  return Object.keys(getStory(id).endings).length;
+  return Object.values(getStory(id).endings).filter((ending) => !ending.next).length;
 }

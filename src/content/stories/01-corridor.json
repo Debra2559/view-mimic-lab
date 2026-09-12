@@ -122,7 +122,24 @@
           "speaker": "narrator",
           "text": "凌晨的站长在电话里骂了你二十分钟。可你看着重新亮起灯的楼道，忽然觉得这一单超时，值了。"
         }
-      ]
+      ],
+      "next": {
+        "prompt": "火灭了，但这栋楼的问题还在。天亮之后——",
+        "choices": [
+          {
+            "key": "A",
+            "label": "把整栋楼的隐患拍下来，交给街道。",
+            "innerVoice": "既然管了一次，就别管一半。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "当作一次意外，继续跑我的单。",
+            "innerVoice": "我只是个外卖员，改不了一栋楼。",
+            "ending": "AB"
+          }
+        ]
+      }
     },
     "B": {
       "title": "无人负责的夜晚",
@@ -140,6 +157,83 @@
           "speaker": "linxia",
           "expression": "tense",
           "text": "她的最后一条消息停在 2:03，一直没有已读——「烟好大，我下不去楼了。」"
+        }
+      ],
+      "next": {
+        "prompt": "新闻推送之后的第三天，你又接到了那个小区的单。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "上楼去看看她。",
+            "innerVoice": "我欠那扇门一句话。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "把单转给别人，我不想再去那儿。",
+            "innerVoice": "有些地方，去了就得面对。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "换掉的那排插座",
+      "summary": "一个人的多管闲事，变成了三十户人的规矩。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你拍了四十二张照片：飞线、堆物、堵死的消防通道，一条条写进投诉单。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "relieved",
+          "text": "你没想到真的有人回你。上周电梯口装了充电桩，楼道空了，通道也通了。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "被记住的那一晚",
+      "summary": "你救下了那一夜，却没能救下下一夜。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你把那晚当成插曲，第二天继续跑单。楼道里的纸箱，三天后又堆回原位。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "tense",
+          "text": "两个月后又是一场火。这次没人闻到味，也没人敲门。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "迟到的一句对不起",
+      "summary": "承认自己转过身，是重新转回来的第一步。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你在医院的走廊等了两个小时，手里那杯粥已经凉透。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "calm",
+          "text": "我知道那晚有人经过。你能来，我就当这事过去了。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "一直没有已读",
+      "summary": "你躲开了那栋楼，却躲不开每次闻到焦味时的那一秒停顿。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你改了接单区域，那个小区从此不在你的地图上。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "tense",
+          "text": "那条 2:03 的消息，你再也没敢点开第二次。"
         }
       ]
     }

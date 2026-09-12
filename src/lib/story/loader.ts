@@ -32,7 +32,10 @@ type RawStory = {
 
   choicePrompt: string;
   choices: Story["choices"];
-  endings: Record<"A" | "B", { title: string; summary: string; nodes: StoryNode[] }>;
+  endings: Record<
+    string,
+    { title: string; summary: string; nodes: StoryNode[]; next?: Story["endings"][string]["next"] }
+  >;
 };
 
 function resolveCover(key: string): string {
@@ -78,10 +81,18 @@ function toStory(raw: RawStory): Story {
 
     choicePrompt: raw.choicePrompt,
     choices: raw.choices,
-    endings: {
-      A: { key: "A", ...raw.endings.A },
-      B: { key: "B", ...raw.endings.B },
-    },
+    endings: Object.fromEntries(
+      Object.entries(raw.endings).map(([key, value]) => [
+        key,
+        {
+          key,
+          title: value.title,
+          summary: value.summary,
+          nodes: value.nodes,
+          ...(value.next ? { next: value.next } : {}),
+        },
+      ]),
+    ),
   };
 }
 
