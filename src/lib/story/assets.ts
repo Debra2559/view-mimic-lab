@@ -56,3 +56,23 @@ export const COVER_IMAGES = {
 } as const;
 
 export type CoverImageKey = keyof typeof COVER_IMAGES;
+
+/** 分叉点 / 结局用的第二张场景图，画面在关键节点切换 */
+import sceneCorridor from "@/assets/story/scene-corridor-fork.jpg";
+import sceneSpin from "@/assets/story/scene-spin-fork.jpg";
+import sceneMind from "@/assets/story/scene-mind-fork.jpg";
+import sceneMosquito from "@/assets/story/scene-mosquito-fork.jpg";
+import sceneMoney from "@/assets/story/scene-money-fork.jpg";
+import sceneRewind from "@/assets/story/scene-rewind-fork.jpg";
+
+export const FORK_SCENES = {
+  corridor: sceneCorridor,
+  dusk: sceneSpin,
+  spin: sceneSpin,
+  mind: sceneMind,
+  mosquito: sceneMosquito,
+  money: sceneMoney,
+  rewind: sceneRewind,
+} as const;
+
+export type ForkSceneKey = keyof typeof FORK_SCENES;
