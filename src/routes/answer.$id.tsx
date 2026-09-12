@@ -195,12 +195,7 @@ function AnswerPage() {
 
       {post.otherAnswers.length > 0 && (
         <section className="border-t-8 border-muted px-5 pb-10 pt-6 sm:px-8" aria-label="全部回答">
-          <h2 className="text-[19px] font-bold">
-            全部 {contributors.length} 个回答
-            {story && (
-              <span className="ml-2 align-middle text-[13px] font-medium text-primary">都参与构成了这条世界线</span>
-            )}
-          </h2>
+          <h2 className="text-[19px] font-bold">全部 {contributors.length} 个回答</h2>
           <ul className="mt-4 space-y-4">
             {post.otherAnswers.map((answer) => (
               <OtherAnswer key={answer.id} answer={answer} />
@@ -213,7 +208,7 @@ function AnswerPage() {
               className="mt-6 h-12 w-full rounded-full border-primary/40 text-[16px] font-semibold text-primary hover:text-primary"
             >
               <Sparkles className="size-[18px]" />
-              带着这些视角，进入世界
+              进入这个世界
             </Button>
           )}
         </section>
