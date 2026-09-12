@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bike,
   Search,
@@ -51,6 +51,28 @@ export function WorldHub({
   const [category, setCategory] = useState("全部");
   const [entries, setEntries] = useState<HubEntry[]>([]);
   const [forgeOpen, setForgeOpen] = useState(false);
+  const cardRefs = useRef(new Map<string, HTMLElement>());
+  const scrollRaf = useRef(0);
+
+  /** Apple Watch 式滚动：卡片离视口中心越远，越小越淡 */
+  const updateCardScales = useCallback(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const vh = window.innerHeight;
+    const mid = vh / 2;
+    cardRefs.current.forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom < -80 || rect.top > vh + 80) return;
+      const dist = Math.min(1, Math.abs(rect.top + rect.height / 2 - mid) / mid);
+      const scale = 1 - dist * 0.12;
+      el.style.transform = `scale(${scale.toFixed(3)})`;
+      el.style.opacity = (1 - dist * 0.4).toFixed(3);
+    });
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    cancelAnimationFrame(scrollRaf.current);
+    scrollRaf.current = requestAnimationFrame(updateCardScales);
+  }, [updateCardScales]);
 
   useEffect(() => {
     setEntries(getHubEntries());
