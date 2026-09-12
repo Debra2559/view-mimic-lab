@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bike,
+  Flame,
   Search,
   Brain,
   Bug,
