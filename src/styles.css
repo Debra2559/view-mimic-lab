@@ -337,32 +337,23 @@
   }
 }
 
-@keyframes hub-shine {
-  from {
-    transform: translateX(-120%) skewX(-18deg);
-  }
-  to {
-    transform: translateX(220%) skewX(-18deg);
-  }
-}
-
 @keyframes hub-aurora {
   0%,
   100% {
-    transform: translate3d(-4%, -2%, 0) scale(1.1);
+    transform: translate3d(-3%, -1%, 0) scale(1.05);
   }
   50% {
-    transform: translate3d(6%, 4%, 0) scale(1.25);
+    transform: translate3d(4%, 2%, 0) scale(1.12);
   }
 }
 
 @keyframes hub-float {
   0%,
   100% {
-    transform: translateY(0) rotate(-3deg);
+    transform: translateY(0) rotate(-2deg);
   }
   50% {
-    transform: translateY(-7px) rotate(3deg);
+    transform: translateY(-5px) rotate(2deg);
   }
 }
 
@@ -370,13 +361,14 @@
   animation: hub-in 0.45s ease-out both;
 }
 
+/* 更克制的极光背景，以靛青和珊瑚微光为主 */
 .hub-aurora {
   background:
-    radial-gradient(38% 30% at 20% 12%, oklch(0.6 0.16 280 / 40%), transparent 70%),
-    radial-gradient(42% 32% at 82% 30%, oklch(0.62 0.15 210 / 35%), transparent 70%),
-    radial-gradient(45% 35% at 50% 92%, oklch(0.66 0.15 45 / 28%), transparent 70%);
-  filter: blur(10px);
-  animation: hub-aurora 16s ease-in-out infinite alternate;
+    radial-gradient(45% 35% at 18% 16%, oklch(0.55 0.14 265 / 28%), transparent 70%),
+    radial-gradient(40% 30% at 86% 24%, oklch(0.62 0.12 30 / 18%), transparent 70%),
+    radial-gradient(48% 38% at 52% 96%, oklch(0.45 0.08 260 / 32%), transparent 70%);
+  filter: blur(14px);
+  animation: hub-aurora 20s ease-in-out infinite alternate;
 }
 
 .hub-card {
@@ -394,29 +386,15 @@
 
 .hub-card:hover,
 .hub-card:active {
-  border-color: oklch(0.76 0.13 245 / 60%);
+  border-color: oklch(0.72 0.1 245 / 55%);
   box-shadow:
-    0 16px 40px oklch(0.1 0.02 260 / 70%),
-    0 0 26px oklch(0.76 0.13 245 / 30%);
+    0 18px 44px oklch(0.1 0.02 260 / 55%),
+    0 0 0 1px oklch(0.72 0.1 245 / 25%);
 }
 
 .hub-glyph {
-  animation: hub-float 5s ease-in-out infinite;
-  filter: drop-shadow(0 6px 14px oklch(0.1 0.02 260 / 55%));
-}
-
-.hub-shine {
-  background: linear-gradient(
-    100deg,
-    transparent 30%,
-    oklch(0.98 0.02 240 / 55%) 50%,
-    transparent 70%
-  );
-  transform: translateX(-120%) skewX(-18deg);
-}
-
-.hub-card:hover .hub-shine {
-  animation: hub-shine 0.9s ease-out;
+  animation: hub-float 6s ease-in-out infinite;
+  filter: drop-shadow(0 6px 14px oklch(0.1 0.02 260 / 45%));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -429,8 +407,7 @@
   .hub-in,
   .hub-card,
   .hub-glyph,
-  .hub-aurora,
-  .hub-shine {
+  .hub-aurora {
     animation: none;
   }
 }
