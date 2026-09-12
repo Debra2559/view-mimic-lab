@@ -39,6 +39,17 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
     setPhase("intro");
   };
 
+  const enterWorld = (id: string) => {
+    setHubOpen(false);
+    if (id === "corridor") {
+      setChoice(null);
+      setNodeIndex(0);
+      setPhase("transition");
+      window.setTimeout(() => setPhase("intro"), 1300);
+    }
+  };
+
+
   const activeNodes: StoryNode[] = choice ? ENDINGS[choice].nodes : MAIN_NODES;
   const activeNode = activeNodes[nodeIndex];
   const activeEnding: Ending | null = choice ? ENDINGS[choice] : null;
