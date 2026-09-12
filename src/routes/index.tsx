@@ -194,7 +194,7 @@ function FeedCard({ item, onDismiss }: { item: FeedPost; onDismiss: () => void }
         {item.storyId && (
           <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary-soft/50 px-3 py-1 text-[12px] font-semibold text-primary">
             <Sparkles className="size-3.5" />
-            1 条世界线
+            检测到可穿越的世界
           </p>
         )}
       </Link>
