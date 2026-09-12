@@ -80,7 +80,13 @@ export function WorldHub({
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
-    return entries.filter((world) => {
+    // 按热度排名：回答数、收藏数、点击量共同决定，未上榜的排最后
+    const sorted = [...entries].sort((a, b) => {
+      const ra = getHeatRank(a.id) || Number.MAX_SAFE_INTEGER;
+      const rb = getHeatRank(b.id) || Number.MAX_SAFE_INTEGER;
+      return ra - rb;
+    });
+    return sorted.filter((world) => {
       const matchCategory = category === "全部" || world.card.category === category;
       const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
       return matchCategory && (q === "" || haystack.includes(q));
@@ -97,6 +103,7 @@ export function WorldHub({
       toast("这条世界线还在生成中", { description: "已为你预约，开放时第一时间通知。" });
       return;
     }
+    recordClick(world.id);
     onEnterWorld(world.id);
   };
 
