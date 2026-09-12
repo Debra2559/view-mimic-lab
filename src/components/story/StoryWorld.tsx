@@ -122,12 +122,18 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setPhase("intro");
   };
 
-  const replayOther = () => {
-    const other: ChoiceKey = choice === "A" ? "B" : "A";
-    setChoice(other);
-    setNodeIndex(0);
+  /** 回到上一个岔路口，去走没走过的那条 */
+  const backToFork = () => {
     resetScene();
-    setPhase("dialogue");
+    setNodeIndex(0);
+    if (parentKey) {
+      setChoice(parentKey);
+      setPhase("ending");
+      return;
+    }
+    setChoice(null);
+    setNodeIndex(story.nodes.length - 1);
+    setPhase("choice");
   };
 
   const enterWorld = (id: string) => {
@@ -222,7 +228,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
           <header className="absolute inset-x-0 top-0 z-20 px-4 pt-4">
             <div className="flex items-center justify-between">
               <span className="rounded-full border border-story-ink/20 bg-story-panel px-3 py-1 text-[12px] tracking-widest text-story-ink/80">
-                {choice ? `${story.chapterLabel} · 分歧之后` : story.chapterLabel}
+                {choice ? `${story.chapterLabel} · 第 ${choice.length} 层分歧` : story.chapterLabel}
               </span>
               <div className="flex items-center gap-2">
                 <Button
