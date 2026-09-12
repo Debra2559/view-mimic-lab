@@ -37,7 +37,10 @@ import {
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
-type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
+type Phase = "transition" | "intro" | "dialogue" | "explore" | "choice" | "ending";
+
+/** 触点的几种呈现形态，避免全是圆形 icon */
+const HOTSPOT_VARIANTS = ["pin", "tag", "halo", "card"] as const;
 /** 结局 key，父分支 + 字母构成树状路径，如 A -> AB -> ABA */
 type ChoiceKey = string;
 
