@@ -2,7 +2,7 @@
  * 把 src/content 下的剧情文本文件加载成运行时的 Story 数据。
  * 编辑剧情只需要改 JSON，不用改代码。
  */
-import { BACKGROUNDS, COVERS, COVER_IMAGES } from "./assets";
+import { BACKGROUNDS, COVERS, COVER_IMAGES, FORK_SCENES } from "./assets";
 import { getCharacter } from "./cast";
 import upcomingRaw from "@/content/upcoming.json";
 import type { Character, Story, StoryNode, UpcomingWorld, WorldCard } from "./types";
@@ -25,6 +25,7 @@ type RawStory = {
   portal: { title: string; action: string };
   background: string;
   backgroundAlt?: string;
+  forkScene?: string;
   cast: string[];
   introLines: string[];
   nodes: StoryNode[];
@@ -73,6 +74,11 @@ function toStory(raw: RawStory): Story {
     card: toCard(raw.card),
     portal: raw.portal,
     background: bg?.src ?? raw.background,
+    ...(function () {
+      const key = raw.forkScene ?? raw.background;
+      const scene = (FORK_SCENES as Record<string, string>)[key];
+      return scene ? { forkScene: scene } : {};
+    })(),
     backgroundAlt: raw.backgroundAlt ?? bg?.alt ?? raw.card.question,
     cast,
     introLines: raw.introLines,

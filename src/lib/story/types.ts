@@ -102,6 +102,8 @@ export interface Story {
   portal: PortalCopy;
   background: string;
   backgroundAlt: string;
+  /** 分叉点与结局时切换的第二张场景图 */
+  forkScene?: string;
   /** 本篇出场角色（引用统一立绘库） */
   cast: Character[];
   introLines: string[];

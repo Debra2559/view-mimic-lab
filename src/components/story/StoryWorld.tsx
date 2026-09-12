@@ -17,6 +17,7 @@ import {
   Smartphone,
   Sparkles,
   StickyNote,
+  Volume2,
   VolumeX,
   Wind,
   X,
@@ -35,6 +36,7 @@ import {
   type StoryNode,
 } from "@/lib/story";
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
+import { Ambience } from "@/lib/story/ambience";
 import { Button } from "@/components/ui/button";
 
 type Phase = "transition" | "intro" | "dialogue" | "explore" | "choice" | "ending";
@@ -74,6 +76,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [touched, setTouched] = useState<string[]>([]);
   const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
   const [exploreDone, setExploreDone] = useState(false);
+  const ambienceRef = useRef<Ambience | null>(null);
 
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
@@ -81,6 +84,35 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   useEffect(() => {
     setUnlocked(getUnlocked(activeId));
   }, [activeId]);
+
+  /** 背景音：跟随剧情阶段切换氛围 */
+  useEffect(() => {
+    if (muted) return;
+    const mood =
+      phase === "ending"
+        ? "ending"
+        : phase === "choice"
+          ? "choice"
+          : phase === "explore"
+            ? "explore"
+            : phase === "intro" || phase === "transition"
+              ? "intro"
+              : "dialogue";
+    ambienceRef.current?.setMood(mood);
+  }, [phase, muted]);
+
+  useEffect(() => () => ambienceRef.current?.dispose(), []);
+
+  const toggleSound = async () => {
+    if (muted) {
+      ambienceRef.current ??= new Ambience();
+      await ambienceRef.current.start("dialogue");
+      setMuted(false);
+      return;
+    }
+    ambienceRef.current?.mute();
+    setMuted(true);
+  };
 
   useEffect(() => {
     if (phase !== "transition") return;
@@ -171,6 +203,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   };
 
   const touch = (item: Interaction) => {
+    ambienceRef.current?.blip(520 + (item.id.length % 5) * 70);
     setActiveInteraction(item);
     setTouched((list) => (list.includes(item.id) ? list : [...list, item.id]));
   };
@@ -196,6 +229,9 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setPhase("dialogue");
   };
 
+  /** 分叉点与结局切换到第二张场景图 */
+  const sceneShifted = phase === "choice" || phase === "ending";
+
   return (
     <div
       className="fixed inset-0 z-50 overflow-hidden bg-story-night text-story-ink"
@@ -208,9 +244,22 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
         alt={story.backgroundAlt}
         width={1344}
         height={768}
-        className="scene-drift absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000 data-[visible=true]:opacity-100"
+        className="scene-drift absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-1000 data-[visible=true]:opacity-100 data-[dim=true]:scale-105 data-[dim=true]:opacity-30 data-[dim=true]:blur-[2px]"
         data-visible={phase !== "transition" && phase !== "intro"}
+        data-dim={sceneShifted}
       />
+      {story.forkScene && (
+        <img
+          key={story.forkScene}
+          src={story.forkScene}
+          alt=""
+          aria-hidden="true"
+          width={1280}
+          height={720}
+          className="scene-drift absolute inset-0 h-full w-full scale-110 object-cover opacity-0 transition-all duration-[1400ms] ease-out data-[visible=true]:scale-100 data-[visible=true]:opacity-100"
+          data-visible={sceneShifted}
+        />
+      )}
       <div
         className="absolute inset-0 bg-gradient-to-b from-story-night/70 via-transparent to-story-night"
         aria-hidden="true"
@@ -293,11 +342,12 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                 <Button
                   variant="ghost"
                   size="icon"
-                  aria-label={muted ? "取消静音（暂未接入音频）" : "静音"}
-                  onClick={() => setMuted((value) => !value)}
-                  className="size-10 rounded-full bg-story-panel text-story-ink/80 hover:text-story-ink"
+                  aria-label={muted ? "打开背景音乐" : "关闭背景音乐"}
+                  onClick={toggleSound}
+                  className="size-10 rounded-full bg-story-panel text-story-ink/80 hover:text-story-ink data-[on=true]:text-story-glow"
+                  data-on={!muted}
                 >
-                  <VolumeX className="size-5" />
+                  {muted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
                 </Button>
                 <Button
                   variant="ghost"
@@ -529,7 +579,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
 
       {phase === "ending" && activeEnding && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-story-night/85 px-8 py-10 text-center backdrop-blur-sm">
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-story-night/75 via-story-night/85 to-story-night px-8 py-10 text-center backdrop-blur-[2px]">
           <div className="ending-pop flex flex-col items-center">
             <p className="flex items-center gap-1.5 text-[13px] tracking-[0.4em] text-story-glow">
               <Sparkles className="size-3.5" />
