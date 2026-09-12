@@ -48,20 +48,28 @@ export interface Interaction {
 }
 
 export interface ChoiceOption {
-  key: "A" | "B";
+  key: string;
   label: string;
   innerVoice: string;
-  /** 通向的结局 key */
-  ending: "A" | "B";
+  /** 通向的结局 key（子分支用父 key + 字母，如 A -> AA / AB） */
+  ending: string;
 }
 
+/** 结局之后继续延伸的岔路 */
+export interface EndingBranch {
+  prompt: string;
+  choices: ChoiceOption[];
+}
 
 export interface Ending {
-  key: "A" | "B";
+  key: string;
   title: string;
   summary: string;
   nodes: StoryNode[];
+  /** 有 next 说明故事还能往下长；没有就是终局 */
+  next?: EndingBranch;
 }
+
 
 /** 回答页里的穿越入口文案（每条回答生成自己的入口） */
 export interface PortalCopy {
@@ -103,7 +111,7 @@ export interface Story {
   choicePrompt: string;
 
   choices: ChoiceOption[];
-  endings: Record<"A" | "B", Ending>;
+  endings: Record<string, Ending>;
 }
 
 /** 尚未开放的世界，只需要卡片信息 */
