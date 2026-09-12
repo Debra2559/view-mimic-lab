@@ -173,9 +173,14 @@ function FeedCard({ item, onDismiss }: { item: FeedPost; onDismiss: () => void }
           {item.verified && <BadgeCheck className="size-4.5 fill-primary text-background" aria-label="已认证" />}
         </div>
         <p className="mt-2 line-clamp-2 text-[17px] leading-relaxed text-foreground/85">{item.excerpt}</p>
+        <p className="mt-2 text-[14px] text-muted-foreground">
+          还有 {item.otherAnswers.length} 个回答：
+          {item.otherAnswers.map((answer) => answer.author).join("、")}
+        </p>
         {item.storyId && (
           <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary-soft/50 px-3 py-1 text-[12px] font-semibold text-primary">
-            <Sparkles className="size-3.5" />检测到可穿越的世界线
+            <Sparkles className="size-3.5" />
+            {getAnswerCount(item)} 个回答共同生成了 1 条世界线
           </p>
         )}
       </Link>
