@@ -192,73 +192,100 @@ export function WorldHub({
         </p>
       )}
 
-      <div className="relative grid grid-cols-2 gap-3 px-4 pb-12 pt-4">
+      <div className="relative grid grid-cols-2 gap-3.5 px-4 pb-14 pt-4 [perspective:800px]">
         {filtered.map((world, index) => {
           const Icon = ICONS[world.card.icon];
           return (
-            <div key={world.id} className="relative">
+            <div
+              key={world.id}
+              ref={(el) => {
+                if (el) cardRefs.current.set(world.id, el);
+                else cardRefs.current.delete(world.id);
+              }}
+              className="hub-card-wrap relative will-change-transform"
+            >
               <button
                 type="button"
                 onClick={() => handlePick(world)}
                 style={{ animationDelay: `${index * 0.07}s` }}
-                className="hub-card group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-story-ink/12 bg-story-panel text-left backdrop-blur-md"
+                className="hub-card group relative block aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-3xl border border-story-ink/12 text-left"
               >
-                <div
-                  className="relative h-28 w-full overflow-hidden"
-                  style={{ background: world.card.cover }}
-                >
-                  <span className="hub-glyph absolute inset-0 grid place-items-center text-story-ink/90">
-                    <Icon className="size-11" strokeWidth={1.4} />
+                {/* 全幅封面，铺满整卡 */}
+                {world.card.coverImage ? (
+                  <img
+                    src={world.card.coverImage}
+                    alt={world.card.question}
+                    loading="lazy"
+                    width={640}
+                    height={800}
+                    className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                ) : (
+                  <span
+                    className="absolute inset-0 grid place-items-center"
+                    style={{ background: world.card.cover }}
+                  >
+                    <Icon className="hub-glyph size-14 text-story-ink/90" strokeWidth={1.2} />
                   </span>
-                  <span className="hub-shine absolute inset-0" aria-hidden="true" />
+                )}
+                {/* 阅读渐变：顶部压暗 + 底部信息区 */}
+                <span
+                  className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.15_0.03_265/0.45)_0%,transparent_32%,transparent_46%,oklch(0.16_0.03_265/0.88)_78%,oklch(0.14_0.03_265/0.96)_100%)]"
+                  aria-hidden="true"
+                />
+                <span className="hub-shine absolute inset-0" aria-hidden="true" />
+
+                {/* 顶部徽标 */}
+                <span className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
                   {world.generated ? (
-                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow backdrop-blur-sm">
                       <Wand2 className="size-2.5" />
                       我生成的
                     </span>
                   ) : (
                     world.id === currentWorldId && (
-                      <span className="absolute left-2 top-2 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow">
+                      <span className="rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow backdrop-blur-sm">
                         当前世界
                       </span>
                     )
                   )}
-                  <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] text-story-ink/85">
-                    {world.status === "playable" ? (
-                      <Play className="size-2.5" />
-                    ) : (
-                      <Lock className="size-2.5" />
-                    )}
-                    {world.status === "playable" ? "可进入" : "即将开启"}
-                  </span>
-                </div>
+                </span>
+                <span className="absolute right-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] text-story-ink/85 backdrop-blur-sm">
+                  {world.status === "playable" ? (
+                    <Play className="size-2.5" />
+                  ) : (
+                    <Lock className="size-2.5" />
+                  )}
+                  {world.status === "playable" ? "可进入" : "即将开启"}
+                </span>
 
-                <div className="flex flex-1 flex-col gap-1.5 p-3">
-                  <h3 className="line-clamp-2 text-[14.5px] font-semibold leading-[1.5] text-story-ink">
+                {/* 底部信息，浮在封面之上 */}
+                <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-3.5">
+                  <span className="line-clamp-2 text-[15px] font-bold leading-[1.45] text-story-ink [text-shadow:0_1px_10px_oklch(0.1_0.02_265/0.6)]">
                     {world.card.question}
-                  </h3>
-                  <p className="line-clamp-2 text-[12.5px] leading-[1.6] text-story-ink/60">
+                  </span>
+                  <span className="line-clamp-2 text-[12px] leading-[1.55] text-story-ink/75">
                     {world.card.hook}
-                  </p>
-                  <div className="mt-1 flex flex-wrap gap-1">
+                  </span>
+                  <span className="mt-0.5 flex flex-wrap gap-1">
                     {world.card.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-story-ink/15 px-2 py-0.5 text-[10.5px] text-story-ink/70"
+                        className="rounded-full border border-story-ink/20 bg-story-night/40 px-2 py-0.5 text-[10.5px] text-story-ink/80 backdrop-blur-sm"
                       >
                         {tag}
                       </span>
                     ))}
-                  </div>
-                  <div className="mt-1 flex items-center justify-between">
-                    <span className="text-[11px] text-story-ink/45">{world.card.players}</span>
+                  </span>
+                  <span className="mt-0.5 flex items-center justify-between text-[11px] text-story-ink/60">
+                    <span>{world.card.players}</span>
                     {world.status === "playable" && (
-                      <span className="text-[11px] text-story-glow/85">
+                      <span className="text-story-glow/90">
                         结局 {getUnlocked(world.id).length}/{getEndingCount(world.id)}
                       </span>
                     )}
-                  </div>
-                </div>
+                  </span>
+                </span>
               </button>
 
               {world.generated && (
@@ -270,7 +297,7 @@ export function WorldHub({
                     setEntries(getHubEntries());
                     toast("已删除这条世界线");
                   }}
-                  className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-story-night/70 text-story-ink/70 hover:text-story-ink"
+                  className="absolute right-2.5 top-9 z-10 grid size-7 place-items-center rounded-full bg-story-night/70 text-story-ink/70 backdrop-blur-sm hover:text-story-ink"
                 >
                   <Trash2 className="size-3.5" />
                 </button>
