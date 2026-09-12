@@ -1,6 +1,10 @@
 /** 统一画风资源库：生成的世界线只能从这里挑背景与封面，保证画风一致。 */
 import bgCorridor from "@/assets/story/bg-corridor.jpg";
 import bgDusk from "@/assets/story/bg-dusk-city.jpg";
+import coverMind from "@/assets/story/cover-mind.jpg";
+import coverMoney from "@/assets/story/cover-money.jpg";
+import coverMosquito from "@/assets/story/cover-mosquito.jpg";
+import coverRewind from "@/assets/story/cover-rewind.jpg";
 
 export const BACKGROUNDS = {
   corridor: {
