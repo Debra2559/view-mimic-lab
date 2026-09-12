@@ -1,19 +1,38 @@
 import {
+  Bike,
   ChevronRight,
+  Clock,
+  DoorOpen,
+  Ear,
+  Eye,
+  Flame,
+  Hand,
   LayoutGrid,
+  Lightbulb,
+  Package,
   Pause,
   Play,
   RotateCcw,
   Share2,
+  Smartphone,
   Sparkles,
+  StickyNote,
   VolumeX,
+  Wind,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ShareSheet } from "@/components/story/ShareSheet";
 import { WorldHub } from "@/components/story/WorldHub";
-import { getCharacter, getStory, type Ending, type Story, type StoryNode } from "@/lib/story";
+import {
+  getCharacter,
+  getStory,
+  type Ending,
+  type Interaction,
+  type Story,
+  type StoryNode,
+} from "@/lib/story";
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +40,21 @@ type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
 type ChoiceKey = "A" | "B";
 
 const EMBERS = [8, 22, 37, 54, 68, 81, 92];
+
+const INTERACTION_ICONS = {
+  hand: Hand,
+  flame: Flame,
+  door: DoorOpen,
+  phone: Smartphone,
+  package: Package,
+  ear: Ear,
+  eye: Eye,
+  clock: Clock,
+  bike: Bike,
+  wind: Wind,
+  light: Lightbulb,
+  note: StickyNote,
+} as const;
 
 export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () => void }) {
   const [activeId, setActiveId] = useState(storyId);
@@ -32,6 +66,10 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [shareOpen, setShareOpen] = useState(false);
   const [hubOpen, setHubOpen] = useState(false);
   const [unlocked, setUnlocked] = useState<string[]>([]);
+  const [touched, setTouched] = useState<string[]>([]);
+  const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
+  const [peeking, setPeeking] = useState(false);
+
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
 
@@ -62,9 +100,19 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     ? 1
     : Math.min((nodeIndex + (phase === "choice" ? 1 : 0) + 1) / branchTotal, 1);
 
+  const interactions = story.interactions ?? [];
+  const touchedCount = interactions.filter((item) => touched.includes(item.id)).length;
+
+  const resetScene = () => {
+    setTouched([]);
+    setActiveInteraction(null);
+    setPeeking(false);
+  };
+
   const restart = () => {
     setChoice(null);
     setNodeIndex(0);
+    resetScene();
     setPhase("intro");
   };
 
@@ -72,6 +120,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     const other: ChoiceKey = choice === "A" ? "B" : "A";
     setChoice(other);
     setNodeIndex(0);
+    resetScene();
     setPhase("dialogue");
   };
 
@@ -80,8 +129,15 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setActiveId(id);
     setChoice(null);
     setNodeIndex(0);
+    resetScene();
     setPhase("transition");
   };
+
+  const touch = (item: Interaction) => {
+    setActiveInteraction(item);
+    setTouched((list) => (list.includes(item.id) ? list : [...list, item.id]));
+  };
+
 
   const advance = useCallback(() => {
     setNodeIndex((value) => {
@@ -202,20 +258,28 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                 </Button>
               </div>
             </div>
-            <div
-              className="progress-bar mt-3 h-[3px] w-full overflow-hidden rounded-full bg-story-ink/15"
-              role="progressbar"
-              aria-label="剧情进度"
-              aria-valuenow={Math.round(progress * 100)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <span
-                className="block h-full w-full rounded-full bg-gradient-to-r from-story-glow to-story-ember"
-                style={{ transform: `scaleX(${progress})` }}
-              />
+            <div className="mt-3 flex items-center gap-3">
+              <div
+                className="progress-bar h-[3px] min-w-0 flex-1 overflow-hidden rounded-full bg-story-ink/15"
+                role="progressbar"
+                aria-label="剧情进度"
+                aria-valuenow={Math.round(progress * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <span
+                  className="block h-full w-full rounded-full bg-gradient-to-r from-story-glow to-story-ember"
+                  style={{ transform: `scaleX(${progress})` }}
+                />
+              </div>
+              {interactions.length > 0 && (
+                <span className="shrink-0 rounded-full bg-story-night/55 px-2.5 py-0.5 text-[11px] tracking-wider text-story-ink/70 backdrop-blur-md">
+                  探索 {touchedCount}/{interactions.length}
+                </span>
+              )}
             </div>
           </header>
+
 
           {phase === "dialogue" && activeNode && speaker && (
             <img
@@ -239,33 +303,129 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             />
           )}
 
-          {phase === "choice" && (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-end gap-4 bg-story-night/60 px-6 pb-24 backdrop-blur-[2px]">
-              <p className="choice-in mb-2 text-center text-[17px] font-medium text-story-ink">
-                {story.choicePrompt}
-              </p>
-              {story.choices.map((option, index) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  onClick={() => pick(option.ending)}
-                  className="choice-in choice-card flex w-full max-w-md cursor-pointer items-start gap-3 rounded-2xl border border-story-ink/15 bg-story-panel px-5 py-4 text-left backdrop-blur-md"
-                  style={{ animationDelay: `${index * 0.12}s` }}
-                >
-                  <span className="choice-key mt-0.5 grid size-7 shrink-0 place-items-center rounded-full border border-story-glow/50 text-[13px] font-bold text-story-glow">
-                    {option.key}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-[17px] font-semibold text-story-ink">{option.label}</span>
-                    <span className="mt-1 block text-[14px] text-story-ink/60">{option.innerVoice}</span>
-                  </span>
-                </button>
-              ))}
-              <p className="text-[12px] text-story-ink/45">每个选择都会写进你的结局图鉴</p>
+          {/* 场景里的可触碰点：摸一摸、推开、拿起…… */}
+          {interactions.length > 0 && !activeInteraction && (
+            <div className="pointer-events-none absolute inset-0 z-20">
+              {interactions.map((item, index) => {
+                const Icon = INTERACTION_ICONS[item.icon] ?? Hand;
+                const used = touched.includes(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => touch(item)}
+                    aria-label={item.label}
+                    data-used={used}
+                    style={{ left: `${item.x}%`, top: `${item.y}%`, animationDelay: `${index * 0.5}s` }}
+                    className="hotspot pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
+                  >
+                    <span className="hotspot-dot grid size-11 place-items-center rounded-full border border-story-glow/50 bg-story-night/55 text-story-glow backdrop-blur-md">
+                      <Icon className="size-[18px]" strokeWidth={1.8} />
+                    </span>
+                    <span className="whitespace-nowrap rounded-full bg-story-night/60 px-2.5 py-0.5 text-[11.5px] tracking-wide text-story-ink/85 backdrop-blur-md">
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* 触碰后的描写 */}
+          {activeInteraction && (
+            <button
+              type="button"
+              onClick={() => setActiveInteraction(null)}
+              aria-label="收起描写"
+              className="absolute inset-0 z-40 flex cursor-pointer items-center justify-center bg-story-night/55 px-6 backdrop-blur-[3px]"
+            >
+              <span className="touch-note block w-full max-w-sm rounded-[22px] border border-story-glow/25 bg-story-night/80 p-6 text-left shadow-[0_24px_60px_oklch(0.08_0.02_260/70%)]">
+                <span className="flex items-center gap-2 text-[11.5px] tracking-[0.32em] text-story-glow/90">
+                  <Hand className="size-3.5" />
+                  {activeInteraction.label}
+                </span>
+                <span className="mt-3 block text-[16.5px] leading-[1.85] text-story-ink/92">
+                  {activeInteraction.response}
+                </span>
+                <span className="mt-4 block text-right text-[12px] text-story-ink/45">点击任意处收起</span>
+              </span>
+            </button>
+          )}
+
+          {phase === "choice" && !peeking && (
+            <div className="choice-screen absolute inset-0 z-30 flex flex-col items-center justify-end px-5 pb-10">
+              <div className="w-full max-w-md">
+                <p className="choice-in flex items-center justify-center gap-3 text-[11.5px] tracking-[0.42em] text-story-glow/80">
+                  <span className="h-px w-10 bg-gradient-to-r from-transparent to-story-glow/60" />
+                  你的选择
+                  <span className="h-px w-10 bg-gradient-to-l from-transparent to-story-glow/60" />
+                </p>
+                <p className="choice-in mt-3 text-center text-[20px] font-semibold leading-[1.6] text-story-ink">
+                  {story.choicePrompt}
+                </p>
+
+                <div className="mt-6 flex flex-col gap-3.5">
+                  {story.choices.map((option, index) => (
+                    <button
+                      key={option.key}
+                      type="button"
+                      onClick={() => pick(option.ending)}
+                      className="choice-in choice-card group relative w-full cursor-pointer overflow-hidden rounded-[20px] border border-story-ink/12 bg-story-night/55 px-5 py-4 text-left backdrop-blur-xl"
+                      style={{ animationDelay: `${0.1 + index * 0.12}s` }}
+                    >
+                      <span
+                        className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-story-glow to-story-ember opacity-70"
+                        aria-hidden="true"
+                      />
+                      <span className="choice-sheen" aria-hidden="true" />
+                      <span className="flex items-start gap-3.5">
+                        <span className="choice-key mt-0.5 grid size-8 shrink-0 place-items-center rounded-full border border-story-glow/50 bg-story-night/60 text-[13px] font-bold text-story-glow">
+                          {option.key}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[17.5px] font-semibold leading-snug text-story-ink">
+                            {option.label}
+                          </span>
+                          <span className="mt-1.5 block text-[13.5px] leading-relaxed text-story-ink/55">
+                            {option.innerVoice}
+                          </span>
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {interactions.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setPeeking(true)}
+                    className="choice-in mx-auto mt-4 flex items-center gap-2 rounded-full border border-story-ink/15 px-4 py-2 text-[13px] text-story-ink/70"
+                    style={{ animationDelay: "0.36s" }}
+                  >
+                    <Eye className="size-4" />
+                    先再看看四周（{touchedCount}/{interactions.length}）
+                  </button>
+                )}
+                <p className="mt-3 text-center text-[11.5px] text-story-ink/40">
+                  每个选择都会写进你的结局图鉴
+                </p>
+              </div>
+            </div>
+          )}
+
+          {phase === "choice" && peeking && (
+            <div className="absolute inset-x-0 bottom-8 z-30 flex justify-center px-6">
+              <Button
+                onClick={() => setPeeking(false)}
+                className="h-12 rounded-full bg-story-glow px-7 text-[15.5px] font-semibold text-story-night hover:bg-story-glow/90"
+              >
+                看够了，做出选择
+              </Button>
             </div>
           )}
         </>
       )}
+
 
       {phase === "ending" && activeEnding && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-story-night/85 px-8 text-center backdrop-blur-sm">

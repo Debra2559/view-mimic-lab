@@ -28,6 +28,8 @@ type RawStory = {
   cast: string[];
   introLines: string[];
   nodes: StoryNode[];
+  interactions?: Story["interactions"];
+
   choicePrompt: string;
   choices: Story["choices"];
   endings: Record<"A" | "B", { title: string; summary: string; nodes: StoryNode[] }>;
@@ -72,6 +74,8 @@ function toStory(raw: RawStory): Story {
     cast,
     introLines: raw.introLines,
     nodes: raw.nodes,
+    interactions: raw.interactions ?? [],
+
     choicePrompt: raw.choicePrompt,
     choices: raw.choices,
     endings: {
