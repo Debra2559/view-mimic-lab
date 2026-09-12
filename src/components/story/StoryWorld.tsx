@@ -509,7 +509,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                 {interactions.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setPeeking(true)}
+                    onClick={() => setPhase("explore")}
                     className="choice-in mx-auto mt-4 flex items-center gap-2 rounded-full border border-story-ink/15 px-4 py-2 text-[13px] text-story-ink/70"
                     style={{ animationDelay: "0.36s" }}
                   >
