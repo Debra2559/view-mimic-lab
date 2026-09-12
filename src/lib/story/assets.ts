@@ -5,6 +5,7 @@ import coverMind from "@/assets/story/cover-mind.jpg";
 import coverMoney from "@/assets/story/cover-money.jpg";
 import coverMosquito from "@/assets/story/cover-mosquito.jpg";
 import coverRewind from "@/assets/story/cover-rewind.jpg";
+import coverBirth from "@/assets/story/cover-birth.jpg";
 
 export const BACKGROUNDS = {
   corridor: {
@@ -31,6 +32,10 @@ export const BACKGROUNDS = {
     src: coverRewind,
     alt: "循环中的清晨房间，闹钟永远停在同一分钟",
   },
+  birth: {
+    src: coverBirth,
+    alt: "深夜县医院产科走廊，一排空着的婴儿床，抽屉里是没人领走的脚环",
+  },
 } as const;
 
 export type BackgroundKey = keyof typeof BACKGROUNDS;
@@ -53,6 +58,7 @@ export const COVER_IMAGES = {
   mosquito: coverMosquito,
   money: coverMoney,
   rewind: coverRewind,
+  birth: coverBirth,
 } as const;
 
 export type CoverImageKey = keyof typeof COVER_IMAGES;
@@ -64,6 +70,7 @@ import sceneMind from "@/assets/story/scene-mind-fork.jpg";
 import sceneMosquito from "@/assets/story/scene-mosquito-fork.jpg";
 import sceneMoney from "@/assets/story/scene-money-fork.jpg";
 import sceneRewind from "@/assets/story/scene-rewind-fork.jpg";
+import sceneBirth from "@/assets/story/scene-birth-fork.jpg";
 
 export const FORK_SCENES = {
   corridor: sceneCorridor,
@@ -73,6 +80,7 @@ export const FORK_SCENES = {
   mosquito: sceneMosquito,
   money: sceneMoney,
   rewind: sceneRewind,
+  birth: sceneBirth,
 } as const;
 
 export type ForkSceneKey = keyof typeof FORK_SCENES;

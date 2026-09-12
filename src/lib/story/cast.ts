@@ -8,6 +8,9 @@ import heyuCalm from "@/assets/story/heyu-calm.png";
 import heyuRelieved from "@/assets/story/heyu-relieved.png";
 import heyuTense from "@/assets/story/heyu-tense.png";
 import linxiaTense from "@/assets/story/linxia-tense.png";
+import luqingCalm from "@/assets/story/luqing-calm.png";
+import luqingRelieved from "@/assets/story/luqing-relieved.png";
+import luqingTense from "@/assets/story/luqing-tense.png";
 import luzhaoCalm from "@/assets/story/luzhao-calm.png";
 import luzhaoRelieved from "@/assets/story/luzhao-relieved.png";
 import luzhaoTense from "@/assets/story/luzhao-tense.png";
@@ -50,6 +53,12 @@ export const CHARACTERS = {
     name: "周砚",
     role: "时间银行柜员",
     sprites: { calm: zhouyanCalm, tense: zhouyanTense, relieved: zhouyanRelieved },
+  },
+  luqing: {
+    id: "luqing",
+    name: "陆青",
+    role: "县医院产科的夜班护士",
+    sprites: { calm: luqingCalm, tense: luqingTense, relieved: luqingRelieved },
   },
   luzhao: {
     id: "luzhao",
