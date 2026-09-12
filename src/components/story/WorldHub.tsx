@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bike,
   Search,
@@ -10,13 +10,23 @@ import {
   Play,
   Repeat,
   Sparkles,
+  Trash2,
+  Wand2,
   X,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { HUB_ENTRIES, STORY_MAP, WORLD_CATEGORIES, type HubEntry, type WorldCard } from "@/lib/story";
+import {
+  getEndingCount,
+  getHubEntries,
+  WORLD_CATEGORIES,
+  type HubEntry,
+  type WorldCard,
+} from "@/lib/story";
+import { removeGenerated } from "@/lib/story/custom";
 import { getUnlocked } from "@/lib/story/progress";
+import { StoryForge } from "@/components/story/StoryForge";
 import { Button } from "@/components/ui/button";
 
 const ICONS: Record<WorldCard["icon"], LucideIcon> = {
@@ -39,10 +49,16 @@ export function WorldHub({
 }) {
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("全部");
+  const [entries, setEntries] = useState<HubEntry[]>([]);
+  const [forgeOpen, setForgeOpen] = useState(false);
+
+  useEffect(() => {
+    setEntries(getHubEntries());
+  }, []);
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
-    return HUB_ENTRIES.filter((world) => {
+    return entries.filter((world) => {
       const matchCategory = category === "全部" || world.card.category === category;
       const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
       return matchCategory && (q === "" || haystack.includes(q));
