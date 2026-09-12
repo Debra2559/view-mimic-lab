@@ -118,6 +118,16 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="打开互动回答世界"
+                onClick={() => setHubOpen(true)}
+                className="size-10 rounded-full bg-story-panel text-story-glow hover:text-story-glow"
+              >
+                <LayoutGrid className="size-5" />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
                 aria-label={muted ? "取消静音（暂未接入音频）" : "静音"}
                 onClick={() => setMuted((value) => !value)}
                 className="size-10 rounded-full bg-story-panel text-story-ink/80 hover:text-story-ink"
