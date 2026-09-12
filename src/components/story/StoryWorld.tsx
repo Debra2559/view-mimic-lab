@@ -198,6 +198,14 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
             </Button>
             <Button
               variant="outline"
+              onClick={() => setHubOpen(true)}
+              className="h-12 rounded-full border-story-glow/40 bg-transparent text-[16px] text-story-ink hover:bg-story-ink/10 hover:text-story-ink"
+            >
+              <LayoutGrid className="size-4" />
+              探索互动回答世界
+            </Button>
+            <Button
+              variant="outline"
               onClick={onExit}
               className="h-12 rounded-full border-story-ink/25 bg-transparent text-[16px] text-story-ink hover:bg-story-ink/10 hover:text-story-ink"
             >
@@ -215,7 +223,12 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
         </div>
       )}
 
+      {hubOpen && (
+        <WorldHub currentWorldId="corridor" onEnterWorld={enterWorld} onClose={() => setHubOpen(false)} />
+      )}
+
       {shareOpen && activeEnding && <ShareSheet ending={activeEnding} onClose={() => setShareOpen(false)} />}
+
     </div>
   );
 }
