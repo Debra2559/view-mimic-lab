@@ -13,7 +13,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { HUB_ENTRIES, type HubEntry, type WorldCard } from "@/lib/story";
+import { HUB_ENTRIES, STORY_MAP, type HubEntry, type WorldCard } from "@/lib/story";
+import { getUnlocked } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
 const ICONS: Record<WorldCard["icon"], LucideIcon> = {
@@ -111,7 +112,15 @@ export function WorldHub({
                   </span>
                 ))}
               </div>
-              <span className="mt-1 text-[11px] text-story-ink/45">{world.card.players}</span>
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-[11px] text-story-ink/45">{world.card.players}</span>
+                {world.status === "playable" && (
+                  <span className="text-[11px] text-story-glow/85">
+                    结局 {getUnlocked(world.id).length}/
+                    {Object.keys(STORY_MAP[world.id]?.endings ?? {}).length}
+                  </span>
+                )}
+              </div>
             </div>
           </button>
           );
