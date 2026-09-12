@@ -16,7 +16,6 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { PortalEntry } from "@/components/story/PortalEntry";
 import { StoryWorld } from "@/components/story/StoryWorld";
 import { Button } from "@/components/ui/button";
 import { getContributors, getPost, type SideAnswer } from "@/lib/feed";
@@ -183,12 +182,7 @@ function AnswerPage() {
 
         <div className="answer-copy mt-5 space-y-7 text-[20px] leading-[1.78]">
           {post.paragraphs.map((text, index) => (
-            <div key={`${post.id}-p-${index}`} className="space-y-7">
-              <p>{text}</p>
-              {story && post.portalAfter === index + 1 && (
-                <PortalEntry story={story} onEnter={setStoryId} />
-              )}
-            </div>
+            <p key={`${post.id}-p-${index}`}>{text}</p>
           ))}
         </div>
       </article>
