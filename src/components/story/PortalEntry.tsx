@@ -1,13 +1,16 @@
 import { Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
 
-export function PortalEntry({ onEnter }: { onEnter: () => void }) {
+import type { Story } from "@/lib/story";
+
+/** 每条回答都可以生成自己的穿越入口：文案与目标世界线来自 Story。 */
+export function PortalEntry({ story, onEnter }: { story: Story; onEnter: (storyId: string) => void }) {
   const [connecting, setConnecting] = useState(false);
 
   const handleClick = () => {
     if (connecting) return;
     setConnecting(true);
-    window.setTimeout(onEnter, 900);
+    window.setTimeout(() => onEnter(story.id), 900);
   };
 
   return (
@@ -15,14 +18,14 @@ export function PortalEntry({ onEnter }: { onEnter: () => void }) {
       <button
         type="button"
         onClick={handleClick}
-        aria-label="触碰裂缝，进入这条回答的世界"
+        aria-label={`${story.portal.action}，进入这条回答的世界`}
         className="animate-portal relative grid size-16 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-full bg-story-night text-story-glow"
       >
         <span className="portal-shimmer absolute inset-0" aria-hidden="true" />
         <Sparkles className="relative size-7" strokeWidth={1.8} />
       </button>
       <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-semibold text-foreground">检测到可进入的世界线</p>
+        <p className="text-[15px] font-semibold text-foreground">{story.portal.title}</p>
         <button
           type="button"
           onClick={handleClick}
@@ -34,7 +37,7 @@ export function PortalEntry({ onEnter }: { onEnter: () => void }) {
               正在连接世界……
             </>
           ) : (
-            "触碰裂缝，成为那个外卖员 〉"
+            `${story.portal.action} 〉`
           )}
         </button>
       </div>
