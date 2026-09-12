@@ -579,7 +579,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
 
       {phase === "ending" && activeEnding && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-story-night/85 px-8 py-10 text-center backdrop-blur-sm">
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-story-night/75 via-story-night/85 to-story-night px-8 py-10 text-center backdrop-blur-[2px]">
           <div className="ending-pop flex flex-col items-center">
             <p className="flex items-center gap-1.5 text-[13px] tracking-[0.4em] text-story-glow">
               <Sparkles className="size-3.5" />
