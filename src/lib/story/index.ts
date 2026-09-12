@@ -1,3 +1,4 @@
+import { getGeneratedStories } from "./custom";
 import { corridorStory } from "./stories/corridor";
 import { spinStory } from "./stories/spin";
 import type { Story, UpcomingWorld } from "./types";
@@ -13,7 +14,7 @@ export const STORY_MAP: Record<string, Story> = Object.fromEntries(
 );
 
 export function getStory(id: string): Story {
-  return STORY_MAP[id] ?? STORIES[0]!;
+  return STORY_MAP[id] ?? getGeneratedStories().find((s) => s.id === id) ?? STORIES[0]!;
 }
 
 /** 待开放世界，只有卡片信息 */
@@ -76,9 +77,26 @@ export interface HubEntry {
   id: string;
   card: Story["card"];
   status: "playable" | "soon";
+  /** 由用户投喂的回答生成 */
+  generated?: boolean;
 }
 
 export const HUB_ENTRIES: HubEntry[] = [
   ...STORIES.map((story) => ({ id: story.id, card: story.card, status: "playable" as const })),
   ...UPCOMING_WORLDS.map((world) => ({ id: world.id, card: world.card, status: "soon" as const })),
 ];
+
+/** 内置世界线 + 用户投喂回答生成的世界线（客户端运行时读取） */
+export function getHubEntries(): HubEntry[] {
+  const generated = getGeneratedStories().map((story) => ({
+    id: story.id,
+    card: story.card,
+    status: "playable" as const,
+    generated: true,
+  }));
+  return [...generated, ...HUB_ENTRIES];
+}
+
+export function getEndingCount(id: string): number {
+  return Object.keys(getStory(id).endings).length;
+}

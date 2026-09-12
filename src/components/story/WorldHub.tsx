@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bike,
   Search,
@@ -10,13 +10,23 @@ import {
   Play,
   Repeat,
   Sparkles,
+  Trash2,
+  Wand2,
   X,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { HUB_ENTRIES, STORY_MAP, WORLD_CATEGORIES, type HubEntry, type WorldCard } from "@/lib/story";
+import {
+  getEndingCount,
+  getHubEntries,
+  WORLD_CATEGORIES,
+  type HubEntry,
+  type WorldCard,
+} from "@/lib/story";
+import { removeGenerated } from "@/lib/story/custom";
 import { getUnlocked } from "@/lib/story/progress";
+import { StoryForge } from "@/components/story/StoryForge";
 import { Button } from "@/components/ui/button";
 
 const ICONS: Record<WorldCard["icon"], LucideIcon> = {
@@ -39,15 +49,21 @@ export function WorldHub({
 }) {
   const [keyword, setKeyword] = useState("");
   const [category, setCategory] = useState("全部");
+  const [entries, setEntries] = useState<HubEntry[]>([]);
+  const [forgeOpen, setForgeOpen] = useState(false);
+
+  useEffect(() => {
+    setEntries(getHubEntries());
+  }, []);
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
-    return HUB_ENTRIES.filter((world) => {
+    return entries.filter((world) => {
       const matchCategory = category === "全部" || world.card.category === category;
       const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
       return matchCategory && (q === "" || haystack.includes(q));
     });
-  }, [keyword, category]);
+  }, [keyword, category, entries]);
 
   const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
@@ -122,6 +138,24 @@ export function WorldHub({
             </button>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => setForgeOpen(true)}
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-story-glow/45 bg-story-glow/10 px-4 py-3 text-left"
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-story-glow/20 text-story-glow">
+            <Wand2 className="size-4.5" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[14.5px] font-semibold text-story-ink">
+              投喂一条知乎「如果」回答
+            </span>
+            <span className="block text-[12px] text-story-ink/60">
+              自动生成专属剧情、立绘与分支结局
+            </span>
+          </span>
+        </button>
       </div>
 
       {filtered.length === 0 && (
@@ -134,58 +168,100 @@ export function WorldHub({
         {filtered.map((world, index) => {
           const Icon = ICONS[world.card.icon];
           return (
-          <button
-            key={world.id}
-            type="button"
-            onClick={() => handlePick(world)}
-            style={{ animationDelay: `${index * 0.07}s` }}
-            className="hub-card group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-story-ink/12 bg-story-panel text-left backdrop-blur-md"
-          >
-            <div className="relative h-28 w-full overflow-hidden" style={{ background: world.card.cover }}>
-              <span className="hub-glyph absolute inset-0 grid place-items-center text-story-ink/90">
-                <Icon className="size-11" strokeWidth={1.4} />
-              </span>
-              <span className="hub-shine absolute inset-0" aria-hidden="true" />
-              {world.id === currentWorldId && (
-                <span className="absolute left-2 top-2 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow">
-                  当前世界
-                </span>
-              )}
-              <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] text-story-ink/85">
-                {world.status === "playable" ? <Play className="size-2.5" /> : <Lock className="size-2.5" />}
-                {world.status === "playable" ? "可进入" : "即将开启"}
-              </span>
-            </div>
+            <div key={world.id} className="relative">
+              <button
+                type="button"
+                onClick={() => handlePick(world)}
+                style={{ animationDelay: `${index * 0.07}s` }}
+                className="hub-card group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-story-ink/12 bg-story-panel text-left backdrop-blur-md"
+              >
+                <div
+                  className="relative h-28 w-full overflow-hidden"
+                  style={{ background: world.card.cover }}
+                >
+                  <span className="hub-glyph absolute inset-0 grid place-items-center text-story-ink/90">
+                    <Icon className="size-11" strokeWidth={1.4} />
+                  </span>
+                  <span className="hub-shine absolute inset-0" aria-hidden="true" />
+                  {world.generated ? (
+                    <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow">
+                      <Wand2 className="size-2.5" />
+                      我生成的
+                    </span>
+                  ) : (
+                    world.id === currentWorldId && (
+                      <span className="absolute left-2 top-2 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow">
+                        当前世界
+                      </span>
+                    )
+                  )}
+                  <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] text-story-ink/85">
+                    {world.status === "playable" ? (
+                      <Play className="size-2.5" />
+                    ) : (
+                      <Lock className="size-2.5" />
+                    )}
+                    {world.status === "playable" ? "可进入" : "即将开启"}
+                  </span>
+                </div>
 
-            <div className="flex flex-1 flex-col gap-1.5 p-3">
-              <h3 className="line-clamp-2 text-[14.5px] font-semibold leading-[1.5] text-story-ink">
-                {world.card.question}
-              </h3>
-              <p className="line-clamp-2 text-[12.5px] leading-[1.6] text-story-ink/60">{world.card.hook}</p>
-              <div className="mt-1 flex flex-wrap gap-1">
-                {world.card.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-story-ink/15 px-2 py-0.5 text-[10.5px] text-story-ink/70"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-              <div className="mt-1 flex items-center justify-between">
-                <span className="text-[11px] text-story-ink/45">{world.card.players}</span>
-                {world.status === "playable" && (
-                  <span className="text-[11px] text-story-glow/85">
-                    结局 {getUnlocked(world.id).length}/
-                    {Object.keys(STORY_MAP[world.id]?.endings ?? {}).length}
-                  </span>
-                )}
-              </div>
+                <div className="flex flex-1 flex-col gap-1.5 p-3">
+                  <h3 className="line-clamp-2 text-[14.5px] font-semibold leading-[1.5] text-story-ink">
+                    {world.card.question}
+                  </h3>
+                  <p className="line-clamp-2 text-[12.5px] leading-[1.6] text-story-ink/60">
+                    {world.card.hook}
+                  </p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {world.card.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full border border-story-ink/15 px-2 py-0.5 text-[10.5px] text-story-ink/70"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-1 flex items-center justify-between">
+                    <span className="text-[11px] text-story-ink/45">{world.card.players}</span>
+                    {world.status === "playable" && (
+                      <span className="text-[11px] text-story-glow/85">
+                        结局 {getUnlocked(world.id).length}/{getEndingCount(world.id)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </button>
+
+              {world.generated && (
+                <button
+                  type="button"
+                  aria-label="删除这条生成的世界线"
+                  onClick={() => {
+                    removeGenerated(world.id);
+                    setEntries(getHubEntries());
+                    toast("已删除这条世界线");
+                  }}
+                  className="absolute right-2 top-2 grid size-7 place-items-center rounded-full bg-story-night/70 text-story-ink/70 hover:text-story-ink"
+                >
+                  <Trash2 className="size-3.5" />
+                </button>
+              )}
             </div>
-          </button>
           );
         })}
       </div>
+
+      {forgeOpen && (
+        <StoryForge
+          onClose={() => setForgeOpen(false)}
+          onCreated={(id) => {
+            setForgeOpen(false);
+            setEntries(getHubEntries());
+            onEnterWorld(id);
+          }}
+        />
+      )}
     </div>
   );
 }
