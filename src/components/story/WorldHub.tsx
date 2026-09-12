@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { HUB_ENTRIES, STORY_MAP, type HubEntry, type WorldCard } from "@/lib/story";
+import { HUB_ENTRIES, STORY_MAP, WORLD_CATEGORIES, type HubEntry, type WorldCard } from "@/lib/story";
 import { getUnlocked } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
@@ -37,6 +37,18 @@ export function WorldHub({
   onEnterWorld: (id: string) => void;
   onClose: () => void;
 }) {
+  const [keyword, setKeyword] = useState("");
+  const [category, setCategory] = useState("全部");
+
+  const filtered = useMemo(() => {
+    const q = keyword.trim().toLowerCase();
+    return HUB_ENTRIES.filter((world) => {
+      const matchCategory = category === "全部" || world.card.category === category;
+      const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
+      return matchCategory && (q === "" || haystack.includes(q));
+    });
+  }, [keyword, category]);
+
   const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
       toast("这条世界线还在生成中", { description: "已为你预约，开放时第一时间通知。" });
