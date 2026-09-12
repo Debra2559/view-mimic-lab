@@ -416,3 +416,103 @@
   }
 }
 
+
+/* ===== 互动增强：进度、选项、结局收集 ===== */
+
+@keyframes progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes ending-pop {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+  }
+  60% {
+    transform: translateY(-4px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes badge-ring {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.76 0.13 245 / 45%);
+  }
+  50% {
+    box-shadow: 0 0 0 8px oklch(0.76 0.13 245 / 0%);
+  }
+}
+
+@keyframes ember-float {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  25% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-140px) scale(1.1);
+  }
+}
+
+.progress-bar span {
+  transform-origin: left center;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ending-pop {
+  animation: ending-pop 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.choice-card {
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    background-color 0.24s ease;
+}
+
+.choice-card:hover,
+.choice-card:active {
+  transform: translateY(-3px);
+  border-color: oklch(0.76 0.13 245 / 70%);
+  box-shadow:
+    0 14px 34px oklch(0.1 0.02 260 / 60%),
+    0 0 22px oklch(0.76 0.13 245 / 28%);
+}
+
+.choice-key {
+  animation: badge-ring 2.4s ease-out infinite;
+}
+
+.ember {
+  position: absolute;
+  bottom: 12%;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--story-ember);
+  filter: blur(0.5px);
+  animation: ember-float 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ending-pop,
+  .choice-key,
+  .ember,
+  .choice-card {
+    animation: none;
+    transition: none;
+  }
+}
