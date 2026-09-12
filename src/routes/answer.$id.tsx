@@ -4,10 +4,12 @@ import {
   ArrowBigUp,
   ChevronDown,
   ChevronLeft,
+  Globe2,
   Headphones,
   MessageCircle,
   MoreVertical,
   Share2,
+  Sparkles,
   Star,
   Wifi,
 } from "lucide-react";
@@ -17,7 +19,7 @@ import { toast } from "sonner";
 import { PortalEntry } from "@/components/story/PortalEntry";
 import { StoryWorld } from "@/components/story/StoryWorld";
 import { Button } from "@/components/ui/button";
-import { getPost } from "@/lib/feed";
+import { getContributors, getPost, type SideAnswer } from "@/lib/feed";
 import { getStory } from "@/lib/story";
 
 export const Route = createFileRoute("/answer/$id")({
