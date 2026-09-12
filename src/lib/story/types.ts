@@ -18,6 +18,35 @@ export interface StoryNode {
   text: string;
 }
 
+/** 场景里的可触碰物件：摸一摸、推开门、拿起某样东西…… */
+export type InteractionIcon =
+  | "hand"
+  | "flame"
+  | "door"
+  | "phone"
+  | "package"
+  | "ear"
+  | "eye"
+  | "clock"
+  | "bike"
+  | "wind"
+  | "light"
+  | "note";
+
+export interface Interaction {
+  id: string;
+  /** 按钮上的动作文案，如「摸摸车座」 */
+  label: string;
+  icon: InteractionIcon;
+  /** 在画面中的位置，百分比 */
+  x: number;
+  y: number;
+  /** 触碰后的描写 */
+  response: string;
+  /** 已经碰过之后再点的短句 */
+  after?: string;
+}
+
 export interface ChoiceOption {
   key: "A" | "B";
   label: string;
@@ -25,6 +54,7 @@ export interface ChoiceOption {
   /** 通向的结局 key */
   ending: "A" | "B";
 }
+
 
 export interface Ending {
   key: "A" | "B";
