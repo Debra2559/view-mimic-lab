@@ -4,7 +4,7 @@ import {
   ArrowBigUp,
   ChevronDown,
   ChevronLeft,
-  Globe2,
+  ChevronRight,
   Headphones,
   MessageCircle,
   MoreVertical,
