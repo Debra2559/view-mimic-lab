@@ -12,7 +12,7 @@ import {
   Wifi,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import authorAvatar from "@/assets/author-avatar.jpg";
 import { type FeedPost } from "@/lib/feed";
@@ -46,8 +46,14 @@ function FeedPage() {
   const [activeTab, setActiveTab] = useState("推荐");
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  // 热度排序 + 每次进首页轮换一位，热榜常看常新
-  const ranked = useMemo(() => getRotatedFeed(), []);
+  // 热度排序 + 每次进首页轮换一位，热榜常看常新。
+  // 轮换依赖 sessionStorage，挂载后再启用，避免服务端与客户端首屏不一致。
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  const ranked = useMemo(
+    () => (hydrated ? getRotatedFeed() : getRankedPosts()),
+    [hydrated],
+  );
   const items = ranked.filter((item) => !dismissed.includes(item.id));
 
 
