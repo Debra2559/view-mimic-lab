@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AnswerRouteImport } from './routes/answer'
 import { Route as AnswerIdRouteImport } from './routes/answer.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,44 +17,36 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AnswerRoute = AnswerRouteImport.update({
-  id: '/answer',
-  path: '/answer',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AnswerIdRoute = AnswerIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => AnswerRoute,
+  id: '/answer/$id',
+  path: '/answer/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/answer': typeof AnswerRouteWithChildren
   '/answer/$id': typeof AnswerIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/answer': typeof AnswerRouteWithChildren
   '/answer/$id': typeof AnswerIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/answer': typeof AnswerRouteWithChildren
   '/answer/$id': typeof AnswerIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/answer' | '/answer/$id'
+  fullPaths: '/' | '/answer/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/answer' | '/answer/$id'
-  id: '__root__' | '/' | '/answer' | '/answer/$id'
+  to: '/' | '/answer/$id'
+  id: '__root__' | '/' | '/answer/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AnswerRoute: typeof AnswerRouteWithChildren
+  AnswerIdRoute: typeof AnswerIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -67,37 +58,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/answer': {
-      id: '/answer'
-      path: '/answer'
-      fullPath: '/answer'
-      preLoaderRoute: typeof AnswerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/answer/$id': {
       id: '/answer/$id'
-      path: '/$id'
+      path: '/answer/$id'
       fullPath: '/answer/$id'
       preLoaderRoute: typeof AnswerIdRouteImport
-      parentRoute: typeof AnswerRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AnswerRouteChildren {
-  AnswerIdRoute: typeof AnswerIdRoute
-}
-
-const AnswerRouteChildren: AnswerRouteChildren = {
-  AnswerIdRoute: AnswerIdRoute,
-}
-
-const AnswerRouteWithChildren =
-  AnswerRoute._addFileChildren(AnswerRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AnswerRoute: AnswerRouteWithChildren,
+  AnswerIdRoute: AnswerIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

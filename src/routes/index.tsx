@@ -33,79 +33,16 @@ export const Route = createFileRoute("/")({
 
 const TABS = ["关注", "推荐", "热榜", "故事", "知识", "圈子", "专栏"];
 
-type FeedItem = {
-  id: string;
-  title: string;
-  author: string;
-  verified?: boolean;
-  excerpt: string;
-  upvotes: string;
-  stars: string;
-  comments: string;
-  to?: string;
-  avatar?: string;
-  accent: string;
-  spark?: boolean;
-};
-
-const FEED: FeedItem[] = [
-  {
-    id: "corridor",
-    title: "社会现象如果大家都去责任化的结果会是什么？",
-    author: "东莞仔",
-    verified: true,
-    excerpt:
-      "结果就是，整个社会的运行成本会极速上升。任何不起眼的小事最终都有可能演化成重大事故。举个最简单的例子，一个外卖员凌晨到一个小区送餐…",
-    upvotes: "6306",
-    stars: "713",
-    comments: "463",
-    to: "/answer",
-    avatar: authorAvatar,
-    accent: "from-sky-500 to-blue-600",
-    spark: true,
-  },
-  {
-    id: "ai-agent",
-    title: "如果人人都能拥有 AI 分身，工作会变成什么样？",
-    author: "啦啦啦啦",
-    verified: true,
-    excerpt:
-      "现在很多人嘴上喊「我要转 AI」，结果每天干的事却是收藏一堆教程、刷一堆概念、看一堆「LLM 从入门到精通」…",
-    upvotes: "1.4 万",
-    stars: "2.7 万",
-    comments: "318",
-    accent: "from-violet-500 to-fuchsia-600",
-  },
-  {
-    id: "sweet",
-    title: "有没有一上来就很刺激的甜文？",
-    author: "小尘",
-    verified: true,
-    excerpt:
-      "住闺蜜家当晚，她男友进了我的房间，霸道地封住了我的唇。嗓音清冽低沉：「一个月没见，你不想吗？」下…",
-    upvotes: "242",
-    stars: "180",
-    comments: "评论",
-    accent: "from-rose-400 to-pink-600",
-  },
-  {
-    id: "phone",
-    title: "阔屏手机选华为还是选苹果？",
-    author: "数码老炮",
-    excerpt:
-      "一句话结论：看你钱包厚度和生态依赖。手持 Mac 和 iPad 的，闭眼苹果；预算有限又想要大屏体验，华为更香…",
-    upvotes: "876",
-    stars: "402",
-    comments: "96",
-    accent: "from-amber-400 to-orange-600",
-  },
-];
+function formatCount(value: number) {
+  return value >= 10000 ? `${(value / 10000).toFixed(1)} 万` : String(value);
+}
 
 function FeedPage() {
   const [activeTab, setActiveTab] = useState("推荐");
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const items = FEED.filter((item) => !dismissed.includes(item.id));
+  const items = FEED_POSTS.filter((item) => !dismissed.includes(item.id));
+
 
   return (
     <main className="mx-auto min-h-screen max-w-[768px] bg-background pb-24 text-foreground md:border-x md:border-border">
