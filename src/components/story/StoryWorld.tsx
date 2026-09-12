@@ -1,7 +1,8 @@
-import { ChevronRight, RotateCcw, Share2, VolumeX, X } from "lucide-react";
+import { ChevronRight, LayoutGrid, RotateCcw, Share2, VolumeX, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ShareSheet } from "@/components/story/ShareSheet";
+import { WorldHub } from "@/components/story/WorldHub";
 import {
   CHARACTER_NAME,
   CHARACTER_SPRITES,
@@ -24,6 +25,8 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
   const [choice, setChoice] = useState<ChoiceKey | null>(null);
   const [muted, setMuted] = useState(true);
   const [shareOpen, setShareOpen] = useState(false);
+  const [hubOpen, setHubOpen] = useState(false);
+
 
   useEffect(() => {
     const timer = window.setTimeout(() => setPhase("intro"), 1300);
@@ -35,6 +38,17 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
     setNodeIndex(0);
     setPhase("intro");
   };
+
+  const enterWorld = (id: string) => {
+    setHubOpen(false);
+    if (id === "corridor") {
+      setChoice(null);
+      setNodeIndex(0);
+      setPhase("transition");
+      window.setTimeout(() => setPhase("intro"), 1300);
+    }
+  };
+
 
   const activeNodes: StoryNode[] = choice ? ENDINGS[choice].nodes : MAIN_NODES;
   const activeNode = activeNodes[nodeIndex];
@@ -101,6 +115,16 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
               {choice ? "世界线 · 分歧之后" : "世界线 · 01"}
             </span>
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="打开互动回答世界"
+                onClick={() => setHubOpen(true)}
+                className="size-10 rounded-full bg-story-panel text-story-glow hover:text-story-glow"
+              >
+                <LayoutGrid className="size-5" />
+              </Button>
+
               <Button
                 variant="ghost"
                 size="icon"
@@ -174,6 +198,14 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
             </Button>
             <Button
               variant="outline"
+              onClick={() => setHubOpen(true)}
+              className="h-12 rounded-full border-story-glow/40 bg-transparent text-[16px] text-story-ink hover:bg-story-ink/10 hover:text-story-ink"
+            >
+              <LayoutGrid className="size-4" />
+              探索互动回答世界
+            </Button>
+            <Button
+              variant="outline"
               onClick={onExit}
               className="h-12 rounded-full border-story-ink/25 bg-transparent text-[16px] text-story-ink hover:bg-story-ink/10 hover:text-story-ink"
             >
@@ -191,7 +223,12 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
         </div>
       )}
 
+      {hubOpen && (
+        <WorldHub currentWorldId="corridor" onEnterWorld={enterWorld} onClose={() => setHubOpen(false)} />
+      )}
+
       {shareOpen && activeEnding && <ShareSheet ending={activeEnding} onClose={() => setShareOpen(false)} />}
+
     </div>
   );
 }
