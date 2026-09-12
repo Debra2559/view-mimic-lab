@@ -1,5 +1,7 @@
+import { useMemo, useState } from "react";
 import {
   Bike,
+  Search,
   Brain,
   Bug,
   Globe2,
