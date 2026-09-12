@@ -43,6 +43,7 @@ function resolveCoverImage(key?: string): string | undefined {
 }
 
 function toCard(raw: RawCard): WorldCard {
+  const coverImage = resolveCoverImage(raw.coverImage);
   return {
     question: raw.question,
     hook: raw.hook,
@@ -50,7 +51,7 @@ function toCard(raw: RawCard): WorldCard {
     tags: raw.tags,
     players: raw.players,
     cover: resolveCover(raw.cover),
-    coverImage: resolveCoverImage(raw.coverImage),
+    ...(coverImage ? { coverImage } : {}),
     icon: raw.icon,
   };
 }
