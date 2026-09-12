@@ -78,11 +78,6 @@ export function WorldHub({
     setEntries(getHubEntries());
   }, []);
 
-  useEffect(() => {
-    const raf = requestAnimationFrame(updateCardScales);
-    return () => cancelAnimationFrame(raf);
-  }, [filtered.length, updateCardScales]);
-
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     return entries.filter((world) => {
