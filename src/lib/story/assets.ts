@@ -28,3 +28,15 @@ export const COVERS = {
 } as const;
 
 export type CoverKey = keyof typeof COVERS;
+
+/** 剧情文本文件里 coverImage 可以引用的封面图 */
+export const COVER_IMAGES = {
+  corridor: bgCorridor,
+  dusk: bgDusk,
+  mind: coverMind,
+  mosquito: coverMosquito,
+  money: coverMoney,
+  rewind: coverRewind,
+} as const;
+
+export type CoverImageKey = keyof typeof COVER_IMAGES;
