@@ -67,6 +67,7 @@ function AnswerPage() {
   const [saved, setSaved] = useState(false);
   const [storyId, setStoryId] = useState<string | null>(null);
   const story = post.storyId ? getStory(post.storyId) : null;
+  const contributors = getContributors(post);
 
   const scrollToNext = () => {
     window.scrollBy({ top: window.innerHeight * 0.7, behavior: "smooth" });
