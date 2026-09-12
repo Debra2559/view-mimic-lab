@@ -249,6 +249,20 @@ export function WorldHub({
 
                 {/* 顶部徽标 */}
                 <span className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
+                  {rank && (
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide backdrop-blur-md ${
+                        rank <= 3
+                          ? "border-hub-coral/50 bg-hub-coral/20 text-hub-coral"
+                          : "border-hub-ink/10 bg-hub-night/55 text-hub-ink/85"
+                      }`}
+                      title="热度由回答数、收藏数和点击量共同决定"
+                    >
+                      <Flame className="size-2.5" />
+                      No.{rank}
+                      {post && <span className="font-normal opacity-80">· {heatLabel(heatScore(post))}</span>}
+                    </span>
+                  )}
                   {world.generated ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-hub-ink/10 bg-hub-night/55 px-2 py-0.5 text-[10px] tracking-widest text-hub-glow backdrop-blur-md">
                       <Wand2 className="size-2.5" />
