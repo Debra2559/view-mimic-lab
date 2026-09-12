@@ -421,3 +421,40 @@ export const FEED_POSTS: FeedPost[] = [
 export function getPost(id: string) {
   return FEED_POSTS.find((post) => post.id === id);
 }
+
+export type WorldContributor = {
+  id: string;
+  author: string;
+  bio: string;
+  stance: string;
+  accent: string;
+  avatar?: string;
+  upvotes: number;
+};
+
+/** 一个问题下，共同构成这条世界线的所有回答 */
+export function getContributors(post: FeedPost): WorldContributor[] {
+  return [
+    {
+      id: post.id,
+      author: post.author,
+      bio: post.bio,
+      stance: post.stance,
+      accent: post.accent,
+      avatar: post.avatar,
+      upvotes: post.upvotes,
+    },
+    ...post.otherAnswers.map((a) => ({
+      id: a.id,
+      author: a.author,
+      bio: a.bio,
+      stance: a.stance,
+      accent: a.accent,
+      upvotes: a.upvotes,
+    })),
+  ];
+}
+
+export function getAnswerCount(post: FeedPost) {
+  return post.otherAnswers.length + 1;
+}
