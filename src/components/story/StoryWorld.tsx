@@ -67,7 +67,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [hubOpen, setHubOpen] = useState(false);
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [touched, setTouched] = useState<string[]>([]);
-  const [活, setActiveInteraction] = useState<Interaction | null>(null);
+  const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
   const [peeking, setPeeking] = useState(false);
 
 
