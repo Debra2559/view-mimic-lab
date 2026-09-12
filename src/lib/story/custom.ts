@@ -63,7 +63,9 @@ export function toStory(entry: StoredStory, index: number): Story {
 
   return {
     id: entry.id,
+    interactions: [],
     chapterLabel: `世界线 · 生成 ${String(index + 1).padStart(2, "0")}`,
+
     card: {
       question: d.question,
       hook: d.hook,
