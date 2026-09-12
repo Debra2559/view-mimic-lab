@@ -5,7 +5,10 @@
     "question": "如果每天都能重来一次，会怎样？",
     "hook": "第 47 次循环，你决定不再做好人。",
     "category": "时间循环",
-    "tags": ["循环", "隐藏结局"],
+    "tags": [
+      "循环",
+      "隐藏结局"
+    ],
     "players": "3.9 万人进入",
     "cover": "night",
     "coverImage": "rewind",
@@ -16,18 +19,67 @@
     "action": "触碰裂缝，进入第 47 次的同一天"
   },
   "background": "rewind",
-  "cast": ["luzhao"],
+  "cast": [
+    "luzhao"
+  ],
   "introLines": [
     "闹钟又响了。七点零三分，和前面四十六次一模一样。",
     "窗外的鸽子，还是那只。"
   ],
   "nodes": [
-    { "speaker": "narrator", "text": "第 47 次。你已经背下了今天所有的对白：楼下早餐摊少找的两块钱，九点四十分那场雨，下午三点的那声急刹车。" },
-    { "speaker": "narrator", "text": "你也背下了那件事——傍晚六点十二分，十字路口，有个人会被撞。" },
-    { "speaker": "luzhao", "expression": "calm", "text": "你今天也醒着，对吧。第几次了？" },
-    { "speaker": "narrator", "text": "陆昭。唯一一个和你一样记得所有循环的人。前四十六次，他陪你救了那个人四十六遍。" },
-    { "speaker": "luzhao", "expression": "tense", "text": "救了也没用，第二天她照样在那儿。我们只是在重复地演一场好人。" },
-    { "speaker": "luzhao", "expression": "tense", "text": "今天别去了。就一次，我们试试什么都不做，看这一天会不会放过我们。" }
+    {
+      "speaker": "narrator",
+      "text": "第 47 次。你已经背下了今天所有的对白：楼下早餐摊少找的两块钱，九点四十分那场雨，下午三点的那声急刹车。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "你也背下了那件事——傍晚六点十二分，十字路口，有个人会被撞。"
+    },
+    {
+      "speaker": "luzhao",
+      "expression": "calm",
+      "text": "你今天也醒着，对吧。第几次了？"
+    },
+    {
+      "speaker": "narrator",
+      "text": "陆昭。唯一一个和你一样记得所有循环的人。前四十六次，他陪你救了那个人四十六遍。"
+    },
+    {
+      "speaker": "luzhao",
+      "expression": "tense",
+      "text": "救了也没用，第二天她照样在那儿。我们只是在重复地演一场好人。"
+    },
+    {
+      "speaker": "luzhao",
+      "expression": "tense",
+      "text": "今天别去了。就一次，我们试试什么都不做，看这一天会不会放过我们。"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "clock",
+      "label": "按停闹钟",
+      "icon": "clock",
+      "x": 30,
+      "y": 42,
+      "response": "7:00。第 47 次。按下去的手感、弹簧的声音、床单的温度，全都和昨天一模一样。"
+    },
+    {
+      "id": "window",
+      "label": "推开窗",
+      "icon": "door",
+      "x": 70,
+      "y": 38,
+      "response": "楼下那只橘猫又一次从同一个墙角跳下来。它这辈子，大概已经跳过四十七次了。"
+    },
+    {
+      "id": "guitar",
+      "label": "拿起那把吉他",
+      "icon": "package",
+      "x": 50,
+      "y": 70,
+      "response": "和弦你已经练熟了——只有你记得练过。今天是第一次，你想弹给别人听。"
+    }
   ],
   "choicePrompt": "六点零五分，路口还有七分钟。你的选择是——",
   "choices": [
@@ -49,18 +101,38 @@
       "title": "第 47 次伸手",
       "summary": "意义不在于被记住，而在于那一刻你真的做了。",
       "nodes": [
-        { "speaker": "narrator", "text": "六点十二分，你又一次撞开了她。刹车声、尖叫声、你摔在地上的疼，全都和前四十六次一样真实。" },
-        { "speaker": "luzhao", "expression": "relieved", "text": "第二天早上，闹钟没有响。……循环停了。原来它要的不是结果，是你还愿不愿意。" },
-        { "speaker": "narrator", "text": "你终于走出了那一天。而她，从来都不知道自己被救了四十七次。" }
+        {
+          "speaker": "narrator",
+          "text": "六点十二分，你又一次撞开了她。刹车声、尖叫声、你摔在地上的疼，全都和前四十六次一样真实。"
+        },
+        {
+          "speaker": "luzhao",
+          "expression": "relieved",
+          "text": "第二天早上，闹钟没有响。……循环停了。原来它要的不是结果，是你还愿不愿意。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "你终于走出了那一天。而她，从来都不知道自己被救了四十七次。"
+        }
       ]
     },
     "B": {
       "title": "放过自己的那一天",
       "summary": "你终于知道不做好人会怎样——你会记得，而且只有你记得。",
       "nodes": [
-        { "speaker": "narrator", "text": "六点十二分，你们坐在天台上。远处传来刹车声，然后是很长的安静。" },
-        { "speaker": "luzhao", "expression": "tense", "text": "……明天她还会在那儿的。对吧？对吧。" },
-        { "speaker": "narrator", "text": "第二天七点零三分，闹钟准时响起。循环没有停。只是从这一次开始，它变得很难熬。" }
+        {
+          "speaker": "narrator",
+          "text": "六点十二分，你们坐在天台上。远处传来刹车声，然后是很长的安静。"
+        },
+        {
+          "speaker": "luzhao",
+          "expression": "tense",
+          "text": "……明天她还会在那儿的。对吧？对吧。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "第二天七点零三分，闹钟准时响起。循环没有停。只是从这一次开始，它变得很难熬。"
+        }
       ]
     }
   }
