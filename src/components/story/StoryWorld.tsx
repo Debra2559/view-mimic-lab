@@ -235,7 +235,7 @@ function DialogueBox({
   onAdvance,
 }: {
   node: StoryNode;
-  speakerName?: string;
+  speakerName?: string | undefined;
   onAdvance: () => void;
 }) {
   const [shown, setShown] = useState(0);

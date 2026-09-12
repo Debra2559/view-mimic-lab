@@ -19,6 +19,7 @@ import { useState } from "react";
 import authorAvatar from "@/assets/author-avatar.jpg";
 import { PortalEntry } from "@/components/story/PortalEntry";
 import { StoryWorld } from "@/components/story/StoryWorld";
+import { getStory } from "@/lib/story";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/")({
@@ -42,7 +43,8 @@ function AnswerPage() {
   const [followed, setFollowed] = useState(false);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [inStory, setInStory] = useState(false);
+  const [storyId, setStoryId] = useState<string | null>(null);
+  const answerStory = getStory("corridor");
 
   const scrollToNext = () => {
     window.scrollBy({ top: window.innerHeight * 0.7, behavior: "smooth" });
@@ -134,7 +136,7 @@ function AnswerPage() {
           <p>举个最简单的例子。</p>
           <p>一个外卖员凌晨到一个小区送餐，当他送完下楼以后发现一个违规在楼道里充电的电动车车座位置正在往外冒烟，这是电池内部燃烧的征兆。周围还堆积了一大堆纸壳塑料等回收垃圾。</p>
           <p>此时根据这个外卖员的心态就会诞生两个选择。</p>
-          <PortalEntry onEnter={() => setInStory(true)} />
+          <PortalEntry story={answerStory} onEnter={setStoryId} />
           <p className="border-b border-dashed border-muted-foreground/60">
             A外卖员是个善良且富有责任感的人，他觉得自己发现了这个危险源，自己就有责任去解决，于是他会选择马上报警，同时通知物业管理人员，帮忙与其一起转移这辆随时要烧起来的电动车。
           </p>
@@ -176,7 +178,7 @@ function AnswerPage() {
         </div>
       </footer>
 
-      {inStory && <StoryWorld onExit={() => setInStory(false)} />}
+      {storyId && <StoryWorld storyId={storyId} onExit={() => setStoryId(null)} />}
     </main>
   );
 }
