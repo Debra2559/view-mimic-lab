@@ -1,5 +1,17 @@
 import authorAvatar from "@/assets/author-avatar.jpg";
 
+/** 同一个问题下的其他回答，它们和主回答一起构成这个问题的世界 */
+export type SideAnswer = {
+  id: string;
+  author: string;
+  bio: string;
+  accent: string;
+  /** 这条回答在世界里贡献的视角 */
+  stance: string;
+  upvotes: number;
+  paragraphs: string[];
+};
+
 export type FeedPost = {
   id: string;
   title: string;
@@ -9,11 +21,15 @@ export type FeedPost = {
   avatar?: string;
   accent: string;
   questionMeta: string;
+  /** 主回答在世界里贡献的视角 */
+  stance: string;
   excerpt: string;
   paragraphs: string[];
   upvotes: number;
   stars: number;
   comments: number;
+  /** 问题下的其他回答 */
+  otherAnswers: SideAnswer[];
   /** 若存在，正文中会出现穿越入口 */
   storyId?: string;
   /** 穿越入口插在第几段之后 */
@@ -55,6 +71,37 @@ export const FEED_POSTS: FeedPost[] = [
     upvotes: 6306,
     stars: 713,
     comments: 463,
+    stance: "亲历者视角：责任是一种公共品",
+    otherAnswers: [
+      {
+        id: "corridor-2",
+        author: "林清和",
+        bio: "城市公共治理研究",
+        accent: "from-slate-500 to-zinc-700",
+        stance: "制度视角：没人负责，是因为没人被设计成负责",
+        upvotes: 2841,
+        paragraphs: [
+          "高赞回答讲的是人心，我想补一个更冷的角度：去责任化不是道德问题，是制度问题。",
+          "任何一栋楼里的隐患，都同时属于物业、业委会、街道、消防、车主。当一件事属于所有人，它就不属于任何人。这在公共管理里有个老词，叫「共同责任的稀释」。",
+          "真正有效的做法从来不是号召大家更善良，而是把责任压到一个具体的人头上：这层楼的充电桩归谁管，姓名和电话贴在墙上。你会发现，事故率立刻就下去了。",
+          "所以我不太喜欢「人心不古」这种叙事。人心一直如此，变的是有没有人替他们把责任写清楚。",
+        ],
+      },
+      {
+        id: "corridor-3",
+        author: "阿彦",
+        bio: "跑了四年外卖",
+        accent: "from-orange-400 to-amber-600",
+        stance: "旁观者视角：我也停下来过，然后被扣了钱",
+        upvotes: 1907,
+        paragraphs: [
+          "我就是那个外卖员。不是比喻，我真的在楼道里遇到过冒烟的电动车。",
+          "我报了警，等了二十分钟，那一单超时，扣了八块，客户给了差评，说我耽误他吃饭。第二天站长在群里点名批评我配送时长。",
+          "我不是想说自己多好，我只是想说：让一个人做对的事，代价不能全由他一个人扛。你们在评论区骂 B 的时候，B 可能正在为那八块钱算今天的房租。",
+          "后来我还是会停下来。但我也理解那些不停的人。",
+        ],
+      },
+    ],
     storyId: "corridor",
     portalAfter: 4,
   },
@@ -89,6 +136,36 @@ export const FEED_POSTS: FeedPost[] = [
     upvotes: 24100,
     stars: 8902,
     comments: 1512,
+    stance: "物理视角：惯性、大气与海水的坍缩",
+    otherAnswers: [
+      {
+        id: "spin-2",
+        author: "麦田守夜人",
+        bio: "民航气象 / 业余观星",
+        accent: "from-cyan-500 to-blue-700",
+        stance: "生存视角：极点上的那几个人会怎么活",
+        upvotes: 5120,
+        paragraphs: [
+          "高赞把灾难讲清楚了，我想聊聊另一半：假设有人活下来了，比如南极科考站那批人。",
+          "自转停止后，一天等于一年。极点反而是最温和的地方——那里本来就是半年白天半年黑夜，人类已经在那儿待了几十年，有成熟的经验。",
+          "真正的问题是补给。没有全球航运、没有卫星导航、磁场衰减让指南针失效，他们必须在第一个「白昼」结束前，决定是留下还是向环形大陆迁徙。",
+          "所以我一直觉得这道题最有意思的不是「地球停了会怎样」，而是「最后一批人会往哪儿走」。",
+        ],
+      },
+      {
+        id: "spin-3",
+        author: "沉舟",
+        bio: "地质学在读",
+        accent: "from-stone-500 to-amber-700",
+        stance: "地质视角：赤道鼓包塌下去之后",
+        upvotes: 3388,
+        paragraphs: [
+          "补充一个大家很少提的点：地球不是刚体，它是被自转「撑」成现在这个形状的。",
+          "赤道多出来的那 21 公里，是几十亿年离心力的结果。自转一停，地壳必须重新找平衡，这意味着全球尺度的应力释放：连锁地震、大规模火山、板块边界重排。",
+          "换句话说，就算你躲过了风和海，你也躲不过脚下这颗球重新变形的过程。它不会在一天里完成，会持续几万年。",
+        ],
+      },
+    ],
     storyId: "spin",
     portalAfter: 3,
   },
@@ -124,6 +201,35 @@ export const FEED_POSTS: FeedPost[] = [
     upvotes: 15800,
     stars: 4310,
     comments: 903,
+    stance: "社会视角：谎言消失后，信任并不会增加",
+    otherAnswers: [
+      {
+        id: "mind-2",
+        author: "季声",
+        bio: "临床心理咨询师",
+        accent: "from-fuchsia-500 to-rose-600",
+        stance: "关系视角：亲密关系靠的是善意的不知情",
+        upvotes: 4102,
+        paragraphs: [
+          "咨询室里最常见的一句话是：「我其实不想知道他怎么想的，我只想他别骗我。」这两件事，读心术会同时给你，但你只想要后一件。",
+          "念头不是人格。一个人脑子里闪过的最难听的那句话，往往是他最不认同的那句。人有能力在零点几秒里否定自己——读心术会把这个过程剥掉，只留下最糟的那一帧。",
+          "如果真有那一天，我的建议只有一条：别把听见的当成事实，把它当成天气。它会过去。",
+        ],
+      },
+      {
+        id: "mind-3",
+        author: "无名氏 47",
+        bio: "匿名用户",
+        accent: "from-zinc-500 to-slate-700",
+        stance: "少数派视角：我会是第一批被淘汰的人",
+        upvotes: 2660,
+        paragraphs: [
+          "我有 ADHD。我的脑子从来不是一条线，是十几条线同时在吵。",
+          "所以每次看到有人说「读心术会让世界更真诚」，我都觉得好笑。真诚的前提是你的念头能见人。我的不能，不是因为我坏，只是因为它太吵、太快、太乱。",
+          "那一天真来了，被隔离的不会是骗子，是我们这种人。任何新能力都会重新划一次线，而线的另一边总有人。",
+        ],
+      },
+    ],
     storyId: "mind",
     portalAfter: 3,
   },
@@ -155,6 +261,35 @@ export const FEED_POSTS: FeedPost[] = [
     upvotes: 9230,
     stars: 2104,
     comments: 471,
+    stance: "生态视角：生态位不会空着",
+    otherAnswers: [
+      {
+        id: "mosquito-2",
+        author: "程雁",
+        bio: "公共卫生 / 热带病防治",
+        accent: "from-lime-500 to-emerald-700",
+        stance: "公共卫生视角：每年六十万条命的账",
+        upvotes: 3980,
+        paragraphs: [
+          "生态账要算，但人命账也要算。疟疾每年带走约 60 万人，其中大部分是五岁以下的孩子。",
+          "我在非洲做过两年项目。你在蚊帐外面听见嗡嗡声的时候，想的不是「按蚊在生态系统里的地位」，是明天这个孩子还在不在。",
+          "所以现在的主流方案是精准压制而不是灭绝：沃尔巴克氏体、不育雄蚊、基因驱动。目标是断传染链。这不是妥协，这是我们同时算完两本账之后能拿到的最好结果。",
+        ],
+      },
+      {
+        id: "mosquito-3",
+        author: "北纬 68 度",
+        bio: "苔原生态观察员",
+        accent: "from-sky-400 to-teal-600",
+        stance: "苔原视角：候鸟夏天靠什么喂孩子",
+        upvotes: 1554,
+        paragraphs: [
+          "我在北极圈里待过三个夏天。那几周的蚊群密到能在天上形成一团黑云，走两步吸一口气都会吃到蚊子。",
+          "但也正是那团黑云，撑起了整个苔原的育雏季。候鸟飞几千公里来这里，就是为了这几周的蛋白质。",
+          "所以每次有人说「蚊子消失了世界会更好」，我脑子里出现的画面都是同一个：空掉的巢。",
+        ],
+      },
+    ],
     storyId: "mosquito",
     portalAfter: 3,
   },
@@ -186,6 +321,35 @@ export const FEED_POSTS: FeedPost[] = [
     upvotes: 7120,
     stars: 1866,
     comments: 355,
+    stance: "经济视角：一种会自然贬值的货币",
+    otherAnswers: [
+      {
+        id: "money-2",
+        author: "顾明",
+        bio: "三甲医院急诊科",
+        accent: "from-red-400 to-rose-700",
+        stance: "医疗视角：救一条命第一次有了报价",
+        upvotes: 2233,
+        paragraphs: [
+          "我们科室现在也在算钱，但钱和命之间隔着一层。那层一旦没了，事情会变得很难看。",
+          "抢救一个人需要六小时，家属账上只剩四小时。这道题在现实里我们靠制度、靠垫付、靠「先救人」往后拖。可如果货币就是寿命，拖不了——每多一分钟，就是有人少活一分钟。",
+          "最可怕的不是有人付不起，是系统会给出一个「不值得救」的结论，而且算得毫无破绽。",
+        ],
+      },
+      {
+        id: "money-3",
+        author: "小满",
+        bio: "普通上班族",
+        accent: "from-yellow-400 to-amber-600",
+        stance: "家庭视角：我妈想把她的余额转给我",
+        upvotes: 1780,
+        paragraphs: [
+          "看到这个问题我第一反应不是经济学，是我妈。",
+          "她一定会转。她会瞒着我去办，就像她当年瞒着我把房子抵押了给我付首付一样。而我一定不会要，我们会为这件事吵到翻脸。",
+          "现实里这种事其实每天都在发生，只是换算单位不是小时，是「我再干两年就退休」。这个设定唯一的作用，是让我们没法再装作看不见。",
+        ],
+      },
+    ],
     storyId: "money",
     portalAfter: 3,
   },
@@ -219,6 +383,36 @@ export const FEED_POSTS: FeedPost[] = [
     upvotes: 31400,
     stars: 11200,
     comments: 2084,
+    stance: "叙事视角：狂欢、崩溃，然后打磨这一天",
+    otherAnswers: [
+      {
+        id: "rewind-2",
+        author: "余温",
+        bio: "急诊护士 / 上了七年夜班",
+        accent: "from-pink-400 to-rose-600",
+        stance: "现实视角：我的日子本来就在循环",
+        upvotes: 6890,
+        paragraphs: [
+          "说实话，我看这个问题的时候没有觉得恐怖，我觉得熟悉。",
+          "同样的交班、同样的推床声、同样的家属在走廊里哭。我早就在循环里了，只是没有人给我重置记忆。",
+          "所以如果真有循环，我大概不会去狂欢。我会用第一百次去记住那个总在凌晨三点醒来的老太太姓什么，用第两百次学会怎么在她醒来之前把灯调暗。",
+          "高赞说「哪些事值得反复去做」，我同意。但很多人不是选择反复，是没得选。",
+        ],
+      },
+      {
+        id: "rewind-3",
+        author: "K.",
+        bio: "游戏设计师",
+        accent: "from-indigo-400 to-purple-600",
+        stance: "机制视角：这是一个存档点游戏",
+        upvotes: 3120,
+        paragraphs: [
+          "从设计的角度看，时间循环就是一个只有一个存档点的 roguelike：无限重试、零成本失败、即时反馈。",
+          "玩家在这种机制里一定会经历三个阶段：探索边界、刷取最优解、最后追求自我设定的目标。这和高赞总结的三段完全吻合，因为这是人面对封闭系统的通用反应。",
+          "有意思的是，好玩的循环游戏从来不靠「你能重来」撑住，而靠 NPC 每次都一样、只有你在变。孤独才是这个机制真正的燃料。",
+        ],
+      },
+    ],
     storyId: "rewind",
     portalAfter: 3,
   },
@@ -226,4 +420,41 @@ export const FEED_POSTS: FeedPost[] = [
 
 export function getPost(id: string) {
   return FEED_POSTS.find((post) => post.id === id);
+}
+
+export type WorldContributor = {
+  id: string;
+  author: string;
+  bio: string;
+  stance: string;
+  accent: string;
+  avatar?: string | undefined;
+  upvotes: number;
+};
+
+/** 一个问题下，共同构成这条世界线的所有回答 */
+export function getContributors(post: FeedPost): WorldContributor[] {
+  return [
+    {
+      id: post.id,
+      author: post.author,
+      bio: post.bio,
+      stance: post.stance,
+      accent: post.accent,
+      avatar: post.avatar,
+      upvotes: post.upvotes,
+    },
+    ...post.otherAnswers.map((a) => ({
+      id: a.id,
+      author: a.author,
+      bio: a.bio,
+      stance: a.stance,
+      accent: a.accent,
+      upvotes: a.upvotes,
+    })),
+  ];
+}
+
+export function getAnswerCount(post: FeedPost) {
+  return post.otherAnswers.length + 1;
 }

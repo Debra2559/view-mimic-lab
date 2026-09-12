@@ -4,10 +4,12 @@ import {
   ArrowBigUp,
   ChevronDown,
   ChevronLeft,
+  Globe2,
   Headphones,
   MessageCircle,
   MoreVertical,
   Share2,
+  Sparkles,
   Star,
   Wifi,
 } from "lucide-react";
@@ -17,7 +19,7 @@ import { toast } from "sonner";
 import { PortalEntry } from "@/components/story/PortalEntry";
 import { StoryWorld } from "@/components/story/StoryWorld";
 import { Button } from "@/components/ui/button";
-import { getPost } from "@/lib/feed";
+import { getContributors, getPost, type SideAnswer } from "@/lib/feed";
 import { getStory } from "@/lib/story";
 
 export const Route = createFileRoute("/answer/$id")({
@@ -65,6 +67,7 @@ function AnswerPage() {
   const [saved, setSaved] = useState(false);
   const [storyId, setStoryId] = useState<string | null>(null);
   const story = post.storyId ? getStory(post.storyId) : null;
+  const contributors = getContributors(post);
 
   const scrollToNext = () => {
     window.scrollBy({ top: window.innerHeight * 0.7, behavior: "smooth" });
@@ -120,7 +123,48 @@ function AnswerPage() {
       <header className="border-b border-border px-5 pb-6 pt-6 sm:px-8">
         <h1 className="text-[25px] font-bold leading-[1.35]">{post.title}</h1>
         <p className="mt-3 text-[16px] text-muted-foreground">{post.questionMeta}</p>
+
+        {story && (
+          <section
+            className="mt-5 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary-soft/70 to-primary-soft/20 p-4"
+            aria-label="这个问题的世界线"
+          >
+            <p className="flex items-center gap-2 text-[13px] font-semibold tracking-wide text-primary">
+              <Globe2 className="size-4" />
+              本问题已生成 1 条世界线
+            </p>
+            <p className="mt-2 text-[16px] font-semibold leading-snug">
+              这条世界线由本题的 {contributors.length} 个回答共同长成
+            </p>
+            <ul className="mt-3 space-y-2">
+              {contributors.map((person) => (
+                <li key={person.id} className="flex items-center gap-2.5">
+                  {person.avatar ? (
+                    <img src={person.avatar} alt="" className="size-7 shrink-0 rounded-full object-cover" />
+                  ) : (
+                    <span
+                      className={`grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[12px] font-bold text-white ${person.accent}`}
+                      aria-hidden="true"
+                    >
+                      {person.author.slice(0, 1)}
+                    </span>
+                  )}
+                  <span className="shrink-0 text-[14px] font-medium">{person.author}</span>
+                  <span className="min-w-0 flex-1 truncate text-[13px] text-muted-foreground">{person.stance}</span>
+                </li>
+              ))}
+            </ul>
+            <Button
+              onClick={() => setStoryId(post.storyId!)}
+              className="mt-4 h-11 w-full rounded-full text-[16px] font-semibold"
+            >
+              <Sparkles className="size-[18px]" />
+              穿过这些回答，进入那个世界
+            </Button>
+          </section>
+        )}
       </header>
+
 
       <article className="px-5 pb-8 pt-7 sm:px-8">
         <section className="flex items-center gap-3" aria-label="作者信息">
@@ -170,6 +214,33 @@ function AnswerPage() {
           ))}
         </div>
       </article>
+
+      {post.otherAnswers.length > 0 && (
+        <section className="border-t-8 border-muted px-5 pb-10 pt-6 sm:px-8" aria-label="全部回答">
+          <h2 className="text-[19px] font-bold">
+            全部 {contributors.length} 个回答
+            {story && (
+              <span className="ml-2 align-middle text-[13px] font-medium text-primary">都参与构成了这条世界线</span>
+            )}
+          </h2>
+          <ul className="mt-4 space-y-4">
+            {post.otherAnswers.map((answer) => (
+              <OtherAnswer key={answer.id} answer={answer} />
+            ))}
+          </ul>
+          {story && (
+            <Button
+              variant="outline"
+              onClick={() => setStoryId(post.storyId!)}
+              className="mt-6 h-12 w-full rounded-full border-primary/40 text-[16px] font-semibold text-primary hover:text-primary"
+            >
+              <Sparkles className="size-[18px]" />
+              带着这些视角，进入世界
+            </Button>
+          )}
+        </section>
+      )}
+
 
       <Button
         variant="outline"
@@ -251,5 +322,51 @@ function ActionButton({
       <span className="[&_svg]:size-7 [&_svg]:stroke-[1.7]">{children}</span>
       {count !== undefined && <span className="absolute -right-1 top-0 text-[11px] font-medium">{count}</span>}
     </Button>
+  );
+}
+
+function OtherAnswer({ answer }: { answer: SideAnswer }) {
+  const [open, setOpen] = useState(false);
+  const paragraphs = open ? answer.paragraphs : answer.paragraphs.slice(0, 1);
+
+  return (
+    <li className="rounded-2xl border border-border p-4">
+      <div className="flex items-center gap-2.5">
+        <span
+          className={`grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[15px] font-bold text-white ${answer.accent}`}
+          aria-hidden="true"
+        >
+          {answer.author.slice(0, 1)}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[16px] font-semibold">{answer.author}</p>
+          <p className="truncate text-[13px] text-muted-foreground">{answer.bio}</p>
+        </div>
+      </div>
+      <p className="mt-3 inline-flex rounded-full bg-primary-soft/60 px-3 py-1 text-[12px] font-semibold text-primary">
+        {answer.stance}
+      </p>
+      <div className={`answer-copy mt-3 space-y-4 text-[17px] leading-[1.75] ${open ? "" : "text-foreground/85"}`}>
+        {paragraphs.map((text, index) => (
+          <p key={`${answer.id}-p-${index}`} className={!open && index === 0 ? "line-clamp-3" : ""}>
+            {text}
+          </p>
+        ))}
+      </div>
+      <div className="mt-3 flex items-center gap-4 text-[14px] text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <ArrowBigUp className="size-5" strokeWidth={1.6} />
+          {answer.upvotes}
+        </span>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="ml-auto text-[15px] font-semibold text-primary"
+        >
+          {open ? "收起" : "展开全文"}
+        </button>
+      </div>
+    </li>
   );
 }
