@@ -1,3 +1,7 @@
+import coverMind from "@/assets/story/cover-mind.jpg";
+import coverMoney from "@/assets/story/cover-money.jpg";
+import coverMosquito from "@/assets/story/cover-mosquito.jpg";
+import coverRewind from "@/assets/story/cover-rewind.jpg";
 import { getGeneratedStories } from "./custom";
 import { corridorStory } from "./stories/corridor";
 import { spinStory } from "./stories/spin";
@@ -28,6 +32,7 @@ export const UPCOMING_WORLDS: UpcomingWorld[] = [
       tags: ["人性", "多结局"],
       players: "7.1 万人预约",
       cover: "linear-gradient(150deg, oklch(0.34 0.12 320), oklch(0.6 0.15 280))",
+      coverImage: coverMind,
       icon: "brain",
     },
   },
@@ -40,6 +45,7 @@ export const UPCOMING_WORLDS: UpcomingWorld[] = [
       tags: ["生态", "连锁反应"],
       players: "5.6 万人预约",
       cover: "linear-gradient(150deg, oklch(0.3 0.09 160), oklch(0.58 0.14 140))",
+      coverImage: coverMosquito,
       icon: "bug",
     },
   },
@@ -52,6 +58,7 @@ export const UPCOMING_WORLDS: UpcomingWorld[] = [
       tags: ["反乌托邦", "抉择"],
       players: "4.2 万人预约",
       cover: "linear-gradient(150deg, oklch(0.3 0.06 40), oklch(0.6 0.16 30))",
+      coverImage: coverMoney,
       icon: "hourglass",
     },
   },
@@ -64,6 +71,7 @@ export const UPCOMING_WORLDS: UpcomingWorld[] = [
       tags: ["循环", "隐藏结局"],
       players: "3.9 万人预约",
       cover: "linear-gradient(150deg, oklch(0.28 0.08 240), oklch(0.55 0.13 300))",
+      coverImage: coverRewind,
       icon: "repeat",
     },
   },

@@ -13,6 +13,7 @@ export const corridorStory: Story = {
     tags: ["现实向", "两种结局"],
     players: "12.8 万人进入",
     cover: "linear-gradient(150deg, oklch(0.36 0.09 258), oklch(0.62 0.16 55))",
+    coverImage: bgCorridor,
     icon: "bike",
   },
   portal: {

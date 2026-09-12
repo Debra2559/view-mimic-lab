@@ -49,8 +49,10 @@ export interface WorldCard {
   category: string;
   tags: string[];
   players: string;
-  /** CSS 渐变封面 */
+  /** CSS 渐变封面（无封面图时兜底） */
   cover: string;
+  /** 全幅封面图，铺满整张卡片 */
+  coverImage?: string;
   icon: "bike" | "globe" | "brain" | "bug" | "hourglass" | "repeat";
 }
 

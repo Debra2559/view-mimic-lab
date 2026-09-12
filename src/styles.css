@@ -367,14 +367,18 @@
 .hub-card {
   animation: hub-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   transition:
-    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.28s ease,
     box-shadow 0.28s ease;
 }
 
+/* Apple Watch 式滚动缩放：由 JS 按卡片与视口中心的距离实时驱动 */
+.hub-card-wrap {
+  transform-origin: center center;
+  transition: opacity 0.18s ease-out;
+}
+
 .hub-card:hover,
 .hub-card:active {
-  transform: translateY(-6px) scale(1.02);
   border-color: oklch(0.76 0.13 245 / 60%);
   box-shadow:
     0 16px 40px oklch(0.1 0.02 260 / 70%),
