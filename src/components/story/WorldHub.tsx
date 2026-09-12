@@ -25,6 +25,8 @@ import {
   type WorldCard,
 } from "@/lib/story";
 import { removeGenerated } from "@/lib/story/custom";
+import { getHeatRank, heatLabel, heatScore, recordClick } from "@/lib/heat";
+import { getPost } from "@/lib/feed";
 import { getUnlocked } from "@/lib/story/progress";
 import { StoryForge } from "@/components/story/StoryForge";
 import { Button } from "@/components/ui/button";
