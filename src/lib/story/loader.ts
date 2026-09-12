@@ -32,7 +32,10 @@ type RawStory = {
 
   choicePrompt: string;
   choices: Story["choices"];
-  endings: Record<"A" | "B", { title: string; summary: string; nodes: StoryNode[] }>;
+  endings: Record<
+    string,
+    { title: string; summary: string; nodes: StoryNode[]; next?: Story["endings"][string]["next"] }
+  >;
 };
 
 function resolveCover(key: string): string {
