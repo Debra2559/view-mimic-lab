@@ -179,10 +179,16 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const advance = useCallback(() => {
     setNodeIndex((value) => {
       if (value < activeNodes.length - 1) return value + 1;
-      setPhase(choice ? "ending" : "choice");
+      if (choice) {
+        setPhase("ending");
+      } else if (interactions.length > 0 && !exploreDone) {
+        setPhase("explore");
+      } else {
+        setPhase("choice");
+      }
       return value;
     });
-  }, [activeNodes.length, choice]);
+  }, [activeNodes.length, choice, interactions.length, exploreDone]);
 
   const pick = (key: ChoiceKey) => {
     setChoice(key);
