@@ -124,21 +124,19 @@ function AnswerPage() {
         <p className="mt-3 text-[16px] text-muted-foreground">{post.questionMeta}</p>
 
         {story && (
-          <button
-            type="button"
-            onClick={() => setStoryId(post.storyId!)}
-            className="mt-5 flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-r from-primary-soft/60 to-primary-soft/20 p-4 text-left"
-            aria-label={story.portal.action}
-          >
-            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
-              <Sparkles className="size-6" strokeWidth={1.8} />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold tracking-wide text-primary">{story.portal.title}</p>
-              <p className="mt-0.5 truncate text-[16px] font-semibold">{story.portal.action}</p>
-            </div>
-            <ChevronRight className="size-5 shrink-0 text-primary" />
-          </button>
+          <div className="mt-5 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setStoryId(post.storyId!)}
+              className="portal-chip group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-primary/40 bg-primary-soft/40 px-4 py-2 text-[15px] font-medium text-primary"
+              aria-label={`${story.portal.title}，${story.portal.action}`}
+            >
+              <span className="portal-chip-glow absolute inset-0" aria-hidden="true" />
+              <Sparkles className="relative size-4" strokeWidth={1.8} />
+              <span className="relative">{story.portal.title}</span>
+              <ChevronRight className="relative size-4 opacity-70" strokeWidth={2} />
+            </button>
+          </div>
         )}
       </header>
 
