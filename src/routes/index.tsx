@@ -16,7 +16,14 @@ import { useEffect, useMemo, useState } from "react";
 
 import authorAvatar from "@/assets/author-avatar.jpg";
 import { type FeedPost } from "@/lib/feed";
-import { getRotatedFeed, heatLabel, heatScore, recordClick } from "@/lib/heat";
+import {
+  getClicks,
+  getRankedPosts,
+  getRotatedFeed,
+  heatLabel,
+  heatScore,
+  recordClick,
+} from "@/lib/heat";
 
 
 export const Route = createFileRoute("/")({
