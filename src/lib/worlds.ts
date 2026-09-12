@@ -6,7 +6,7 @@ export interface WorldCard {
   players: string;
   /** CSS gradient used as the animated cover */
   cover: string;
-  glyph: string;
+  icon: "bike" | "globe" | "brain" | "bug" | "hourglass" | "repeat";
   status: "playable" | "soon";
 }
 
@@ -18,7 +18,7 @@ export const WORLDS: WorldCard[] = [
     tags: ["现实向", "两种结局"],
     players: "12.8 万人进入",
     cover: "linear-gradient(150deg, oklch(0.36 0.09 258), oklch(0.62 0.16 55))",
-    glyph: "🛵",
+    icon: "bike",
     status: "playable",
   },
   {
@@ -28,7 +28,7 @@ export const WORLDS: WorldCard[] = [
     tags: ["硬核脑洞", "生存"],
     players: "9.4 万人预约",
     cover: "linear-gradient(150deg, oklch(0.32 0.1 268), oklch(0.58 0.14 200))",
-    glyph: "🌍",
+    icon: "globe",
     status: "soon",
   },
   {
@@ -38,7 +38,7 @@ export const WORLDS: WorldCard[] = [
     tags: ["人性", "多结局"],
     players: "7.1 万人预约",
     cover: "linear-gradient(150deg, oklch(0.34 0.12 320), oklch(0.6 0.15 280))",
-    glyph: "🧠",
+    icon: "brain",
     status: "soon",
   },
   {
@@ -48,7 +48,7 @@ export const WORLDS: WorldCard[] = [
     tags: ["生态", "连锁反应"],
     players: "5.6 万人预约",
     cover: "linear-gradient(150deg, oklch(0.3 0.09 160), oklch(0.58 0.14 140))",
-    glyph: "🦟",
+    icon: "bug",
     status: "soon",
   },
   {
@@ -58,7 +58,7 @@ export const WORLDS: WorldCard[] = [
     tags: ["反乌托邦", "抉择"],
     players: "4.2 万人预约",
     cover: "linear-gradient(150deg, oklch(0.3 0.06 40), oklch(0.6 0.16 30))",
-    glyph: "⏳",
+    icon: "hourglass",
     status: "soon",
   },
   {
@@ -68,7 +68,7 @@ export const WORLDS: WorldCard[] = [
     tags: ["循环", "隐藏结局"],
     players: "3.9 万人预约",
     cover: "linear-gradient(150deg, oklch(0.28 0.08 240), oklch(0.55 0.13 300))",
-    glyph: "🔁",
+    icon: "repeat",
     status: "soon",
   },
 ];

@@ -1,8 +1,29 @@
-import { Lock, Play, Sparkles, X } from "lucide-react";
+import {
+  Bike,
+  Brain,
+  Bug,
+  Globe2,
+  Hourglass,
+  Lock,
+  Play,
+  Repeat,
+  Sparkles,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { WORLDS, type WorldCard } from "@/lib/worlds";
 import { Button } from "@/components/ui/button";
+
+const ICONS: Record<WorldCard["icon"], LucideIcon> = {
+  bike: Bike,
+  globe: Globe2,
+  brain: Brain,
+  bug: Bug,
+  hourglass: Hourglass,
+  repeat: Repeat,
+};
 
 export function WorldHub({
   currentWorldId,
@@ -49,7 +70,9 @@ export function WorldHub({
       </header>
 
       <div className="relative grid grid-cols-2 gap-3 px-4 pb-12 pt-4">
-        {WORLDS.map((world, index) => (
+        {WORLDS.map((world, index) => {
+          const Icon = ICONS[world.icon];
+          return (
           <button
             key={world.id}
             type="button"
@@ -58,7 +81,9 @@ export function WorldHub({
             className="hub-card group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-story-ink/12 bg-story-panel text-left backdrop-blur-md"
           >
             <div className="relative h-28 w-full overflow-hidden" style={{ background: world.cover }}>
-              <span className="hub-glyph absolute inset-0 grid place-items-center text-[42px]">{world.glyph}</span>
+              <span className="hub-glyph absolute inset-0 grid place-items-center text-story-ink/90">
+                <Icon className="size-11" strokeWidth={1.4} />
+              </span>
               <span className="hub-shine absolute inset-0" aria-hidden="true" />
               {world.id === currentWorldId && (
                 <span className="absolute left-2 top-2 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow">
@@ -89,7 +114,8 @@ export function WorldHub({
               <span className="mt-1 text-[11px] text-story-ink/45">{world.players}</span>
             </div>
           </button>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
