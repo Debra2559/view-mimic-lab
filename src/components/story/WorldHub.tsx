@@ -63,7 +63,7 @@ export function WorldHub({
       const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
       return matchCategory && (q === "" || haystack.includes(q));
     });
-  }, [keyword, category]);
+  }, [keyword, category, entries]);
 
   const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
@@ -192,8 +192,7 @@ export function WorldHub({
                 <span className="text-[11px] text-story-ink/45">{world.card.players}</span>
                 {world.status === "playable" && (
                   <span className="text-[11px] text-story-glow/85">
-                    结局 {getUnlocked(world.id).length}/
-                    {Object.keys(STORY_MAP[world.id]?.endings ?? {}).length}
+                    结局 {getUnlocked(world.id).length}/{getEndingCount(world.id)}
                   </span>
                 )}
               </div>
