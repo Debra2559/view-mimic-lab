@@ -114,7 +114,24 @@
           "speaker": "narrator",
           "text": "你很累，但你知道那十二天没有被你花掉。这就够了。"
         }
-      ]
+      ],
+      "next": {
+        "prompt": "契约签下的第三年，公司给了你一个新的选项。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "举报时间银行的强制加班条款。",
+            "innerVoice": "这套规则不该是唯一的活法。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "熬完五年，规规矩矩换回自由。",
+            "innerVoice": "我只想安全地活到期满。",
+            "ending": "AB"
+          }
+        ]
+      }
     },
     "B": {
       "title": "她替你付的账",
@@ -132,6 +149,83 @@
         {
           "speaker": "narrator",
           "text": "后来你再没敢看自己的手腕。那上面的每一秒，都不是你的。"
+        }
+      ],
+      "next": {
+        "prompt": "母亲的余额归零那天，你手腕上还剩 280 小时。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "把剩下的时间全部捐进公共时间池。",
+            "innerVoice": "这些本来就不是我的。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "攒下去，让自己活得久一点。",
+            "innerVoice": "她给我的，就该好好用。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "被改写的条款",
+      "summary": "有人拿自己的余额，换了所有人的规则。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你把五年的工时记录全部提交给监管机构，账户当场被冻结。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "relieved",
+          "text": "新规上个月生效：任何人不得预支超过两年。您的名字写在附录里。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "准时到期的人",
+      "summary": "你活过了合同，也活成了合同的形状。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "第五年最后一天，系统弹出提示：契约履行完毕，余额 0 小时 14 分。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "calm",
+          "text": "您自由了。请问，要续签吗？大部分人都会续。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "还回去的 280 小时",
+      "summary": "还不回给她的，就还给别人。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你在窗口按下转出键，收款方写着：儿童急诊时间池。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "relieved",
+          "text": "系统记录：本次转入让十九个孩子多了一晚。匿名捐赠者，无备注。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "替她活着",
+      "summary": "被人续过命的人，很难再理直气壮地花时间。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你活得很省，省到连散步都要算进支出。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "tense",
+          "text": "您的余额已连续 400 天零支出。系统提示：这也是一种归零。"
         }
       ]
     }

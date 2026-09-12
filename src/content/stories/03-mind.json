@@ -113,7 +113,24 @@
           "speaker": "narrator",
           "text": "后来世界慢慢学会了一件事：读心术没有杀死关系，杀死关系的，一直是那些不敢承认的部分。"
         }
-      ]
+      ],
+      "next": {
+        "prompt": "坦白之后，世界开始逼所有人做同一道题。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "和她一起去做“公开心声”的第一批志愿者。",
+            "innerVoice": "既然遮不住，就让它变成一件正常的事。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "学会给自己筑一道墙，只对她敞开。",
+            "innerVoice": "不是所有人都值得听见我。",
+            "ending": "AB"
+          }
+        ]
+      }
     },
     "B": {
       "title": "礼貌的沉默",
@@ -131,6 +148,83 @@
         {
           "speaker": "narrator",
           "text": "那晚之后，你们都变得很擅长把心声压低。可越是听得见，就越是走得远。"
+        }
+      ],
+      "next": {
+        "prompt": "礼貌地沉默了半年，你们之间那道缝越来越宽。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "在她再一次说“挺好的”时，把话说破。",
+            "innerVoice": "再晚一点，我们就只剩客气了。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "继续维持这份体面，直到它自然结束。",
+            "innerVoice": "有些关系，是被说破才散的。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "透明广场",
+      "summary": "当坦白变成公共设施，谎言就失去了市场。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你们在广场上坐了一整天，让陌生人听见彼此脑子里的噪音。"
+        },
+        {
+          "speaker": "sunian",
+          "expression": "relieved",
+          "text": "今天有个大叔听完就哭了。他说，原来大家都这么乱。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "只对一个人开门",
+      "summary": "把心敞给所有人，和只敞给一个人，是两种不同的勇气。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你学会了收束。人群经过时，你脑子里只剩一片安静的白噪。"
+        },
+        {
+          "speaker": "sunian",
+          "expression": "calm",
+          "text": "你把墙留了一道门，钥匙只有我有。这样也挺好的。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "说破的那一晚",
+      "summary": "坦白从来不嫌晚，只嫌没人先开口。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你打断了她那句“挺好的”，说：我听见了，从第一天就听见了。"
+        },
+        {
+          "speaker": "sunian",
+          "expression": "relieved",
+          "text": "你知道吗，我等这句话，等了六个月。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "互相听得见的陌生人",
+      "summary": "读心术让你们无话不知，也无话可说。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "最后一次见面，你们都很礼貌，礼貌到彼此的心声都调成了静音。"
+        },
+        {
+          "speaker": "sunian",
+          "expression": "tense",
+          "text": "再见。这次我没在心里加任何一句。"
         }
       ]
     }

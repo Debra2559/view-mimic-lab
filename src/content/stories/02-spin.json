@@ -113,7 +113,24 @@
           "speaker": "narrator",
           "text": "永远的黄昏里，你终于明白：知识才是这颗停转星球上，唯一还在转动的东西。"
         }
-      ]
+      ],
+      "next": {
+        "prompt": "记录带出来了。三个月后，避难营要决定下一步。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "跟着勘测队，往晨昏线继续走。",
+            "innerVoice": "有人得先去看看那条线到底能不能住人。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "留在营地，把观测网教给更多人。",
+            "innerVoice": "一个人走得快，一群人才走得远。",
+            "ending": "AB"
+          }
+        ]
+      }
     },
     "B": {
       "title": "第一班车",
@@ -131,6 +148,83 @@
           "speaker": "chenmo",
           "expression": "tense",
           "text": "观测站的电台反复播着同一段空白。那份记录，最终没有人取走。"
+        }
+      ],
+      "next": {
+        "prompt": "车队停在第 4 天的荒野上，燃料只够一次单程。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "凭记忆折回观测站，找那份记录。",
+            "innerVoice": "我知道它在哪一格铁柜里。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "跟着大多数人，继续向前赌一把。",
+            "innerVoice": "人多的方向，总不会全错。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "晨昏线上的第一排帐篷",
+      "summary": "地球停转了，但人还在往能活的地方挪。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你们走了十九天，在温差最小的那条带子上插下第一根标杆。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "relieved",
+          "text": "这里白天不落，夜里不冻。第一批三百人，下个月就到。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "走得太远的人",
+      "summary": "先行者常常看不到自己带来的结果。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "勘测队在第二十四天遇上极地风墙，只有一半人回到营地。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "tense",
+          "text": "你带回的路线是对的。只是这条路线上，永远少了几个名字。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "折返的那一趟",
+      "summary": "你迟了三天，但没有迟到底。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你带着两个人徒步回到观测站，铁皮盒还在桌上，压着一张字条：留给还会回来的人。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "relieved",
+          "text": "电台重新响起来那天，车队已经在安全带上了。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "向前的第 9 天",
+      "summary": "人多的方向，不一定是海水不来的方向。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "车队在第 9 天开到了海岸线。只是那时候，海岸线已经往内陆挪了四十公里。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "tense",
+          "text": "没有人知道风向变了。包括那些本来可以知道的人。"
         }
       ]
     }
