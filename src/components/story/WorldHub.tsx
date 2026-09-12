@@ -78,6 +78,11 @@ export function WorldHub({
     setEntries(getHubEntries());
   }, []);
 
+  useEffect(() => {
+    const raf = requestAnimationFrame(updateCardScales);
+    return () => cancelAnimationFrame(raf);
+  }, [filtered.length, updateCardScales]);
+
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
     return entries.filter((world) => {
@@ -98,6 +103,7 @@ export function WorldHub({
   return (
     <div
       className="hub-in fixed inset-0 z-[60] overflow-y-auto bg-story-night"
+      onScroll={handleScroll}
       role="dialog"
       aria-label="互动回答世界"
     >
