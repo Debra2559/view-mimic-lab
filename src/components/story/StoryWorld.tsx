@@ -116,7 +116,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const resetScene = () => {
     setTouched([]);
     setActiveInteraction(null);
-    setPeeking(false);
+    setExploreDone(false);
   };
 
   const restart = () => {
