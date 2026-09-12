@@ -428,7 +428,7 @@ export type WorldContributor = {
   bio: string;
   stance: string;
   accent: string;
-  avatar?: string;
+  avatar?: string | undefined;
   upvotes: number;
 };
 
