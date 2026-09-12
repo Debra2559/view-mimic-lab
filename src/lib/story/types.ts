@@ -98,7 +98,10 @@ export interface Story {
   cast: Character[];
   introLines: string[];
   nodes: StoryNode[];
+  /** 场景里的可触碰点（可选） */
+  interactions: Interaction[];
   choicePrompt: string;
+
   choices: ChoiceOption[];
   endings: Record<"A" | "B", Ending>;
 }
