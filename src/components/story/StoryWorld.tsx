@@ -1,7 +1,8 @@
-import { ChevronRight, RotateCcw, Share2, VolumeX, X } from "lucide-react";
+import { ChevronRight, LayoutGrid, RotateCcw, Share2, VolumeX, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ShareSheet } from "@/components/story/ShareSheet";
+import { WorldHub } from "@/components/story/WorldHub";
 import {
   CHARACTER_NAME,
   CHARACTER_SPRITES,
@@ -24,6 +25,8 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
   const [choice, setChoice] = useState<ChoiceKey | null>(null);
   const [muted, setMuted] = useState(true);
   const [shareOpen, setShareOpen] = useState(false);
+  const [hubOpen, setHubOpen] = useState(false);
+
 
   useEffect(() => {
     const timer = window.setTimeout(() => setPhase("intro"), 1300);
