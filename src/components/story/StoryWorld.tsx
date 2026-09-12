@@ -100,9 +100,19 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     ? 1
     : Math.min((nodeIndex + (phase === "choice" ? 1 : 0) + 1) / branchTotal, 1);
 
+  const interactions = story.interactions ?? [];
+  const touchedCount = interactions.filter((item) => touched.includes(item.id)).length;
+
+  const resetScene = () => {
+    setTouched([]);
+    setActiveInteraction(null);
+    setPeeking(false);
+  };
+
   const restart = () => {
     setChoice(null);
     setNodeIndex(0);
+    resetScene();
     setPhase("intro");
   };
 
@@ -110,6 +120,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     const other: ChoiceKey = choice === "A" ? "B" : "A";
     setChoice(other);
     setNodeIndex(0);
+    resetScene();
     setPhase("dialogue");
   };
 
@@ -118,8 +129,15 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setActiveId(id);
     setChoice(null);
     setNodeIndex(0);
+    resetScene();
     setPhase("transition");
   };
+
+  const touch = (item: Interaction) => {
+    setActiveInteraction(item);
+    setTouched((list) => (list.includes(item.id) ? list : [...list, item.id]));
+  };
+
 
   const advance = useCallback(() => {
     setNodeIndex((value) => {
