@@ -87,6 +87,11 @@ export function WorldHub({
     });
   }, [keyword, category, entries]);
 
+  useEffect(() => {
+    const raf = requestAnimationFrame(updateCardScales);
+    return () => cancelAnimationFrame(raf);
+  }, [filtered.length, updateCardScales]);
+
   const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
       toast("这条世界线还在生成中", { description: "已为你预约，开放时第一时间通知。" });
