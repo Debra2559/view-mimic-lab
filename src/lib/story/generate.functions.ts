@@ -28,8 +28,8 @@ export const GeneratedSchema = z.object({
   tags: z.array(z.string()),
   icon: z.enum(["bike", "globe", "brain", "bug", "hourglass", "repeat"]),
   coverKey: z.enum(["night", "dusk", "ember", "forest", "violet"]),
-  backgroundKey: z.enum(["corridor", "dusk"]),
-  characterId: z.enum(["linxia", "chenmo"]),
+  backgroundKey: z.enum(["corridor", "dusk", "mind", "mosquito", "money", "rewind"]),
+  characterId: z.enum(["linxia", "chenmo", "sunian", "heyu", "zhouyan", "luzhao"]),
   portalTitle: z.string(),
   portalAction: z.string(),
   introLines: z.array(z.string()),
@@ -70,8 +70,14 @@ const jsonSchema = {
     tags: { type: "array", items: { type: "string" } },
     icon: { type: "string", enum: ["bike", "globe", "brain", "bug", "hourglass", "repeat"] },
     coverKey: { type: "string", enum: ["night", "dusk", "ember", "forest", "violet"] },
-    backgroundKey: { type: "string", enum: ["corridor", "dusk"] },
-    characterId: { type: "string", enum: ["linxia", "chenmo"] },
+    backgroundKey: {
+      type: "string",
+      enum: ["corridor", "dusk", "mind", "mosquito", "money", "rewind"],
+    },
+    characterId: {
+      type: "string",
+      enum: ["linxia", "chenmo", "sunian", "heyu", "zhouyan", "luzhao"],
+    },
     portalTitle: { type: "string" },
     portalAction: { type: "string" },
     introLines: { type: "array", items: { type: "string" } },
@@ -130,7 +136,8 @@ const SYSTEM = `你是一个「知乎回答 → 互动乙游世界线」的改�
 - 全部中文，语气克制、有画面感，不要说教，不要出现「知乎」「AI」字样。
 - 忠于原回答里的关键设定、细节和结论，把它变成「你」亲身经历的场景。
 - nodes 为主线 5~7 条，每条 30~60 字；旁白用 speaker="narrator"，角色台词用 speaker="character"。
-- 角色只能从立绘库里选：linxia（林夏，都市里遇到的同龄人）或 chenmo（陈默，冷静的专业观测者）。
+- 角色只能从立绘库里选：linxia（林夏，都市里遇到的同龄人）、chenmo（陈默，冷静的观测者）、sunian（苏念，你最亲近的人）、heyu（何予，野外研究员）、zhouyan（周砚，制度里的办事员）、luzhao（陆昭，和你一起被困住的同伴）。
+- backgroundKey 按场景挑：corridor 夜晚楼道、dusk 黄昏城市、mind 深夜街边店、mosquito 夏夜湿地、money 明亮大厅、rewind 清晨房间。
 - 两个选择必须是真正的价值取舍，没有明显对错；A/B 各自 3~4 条结局 nodes。
 - 结局标题 4~8 字，summary 60~110 字，写清这个选择带来的后果与「如果」的答案。
 - hook 一句话 15~28 字，tags 恰好 3 个 2~4 字词，introLines 恰好 2 句。
