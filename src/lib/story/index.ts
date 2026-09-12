@@ -1,17 +1,12 @@
-import coverMind from "@/assets/story/cover-mind.jpg";
-import coverMoney from "@/assets/story/cover-money.jpg";
-import coverMosquito from "@/assets/story/cover-mosquito.jpg";
-import coverRewind from "@/assets/story/cover-rewind.jpg";
 import { getGeneratedStories } from "./custom";
-import { corridorStory } from "./stories/corridor";
-import { spinStory } from "./stories/spin";
+import { FILE_STORIES, FILE_UPCOMING } from "./loader";
 import type { Story, UpcomingWorld } from "./types";
 
 export * from "./types";
 export { CHARACTERS, getCharacter } from "./cast";
 
-/** 已开放的世界线：新增一条回答的穿越剧情，只需在这里注册一个 Story。 */
-export const STORIES: Story[] = [corridorStory, spinStory];
+/** 已开放的世界线：全部来自 src/content/stories/*.json，新增一个文件即可新增一条世界线。 */
+export const STORIES: Story[] = FILE_STORIES;
 
 export const STORY_MAP: Record<string, Story> = Object.fromEntries(
   STORIES.map((story) => [story.id, story]),
