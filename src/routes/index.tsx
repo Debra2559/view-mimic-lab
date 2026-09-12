@@ -12,11 +12,18 @@ import {
   Wifi,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import authorAvatar from "@/assets/author-avatar.jpg";
 import { type FeedPost } from "@/lib/feed";
-import { getRotatedFeed, heatLabel, heatScore, recordClick } from "@/lib/heat";
+import {
+  getClicks,
+  getRankedPosts,
+  getRotatedFeed,
+  heatLabel,
+  heatScore,
+  recordClick,
+} from "@/lib/heat";
 
 
 export const Route = createFileRoute("/")({
@@ -46,8 +53,14 @@ function FeedPage() {
   const [activeTab, setActiveTab] = useState("推荐");
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  // 热度排序 + 每次进首页轮换一位，热榜常看常新
-  const ranked = useMemo(() => getRotatedFeed(), []);
+  // 热度排序 + 每次进首页轮换一位，热榜常看常新。
+  // 轮换依赖 sessionStorage，挂载后再启用，避免服务端与客户端首屏不一致。
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  const ranked = useMemo(
+    () => (hydrated ? getRotatedFeed() : getRankedPosts()),
+    [hydrated],
+  );
   const items = ranked.filter((item) => !dismissed.includes(item.id));
 
 
@@ -116,7 +129,7 @@ function FeedPage() {
 
       <ul className="divide-y divide-border">
         {items.map((item) => (
-          <FeedCard key={item.id} item={item} onDismiss={() => setDismissed((ids) => [...ids, item.id])} />
+          <FeedCard key={item.id} item={item} hydrated={hydrated} onDismiss={() => setDismissed((ids) => [...ids, item.id])} />
         ))}
       </ul>
 
@@ -152,7 +165,7 @@ function FeedPage() {
   );
 }
 
-function FeedCard({ item, onDismiss }: { item: FeedPost; onDismiss: () => void }) {
+function FeedCard({ item, hydrated, onDismiss }: { item: FeedPost; hydrated: boolean; onDismiss: () => void }) {
   return (
     <li className="relative px-5 py-5">
       <Link
@@ -169,7 +182,7 @@ function FeedCard({ item, onDismiss }: { item: FeedPost; onDismiss: () => void }
             title="世界线热度：由回答数、收藏数和点击量共同决定"
           >
             <Flame className="size-3.5" />
-            {heatLabel(heatScore(item))}
+            {heatLabel(heatScore(item, hydrated ? getClicks(item.id) : 0))}
           </span>
         </div>
         <div className="mt-2.5 flex items-center gap-2">
