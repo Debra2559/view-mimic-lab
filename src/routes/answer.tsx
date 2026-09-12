@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowBigDown,
   ArrowBigUp,
@@ -22,7 +22,7 @@ import { StoryWorld } from "@/components/story/StoryWorld";
 import { getStory } from "@/lib/story";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/answer")({
   head: () => ({
     meta: [
       { title: "社会现象如果大家都去责任化的结果会是什么？" },
@@ -70,8 +70,10 @@ function AnswerPage() {
         </div>
 
         <nav className="flex h-[72px] items-center border-b border-border px-4" aria-label="页面导航">
-          <Button variant="ghost" size="icon" aria-label="返回上一页" onClick={() => history.back()}>
-            <ChevronLeft className="size-7" strokeWidth={1.8} />
+          <Button variant="ghost" size="icon" aria-label="返回首页" asChild>
+            <Link to="/">
+              <ChevronLeft className="size-7" strokeWidth={1.8} />
+            </Link>
           </Button>
           <div className="ml-auto flex items-center gap-1 text-primary">
             <Button variant="ghost" className="h-11 px-3 text-[17px] font-semibold text-primary">
