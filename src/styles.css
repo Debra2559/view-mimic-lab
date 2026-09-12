@@ -600,7 +600,6 @@
   transform: translateX(-120%);
 }
 
-.choice-card:hover .choice-sheen,
 .choice-card:active .choice-sheen {
   animation: choice-sheen 0.9s ease-out;
 }
