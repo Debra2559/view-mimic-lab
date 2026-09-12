@@ -63,9 +63,9 @@ export function WorldHub({
       const rect = el.getBoundingClientRect();
       if (rect.bottom < -80 || rect.top > vh + 80) return;
       const dist = Math.min(1, Math.abs(rect.top + rect.height / 2 - mid) / mid);
-      const scale = 1 - dist * 0.12;
+      const scale = 1 - dist * 0.1;
       el.style.transform = `scale(${scale.toFixed(3)})`;
-      el.style.opacity = (1 - dist * 0.4).toFixed(3);
+      el.style.opacity = (1 - dist * 0.35).toFixed(3);
     });
   }, []);
 
@@ -102,48 +102,50 @@ export function WorldHub({
 
   return (
     <div
-      className="hub-in fixed inset-0 z-[60] overflow-y-auto bg-story-night"
+      className="hub-in fixed inset-0 z-[60] overflow-y-auto bg-hub-night font-body"
       onScroll={handleScroll}
       role="dialog"
       aria-label="互动回答世界"
     >
       <div className="hub-aurora pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-story-ink/10 bg-story-night/80 px-4 py-3 backdrop-blur-xl">
+      <header className="sticky top-0 z-10 flex items-start justify-between border-b border-hub-ink/10 bg-hub-night/60 px-4 py-3.5 backdrop-blur-2xl">
         <div>
-          <p className="flex items-center gap-1.5 text-[12px] tracking-[0.3em] text-story-glow">
-            <Sparkles className="size-3.5" />
-            互动回答世界
+          <p className="flex items-center gap-1.5 font-display text-[11px] tracking-[0.22em] text-hub-glow/90">
+            <Sparkles className="size-3" />
+            WORLD LOBBY
           </p>
-          <h2 className="mt-1 text-[20px] font-bold text-story-ink">挑一条世界线走进去</h2>
+          <h2 className="mt-1 text-[22px] font-semibold leading-tight tracking-tight text-hub-ink">
+            挑一条世界线走进去
+          </h2>
         </div>
         <Button
           variant="ghost"
           size="icon"
           aria-label="关闭互动回答世界"
           onClick={onClose}
-          className="size-10 rounded-full bg-story-panel text-story-ink/80 hover:text-story-ink"
+          className="size-9 rounded-full border border-hub-ink/10 bg-hub-panel/60 text-hub-ink/80 hover:bg-hub-panel hover:text-hub-ink"
         >
-          <X className="size-5" />
+          <X className="size-4.5" />
         </Button>
       </header>
 
       <div className="relative px-4 pt-4">
         <label className="relative block">
           <span className="sr-only">搜索「如果」世界线</span>
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-story-ink/45" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-hub-ink/40" />
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             placeholder="搜索「如果……会怎样」"
-            className="h-11 w-full rounded-full border border-story-ink/15 bg-story-panel pl-9 pr-9 text-[14px] text-story-ink outline-none backdrop-blur-md placeholder:text-story-ink/40 focus:border-story-glow/60"
+            className="h-11 w-full rounded-2xl border border-hub-ink/15 bg-hub-panel/40 pl-9 pr-9 text-[14px] text-hub-ink outline-none backdrop-blur-xl placeholder:text-hub-ink/45 focus:border-hub-glow/50 focus:bg-hub-panel/60"
           />
           {keyword && (
             <button
               type="button"
               aria-label="清空搜索"
               onClick={() => setKeyword("")}
-              className="absolute right-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full bg-story-ink/10 text-story-ink/70"
+              className="absolute right-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full bg-hub-ink/10 text-hub-ink/70 hover:bg-hub-ink/20"
             >
               <X className="size-3.5" />
             </button>
@@ -156,10 +158,10 @@ export function WorldHub({
               key={item}
               type="button"
               onClick={() => setCategory(item)}
-              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] transition-colors ${
+              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12px] transition-colors ${
                 category === item
-                  ? "border-story-glow/60 bg-story-glow/15 text-story-glow"
-                  : "border-story-ink/15 bg-story-panel text-story-ink/65"
+                  ? "border-hub-coral/70 bg-hub-coral/15 text-hub-coral"
+                  : "border-hub-ink/15 bg-hub-panel/45 text-hub-ink/70 hover:border-hub-ink/25 hover:bg-hub-panel/60"
               }`}
             >
               {item}
@@ -170,16 +172,16 @@ export function WorldHub({
         <button
           type="button"
           onClick={() => setForgeOpen(true)}
-          className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-story-glow/45 bg-story-glow/10 px-4 py-3 text-left"
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-hub-glow/40 bg-hub-panel/35 px-4 py-3 text-left backdrop-blur-xl transition-colors hover:border-hub-glow/60 hover:bg-hub-panel/50"
         >
-          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-story-glow/20 text-story-glow">
-            <Wand2 className="size-4.5" />
+          <span className="grid size-9 shrink-0 place-items-center rounded-full border border-hub-glow/30 bg-hub-glow/15 text-hub-glow">
+            <Wand2 className="size-4" />
           </span>
           <span className="min-w-0">
-            <span className="block text-[14.5px] font-semibold text-story-ink">
+            <span className="block text-[14.5px] font-medium text-hub-ink">
               投喂一条知乎「如果」回答
             </span>
-            <span className="block text-[12px] text-story-ink/60">
+            <span className="block text-[12px] text-hub-ink/55">
               自动生成专属剧情、立绘与分支结局
             </span>
           </span>
@@ -187,7 +189,7 @@ export function WorldHub({
       </div>
 
       {filtered.length === 0 && (
-        <p className="relative px-4 py-16 text-center text-[13px] text-story-ink/50">
+        <p className="relative px-4 py-16 text-center text-[13px] text-hub-ink/50">
           没有找到这条世界线，换个关键词试试。
         </p>
       )}
@@ -208,7 +210,7 @@ export function WorldHub({
                 type="button"
                 onClick={() => handlePick(world)}
                 style={{ animationDelay: `${index * 0.07}s` }}
-                className="hub-card group relative block aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-3xl border border-story-ink/12 text-left"
+                className="hub-card group relative block aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-3xl border border-hub-ink/10 bg-hub-panel/20 text-left"
               >
                 {/* 全幅封面，铺满整卡 */}
                 {world.card.coverImage ? (
@@ -225,32 +227,31 @@ export function WorldHub({
                     className="absolute inset-0 grid place-items-center"
                     style={{ background: world.card.cover }}
                   >
-                    <Icon className="hub-glyph size-14 text-story-ink/90" strokeWidth={1.2} />
+                    <Icon className="hub-glyph size-14 text-hub-ink/80" strokeWidth={1.2} />
                   </span>
                 )}
                 {/* 阅读渐变：顶部压暗 + 底部信息区 */}
                 <span
-                  className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.15_0.03_265/0.45)_0%,transparent_32%,transparent_46%,oklch(0.16_0.03_265/0.88)_78%,oklch(0.14_0.03_265/0.96)_100%)]"
+                  className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.15_0.03_265/0.55)_0%,transparent_30%,transparent_42%,oklch(0.16_0.03_265/0.82)_70%,oklch(0.14_0.03_265/0.95)_100%)]"
                   aria-hidden="true"
                 />
-                <span className="hub-shine absolute inset-0" aria-hidden="true" />
 
                 {/* 顶部徽标 */}
                 <span className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
                   {world.generated ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow backdrop-blur-sm">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-hub-ink/10 bg-hub-night/55 px-2 py-0.5 text-[10px] tracking-widest text-hub-glow backdrop-blur-md">
                       <Wand2 className="size-2.5" />
                       我生成的
                     </span>
                   ) : (
                     world.id === currentWorldId && (
-                      <span className="rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] tracking-widest text-story-glow backdrop-blur-sm">
+                      <span className="rounded-full border border-hub-ink/10 bg-hub-night/55 px-2 py-0.5 text-[10px] tracking-widest text-hub-glow backdrop-blur-md">
                         当前世界
                       </span>
                     )
                   )}
                 </span>
-                <span className="absolute right-2.5 top-2.5 inline-flex items-center gap-1 rounded-full bg-story-night/70 px-2 py-0.5 text-[10px] text-story-ink/85 backdrop-blur-sm">
+                <span className="absolute right-2.5 top-2.5 inline-flex items-center gap-1 rounded-full border border-hub-ink/10 bg-hub-night/55 px-2 py-0.5 text-[10px] text-hub-ink/85 backdrop-blur-md">
                   {world.status === "playable" ? (
                     <Play className="size-2.5" />
                   ) : (
@@ -261,26 +262,26 @@ export function WorldHub({
 
                 {/* 底部信息，浮在封面之上 */}
                 <span className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-3.5">
-                  <span className="line-clamp-2 text-[15px] font-bold leading-[1.45] text-story-ink [text-shadow:0_1px_10px_oklch(0.1_0.02_265/0.6)]">
+                  <span className="line-clamp-2 text-[15px] font-semibold leading-[1.45] text-hub-ink">
                     {world.card.question}
                   </span>
-                  <span className="line-clamp-2 text-[12px] leading-[1.55] text-story-ink/75">
+                  <span className="line-clamp-2 text-[12px] leading-[1.55] text-hub-ink/70">
                     {world.card.hook}
                   </span>
                   <span className="mt-0.5 flex flex-wrap gap-1">
                     {world.card.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-story-ink/20 bg-story-night/40 px-2 py-0.5 text-[10.5px] text-story-ink/80 backdrop-blur-sm"
+                        className="rounded-full border border-hub-ink/15 bg-hub-night/45 px-2 py-0.5 text-[10.5px] text-hub-ink/80 backdrop-blur-sm"
                       >
                         {tag}
                       </span>
                     ))}
                   </span>
-                  <span className="mt-0.5 flex items-center justify-between text-[11px] text-story-ink/60">
+                  <span className="mt-0.5 flex items-center justify-between text-[11px] text-hub-ink/55">
                     <span>{world.card.players}</span>
                     {world.status === "playable" && (
-                      <span className="text-story-glow/90">
+                      <span className="text-hub-coral/90">
                         结局 {getUnlocked(world.id).length}/{getEndingCount(world.id)}
                       </span>
                     )}
@@ -297,7 +298,7 @@ export function WorldHub({
                     setEntries(getHubEntries());
                     toast("已删除这条世界线");
                   }}
-                  className="absolute right-2.5 top-9 z-10 grid size-7 place-items-center rounded-full bg-story-night/70 text-story-ink/70 backdrop-blur-sm hover:text-story-ink"
+                  className="absolute right-2.5 top-9 z-10 grid size-7 place-items-center rounded-full border border-hub-ink/10 bg-hub-night/60 text-hub-ink/70 backdrop-blur-md hover:text-hub-ink"
                 >
                   <Trash2 className="size-3.5" />
                 </button>
