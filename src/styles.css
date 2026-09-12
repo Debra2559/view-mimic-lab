@@ -613,3 +613,33 @@
     transition: none;
   }
 }
+
+/* 详情页顶部的穿越入口胶囊：轻量描边 + 扫过微光 */
+.portal-chip {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.portal-chip:active {
+  border-color: oklch(from var(--primary) l c h / 70%);
+  box-shadow: 0 0 0 4px oklch(from var(--primary) l c h / 12%);
+}
+
+.portal-chip-glow {
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    oklch(from var(--primary) l c h / 18%) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: portal-chip-sheen 3.2s ease-in-out infinite;
+}
+
+@keyframes portal-chip-sheen {
+  0%, 55% { transform: translateX(-100%); }
+  85%, 100% { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-chip-glow { animation: none; }
+}
