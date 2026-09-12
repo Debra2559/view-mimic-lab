@@ -1,5 +1,17 @@
 import authorAvatar from "@/assets/author-avatar.jpg";
 
+/** 同一个问题下的其他回答，它们和主回答一起构成这个问题的世界 */
+export type SideAnswer = {
+  id: string;
+  author: string;
+  bio: string;
+  accent: string;
+  /** 这条回答在世界里贡献的视角 */
+  stance: string;
+  upvotes: number;
+  paragraphs: string[];
+};
+
 export type FeedPost = {
   id: string;
   title: string;
@@ -9,11 +21,15 @@ export type FeedPost = {
   avatar?: string;
   accent: string;
   questionMeta: string;
+  /** 主回答在世界里贡献的视角 */
+  stance: string;
   excerpt: string;
   paragraphs: string[];
   upvotes: number;
   stars: number;
   comments: number;
+  /** 问题下的其他回答 */
+  otherAnswers: SideAnswer[];
   /** 若存在，正文中会出现穿越入口 */
   storyId?: string;
   /** 穿越入口插在第几段之后 */
