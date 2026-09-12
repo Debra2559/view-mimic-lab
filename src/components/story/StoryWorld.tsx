@@ -181,7 +181,7 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
             </Button>
             <Button
               variant="ghost"
-              onClick={share}
+              onClick={() => setShareOpen(true)}
               className="h-11 text-[15px] text-story-ink/70 hover:text-story-ink"
             >
               <Share2 className="size-4" />
@@ -190,6 +190,8 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
           </div>
         </div>
       )}
+
+      {shareOpen && activeEnding && <ShareSheet ending={activeEnding} onClose={() => setShareOpen(false)} />}
     </div>
   );
 }
