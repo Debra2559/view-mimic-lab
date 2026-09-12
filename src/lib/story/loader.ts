@@ -28,6 +28,8 @@ type RawStory = {
   cast: string[];
   introLines: string[];
   nodes: StoryNode[];
+  interactions?: Story["interactions"];
+
   choicePrompt: string;
   choices: Story["choices"];
   endings: Record<"A" | "B", { title: string; summary: string; nodes: StoryNode[] }>;
