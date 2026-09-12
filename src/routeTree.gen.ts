@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnswerIdRouteImport } from './routes/answer.$id'
+import { Route as WorldStoryIdRouteImport } from './routes/world.$storyId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const AnswerIdRoute = AnswerIdRouteImport.update({
   path: '/answer/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorldStoryIdRoute = WorldStoryIdRouteImport.update({
+  id: '/world/$storyId',
+  path: '/world/$storyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/answer/$id': typeof AnswerIdRoute
+  '/world/$storyId': typeof WorldStoryIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/answer/$id': typeof AnswerIdRoute
+  '/world/$storyId': typeof WorldStoryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/answer/$id': typeof AnswerIdRoute
+  '/world/$storyId': typeof WorldStoryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/answer/$id'
+  fullPaths: '/' | '/answer/$id' | '/world/$storyId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/answer/$id'
-  id: '__root__' | '/' | '/answer/$id'
+  to: '/' | '/answer/$id' | '/world/$storyId'
+  id: '__root__' | '/' | '/answer/$id' | '/world/$storyId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnswerIdRoute: typeof AnswerIdRoute
+  WorldStoryIdRoute: typeof WorldStoryIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnswerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/world/$storyId': {
+      id: '/world/$storyId'
+      path: '/world/$storyId'
+      fullPath: '/world/$storyId'
+      preLoaderRoute: typeof WorldStoryIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnswerIdRoute: AnswerIdRoute,
+  WorldStoryIdRoute: WorldStoryIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

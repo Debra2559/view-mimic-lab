@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
 import { ShareSheet } from "@/components/story/ShareSheet";
 import { WorldHub } from "@/components/story/WorldHub";
@@ -145,6 +146,27 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setPhase("transition");
   };
 
+  /** 分享世界线直达链接：朋友打开 /world/:id 就能直接玩 */
+  const shareWorld = async () => {
+    const url = `${window.location.origin}/world/${activeId}`;
+    const text = `我刚在「${story.card.question}」这条世界线里做了一个选择——换你会怎么走？`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: story.card.question, text, url });
+        return;
+      } catch {
+        /* 用户取消分享，静默 */
+        return;
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      toast("链接已复制", { description: "发给朋友，对方打开就能直接玩这条世界线。" });
+    } catch {
+      toast("复制这个链接发给朋友", { description: url });
+    }
+  };
+
   const touch = (item: Interaction) => {
     setActiveInteraction(item);
     setTouched((list) => (list.includes(item.id) ? list : [...list, item.id]));
@@ -240,6 +262,15 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                   data-on={auto}
                 >
                   {auto ? <Pause className="size-5" /> : <Play className="size-5" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="分享这条世界线给朋友"
+                  onClick={shareWorld}
+                  className="size-10 rounded-full bg-story-panel text-story-ink/80 hover:text-story-ink"
+                >
+                  <Share2 className="size-5" />
                 </Button>
                 <Button
                   variant="ghost"
