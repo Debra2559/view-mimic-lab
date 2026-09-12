@@ -463,7 +463,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             </button>
           )}
 
-          {phase === "choice" && !peeking && (
+          {phase === "choice" && (
             <div className="choice-screen absolute inset-0 z-30 flex flex-col items-center justify-end px-5 pb-10">
               <div className="w-full max-w-md">
                 <p className="choice-in flex items-center justify-center gap-3 text-[11.5px] tracking-[0.42em] text-story-glow/80">
