@@ -6,6 +6,7 @@ import {
   MessageCircle,
   Mic,
   Plus,
+  Sparkles,
   Star,
   Wifi,
   X,
@@ -13,6 +14,8 @@ import {
 import { useState } from "react";
 
 import authorAvatar from "@/assets/author-avatar.jpg";
+import { FEED_POSTS, type FeedPost } from "@/lib/feed";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
