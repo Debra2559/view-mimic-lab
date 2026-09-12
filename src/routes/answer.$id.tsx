@@ -324,3 +324,49 @@ function ActionButton({
     </Button>
   );
 }
+
+function OtherAnswer({ answer }: { answer: SideAnswer }) {
+  const [open, setOpen] = useState(false);
+  const paragraphs = open ? answer.paragraphs : answer.paragraphs.slice(0, 1);
+
+  return (
+    <li className="rounded-2xl border border-border p-4">
+      <div className="flex items-center gap-2.5">
+        <span
+          className={`grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[15px] font-bold text-white ${answer.accent}`}
+          aria-hidden="true"
+        >
+          {answer.author.slice(0, 1)}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[16px] font-semibold">{answer.author}</p>
+          <p className="truncate text-[13px] text-muted-foreground">{answer.bio}</p>
+        </div>
+      </div>
+      <p className="mt-3 inline-flex rounded-full bg-primary-soft/60 px-3 py-1 text-[12px] font-semibold text-primary">
+        {answer.stance}
+      </p>
+      <div className={`answer-copy mt-3 space-y-4 text-[17px] leading-[1.75] ${open ? "" : "text-foreground/85"}`}>
+        {paragraphs.map((text, index) => (
+          <p key={`${answer.id}-p-${index}`} className={!open && index === 0 ? "line-clamp-3" : ""}>
+            {text}
+          </p>
+        ))}
+      </div>
+      <div className="mt-3 flex items-center gap-4 text-[14px] text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <ArrowBigUp className="size-5" strokeWidth={1.6} />
+          {answer.upvotes}
+        </span>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          className="ml-auto text-[15px] font-semibold text-primary"
+        >
+          {open ? "收起" : "展开全文"}
+        </button>
+      </div>
+    </li>
+  );
+}
