@@ -124,18 +124,20 @@ function AnswerPage() {
         <p className="mt-3 text-[16px] text-muted-foreground">{post.questionMeta}</p>
 
         {story && (
-          <div className="mt-5 flex justify-center">
+          <div className="mt-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" aria-hidden="true" />
             <button
               type="button"
               onClick={() => setStoryId(post.storyId!)}
-              className="portal-chip group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-primary/40 bg-primary-soft/40 px-4 py-2 text-[15px] font-medium text-primary"
+              className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-primary/25 bg-primary-soft/30 px-3 py-1.5 text-[13px] font-medium text-primary/90 backdrop-blur-sm transition-colors hover:border-primary/45 hover:bg-primary-soft/50 hover:text-primary"
               aria-label={`${story.portal.title}，${story.portal.action}`}
             >
-              <span className="portal-chip-glow absolute inset-0" aria-hidden="true" />
-              <Sparkles className="relative size-4" strokeWidth={1.8} />
-              <span className="relative">{story.portal.title}</span>
-              <ChevronRight className="relative size-4 opacity-70" strokeWidth={2} />
+              <span className="portal-chip-glow absolute inset-0 rounded-full opacity-60" aria-hidden="true" />
+              <Sparkles className="relative size-3.5" strokeWidth={1.8} />
+              <span className="relative">进入这个世界</span>
+              <ChevronRight className="relative size-3.5 opacity-60 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
             </button>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" aria-hidden="true" />
           </div>
         )}
       </header>
