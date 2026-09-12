@@ -479,9 +479,7 @@
     background-color 0.24s ease;
 }
 
-.choice-card:hover,
 .choice-card:active {
-  transform: translateY(-3px);
   border-color: oklch(0.76 0.13 245 / 70%);
   box-shadow:
     0 14px 34px oklch(0.1 0.02 260 / 60%),
