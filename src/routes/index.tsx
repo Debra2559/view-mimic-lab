@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowBigUp,
   BadgeCheck,
+  Flame,
   House,
   MessageCircle,
   Mic,
@@ -11,10 +12,11 @@ import {
   Wifi,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import authorAvatar from "@/assets/author-avatar.jpg";
-import { FEED_POSTS, getAnswerCount, type FeedPost } from "@/lib/feed";
+import { getAnswerCount, type FeedPost } from "@/lib/feed";
+import { getRotatedFeed, heatLabel, heatScore, recordClick } from "@/lib/heat";
 
 
 export const Route = createFileRoute("/")({
@@ -44,7 +46,9 @@ function FeedPage() {
   const [activeTab, setActiveTab] = useState("推荐");
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const items = FEED_POSTS.filter((item) => !dismissed.includes(item.id));
+  // 热度排序 + 每次进首页轮换一位，热榜常看常新
+  const ranked = useMemo(() => getRotatedFeed(), []);
+  const items = ranked.filter((item) => !dismissed.includes(item.id));
 
 
   return (
