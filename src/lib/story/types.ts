@@ -45,6 +45,8 @@ export interface PortalCopy {
 export interface WorldCard {
   question: string;
   hook: string;
+  /** 「如果」主题分类 */
+  category: string;
   tags: string[];
   players: string;
   /** CSS 渐变封面 */

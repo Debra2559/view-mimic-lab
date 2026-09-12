@@ -9,6 +9,7 @@ export const corridorStory: Story = {
   card: {
     question: "如果没人愿意多管一次闲事，会怎样？",
     hook: "凌晨 1:47，楼道里的电动车开始冒烟。",
+    category: "现实向",
     tags: ["现实向", "两种结局"],
     players: "12.8 万人进入",
     cover: "linear-gradient(150deg, oklch(0.36 0.09 258), oklch(0.62 0.16 55))",

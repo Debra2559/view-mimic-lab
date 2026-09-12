@@ -9,6 +9,7 @@ export const spinStory: Story = {
   card: {
     question: "如果地球停止自转，会怎样？",
     hook: "第 1 天，你所在的城市永远停在了黄昏。",
+    category: "硬核脑洞",
     tags: ["硬核脑洞", "生存"],
     players: "9.4 万人进入",
     cover: "linear-gradient(150deg, oklch(0.32 0.1 268), oklch(0.58 0.14 200))",
