@@ -77,6 +77,8 @@ export interface HubEntry {
   id: string;
   card: Story["card"];
   status: "playable" | "soon";
+  /** 由用户投喂的回答生成 */
+  generated?: boolean;
 }
 
 export const HUB_ENTRIES: HubEntry[] = [
