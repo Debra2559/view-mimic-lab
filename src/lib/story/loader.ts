@@ -74,6 +74,8 @@ function toStory(raw: RawStory): Story {
     cast,
     introLines: raw.introLines,
     nodes: raw.nodes,
+    interactions: raw.interactions ?? [],
+
     choicePrompt: raw.choicePrompt,
     choices: raw.choices,
     endings: {
