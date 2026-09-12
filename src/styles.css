@@ -112,6 +112,12 @@
   --story-ember: oklch(0.74 0.16 55);
   --story-glow: oklch(0.76 0.13 245);
   --story-ink: oklch(0.96 0.01 250);
+  /* 互动回答世界：靛青珊瑚 */
+  --hub-night: oklch(0.17 0.04 260);
+  --hub-panel: oklch(0.22 0.045 260 / 72%);
+  --hub-ink: oklch(0.93 0.015 250);
+  --hub-coral: oklch(0.67 0.17 30);
+  --hub-glow: oklch(0.72 0.12 245);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
