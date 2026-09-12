@@ -295,33 +295,131 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             />
           )}
 
-          {phase === "choice" && (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-end gap-4 bg-story-night/60 px-6 pb-24 backdrop-blur-[2px]">
-              <p className="choice-in mb-2 text-center text-[17px] font-medium text-story-ink">
-                {story.choicePrompt}
-              </p>
-              {story.choices.map((option, index) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  onClick={() => pick(option.ending)}
-                  className="choice-in choice-card flex w-full max-w-md cursor-pointer items-start gap-3 rounded-2xl border border-story-ink/15 bg-story-panel px-5 py-4 text-left backdrop-blur-md"
-                  style={{ animationDelay: `${index * 0.12}s` }}
-                >
-                  <span className="choice-key mt-0.5 grid size-7 shrink-0 place-items-center rounded-full border border-story-glow/50 text-[13px] font-bold text-story-glow">
-                    {option.key}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-[17px] font-semibold text-story-ink">{option.label}</span>
-                    <span className="mt-1 block text-[14px] text-story-ink/60">{option.innerVoice}</span>
-                  </span>
-                </button>
-              ))}
-              <p className="text-[12px] text-story-ink/45">每个选择都会写进你的结局图鉴</p>
+          {/* 场景里的可触碰点：摸一摸、推开、拿起…… */}
+          {interactions.length > 0 && !activeInteraction && (
+            <div className="pointer-events-none absolute inset-0 z-20">
+              {interactions.map((item, index) => {
+                const Icon = INTERACTION_ICONS[item.icon] ?? Hand;
+                const used = touched.includes(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => touch(item)}
+                    aria-label={item.label}
+                    data-used={used}
+                    style={{ left: `${item.x}%`, top: `${item.y}%`, animationDelay: `${index * 0.5}s` }}
+                    className="hotspot pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
+                  >
+                    <span className="hotspot-dot grid size-11 place-items-center rounded-full border border-story-glow/50 bg-story-night/55 text-story-glow backdrop-blur-md">
+                      <Icon className="size-[18px]" strokeWidth={1.8} />
+                    </span>
+                    <span className="whitespace-nowrap rounded-full bg-story-night/60 px-2.5 py-0.5 text-[11.5px] tracking-wide text-story-ink/85 backdrop-blur-md">
+                      {item.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* 触碰后的描写 */}
+          {activeInteraction && (
+            <button
+              type="button"
+              onClick={() => setActiveInteraction(null)}
+              aria-label="收起描写"
+              className="absolute inset-0 z-40 flex cursor-pointer items-center justify-center bg-story-night/55 px-6 backdrop-blur-[3px]"
+            >
+              <span className="touch-note block w-full max-w-sm rounded-[22px] border border-story-glow/25 bg-story-night/80 p-6 text-left shadow-[0_24px_60px_oklch(0.08_0.02_260/70%)]">
+                <span className="flex items-center gap-2 text-[11.5px] tracking-[0.32em] text-story-glow/90">
+                  <Hand className="size-3.5" />
+                  {activeInteraction.label}
+                </span>
+                <span className="mt-3 block text-[16.5px] leading-[1.85] text-story-ink/92">
+                  {touched.includes(activeInteraction.id) && activeInteraction.after
+                    ? activeInteraction.response
+                    : activeInteraction.response}
+                </span>
+                <span className="mt-4 block text-right text-[12px] text-story-ink/45">点击任意处收起</span>
+              </span>
+            </button>
+          )}
+
+          {phase === "choice" && !peeking && (
+            <div className="choice-screen absolute inset-0 z-30 flex flex-col items-center justify-end px-5 pb-10">
+              <div className="w-full max-w-md">
+                <p className="choice-in flex items-center justify-center gap-3 text-[11.5px] tracking-[0.42em] text-story-glow/80">
+                  <span className="h-px w-10 bg-gradient-to-r from-transparent to-story-glow/60" />
+                  你的选择
+                  <span className="h-px w-10 bg-gradient-to-l from-transparent to-story-glow/60" />
+                </p>
+                <p className="choice-in mt-3 text-center text-[20px] font-semibold leading-[1.6] text-story-ink">
+                  {story.choicePrompt}
+                </p>
+
+                <div className="mt-6 flex flex-col gap-3.5">
+                  {story.choices.map((option, index) => (
+                    <button
+                      key={option.key}
+                      type="button"
+                      onClick={() => pick(option.ending)}
+                      className="choice-in choice-card group relative w-full cursor-pointer overflow-hidden rounded-[20px] border border-story-ink/12 bg-story-night/55 px-5 py-4 text-left backdrop-blur-xl"
+                      style={{ animationDelay: `${0.1 + index * 0.12}s` }}
+                    >
+                      <span
+                        className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-story-glow to-story-ember opacity-70"
+                        aria-hidden="true"
+                      />
+                      <span className="choice-sheen" aria-hidden="true" />
+                      <span className="flex items-start gap-3.5">
+                        <span className="choice-key mt-0.5 grid size-8 shrink-0 place-items-center rounded-full border border-story-glow/50 bg-story-night/60 text-[13px] font-bold text-story-glow">
+                          {option.key}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[17.5px] font-semibold leading-snug text-story-ink">
+                            {option.label}
+                          </span>
+                          <span className="mt-1.5 block text-[13.5px] leading-relaxed text-story-ink/55">
+                            {option.innerVoice}
+                          </span>
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {interactions.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setPeeking(true)}
+                    className="choice-in mx-auto mt-4 flex items-center gap-2 rounded-full border border-story-ink/15 px-4 py-2 text-[13px] text-story-ink/70"
+                    style={{ animationDelay: "0.36s" }}
+                  >
+                    <Eye className="size-4" />
+                    先再看看四周（{touchedCount}/{interactions.length}）
+                  </button>
+                )}
+                <p className="mt-3 text-center text-[11.5px] text-story-ink/40">
+                  每个选择都会写进你的结局图鉴
+                </p>
+              </div>
+            </div>
+          )}
+
+          {phase === "choice" && peeking && (
+            <div className="absolute inset-x-0 bottom-8 z-30 flex justify-center px-6">
+              <Button
+                onClick={() => setPeeking(false)}
+                className="h-12 rounded-full bg-story-glow px-7 text-[15.5px] font-semibold text-story-night hover:bg-story-glow/90"
+              >
+                看够了，做出选择
+              </Button>
             </div>
           )}
         </>
       )}
+
 
       {phase === "ending" && activeEnding && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-story-night/85 px-8 text-center backdrop-blur-sm">
