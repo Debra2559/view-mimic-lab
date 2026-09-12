@@ -37,7 +37,10 @@ import {
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
-type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
+type Phase = "transition" | "intro" | "dialogue" | "explore" | "choice" | "ending";
+
+/** 触点的几种呈现形态，避免全是圆形 icon */
+const HOTSPOT_VARIANTS = ["pin", "tag", "halo", "card"] as const;
 /** 结局 key，父分支 + 字母构成树状路径，如 A -> AB -> ABA */
 type ChoiceKey = string;
 
@@ -70,7 +73,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [touched, setTouched] = useState<string[]>([]);
   const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
-  const [peeking, setPeeking] = useState(false);
+  const [exploreDone, setExploreDone] = useState(false);
 
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
@@ -113,7 +116,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const resetScene = () => {
     setTouched([]);
     setActiveInteraction(null);
-    setPeeking(false);
+    setExploreDone(false);
   };
 
   const restart = () => {
@@ -176,10 +179,16 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const advance = useCallback(() => {
     setNodeIndex((value) => {
       if (value < activeNodes.length - 1) return value + 1;
-      setPhase(choice ? "ending" : "choice");
+      if (choice) {
+        setPhase("ending");
+      } else if (interactions.length > 0 && !exploreDone) {
+        setPhase("explore");
+      } else {
+        setPhase("choice");
+      }
       return value;
     });
-  }, [activeNodes.length, choice]);
+  }, [activeNodes.length, choice, interactions.length, exploreDone]);
 
   const pick = (key: ChoiceKey) => {
     setChoice(key);
@@ -245,7 +254,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
         </button>
       )}
 
-      {(phase === "dialogue" || phase === "choice") && (
+      {(phase === "dialogue" || phase === "explore" || phase === "choice") && (
         <>
           <header className="absolute inset-x-0 top-0 z-20 px-4 pt-4">
             <div className="flex items-center justify-between">
@@ -346,32 +355,91 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             />
           )}
 
-          {/* 场景里的可触碰点：摸一摸、推开、拿起…… */}
-          {interactions.length > 0 && !activeInteraction && (
-            <div className="pointer-events-none absolute inset-0 z-20">
-              {interactions.map((item, index) => {
-                const Icon = INTERACTION_ICONS[item.icon] ?? Hand;
-                const used = touched.includes(item.id);
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => touch(item)}
-                    aria-label={item.label}
-                    data-used={used}
-                    style={{ left: `${item.x}%`, top: `${item.y}%`, animationDelay: `${index * 0.5}s` }}
-                    className="hotspot pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
-                  >
-                    <span className="hotspot-dot grid size-11 place-items-center rounded-full border border-story-glow/50 bg-story-night/55 text-story-glow backdrop-blur-md">
-                      <Icon className="size-[18px]" strokeWidth={1.8} />
-                    </span>
-                    <span className="whitespace-nowrap rounded-full bg-story-night/60 px-2.5 py-0.5 text-[11.5px] tracking-wide text-story-ink/85 backdrop-blur-md">
-                      {item.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+          {/* 探索阶段：剧情停下来，让你自己在场景里翻找 */}
+          {phase === "explore" && !activeInteraction && (
+            <>
+              <div className="absolute inset-0 z-10 bg-story-night/35" aria-hidden="true" />
+              <div className="absolute inset-x-0 top-24 z-20 px-8 text-center">
+                <p className="text-[11.5px] tracking-[0.42em] text-story-glow/80">停下来看看</p>
+                <p className="mt-2 text-[17px] leading-relaxed text-story-ink/85">
+                  在做决定之前，四周还有东西在等你伸手。
+                </p>
+              </div>
+              <div className="pointer-events-none absolute inset-0 z-20">
+                {interactions.map((item, index) => {
+                  const Icon = INTERACTION_ICONS[item.icon] ?? Hand;
+                  const used = touched.includes(item.id);
+                  const variant = HOTSPOT_VARIANTS[index % HOTSPOT_VARIANTS.length];
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => touch(item)}
+                      aria-label={item.label}
+                      data-used={used}
+                      style={{ left: `${item.x}%`, top: `${item.y}%`, animationDelay: `${index * 0.5}s` }}
+                      className="hotspot pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
+                    >
+                      {variant === "pin" && (
+                        <>
+                          <span className="hotspot-dot grid size-11 place-items-center rounded-full border border-story-glow/50 bg-story-night/55 text-story-glow backdrop-blur-md">
+                            <Icon className="size-[18px]" strokeWidth={1.8} />
+                          </span>
+                          <span className="whitespace-nowrap rounded-full bg-story-night/60 px-2.5 py-0.5 text-[11.5px] tracking-wide text-story-ink/85 backdrop-blur-md">
+                            {item.label}
+                          </span>
+                        </>
+                      )}
+
+                      {variant === "tag" && (
+                        <span className="hotspot-underline whitespace-nowrap px-1 pb-1 text-[14px] font-medium tracking-wide text-story-ink/90 [text-shadow:0_2px_10px_oklch(0.1_0.02_260/80%)]">
+                          {item.label}
+                        </span>
+                      )}
+
+                      {variant === "halo" && (
+                        <>
+                          <span className="hotspot-halo size-3 rounded-full bg-story-glow/90" />
+                          <span className="hotspot-thread" aria-hidden="true" />
+                          <span className="whitespace-nowrap text-[11.5px] tracking-[0.2em] text-story-ink/75">
+                            〔{item.label}〕
+                          </span>
+                        </>
+                      )}
+
+                      {variant === "card" && (
+                        <span className="flex max-w-[180px] items-center gap-2.5 rounded-2xl border border-story-ink/15 bg-story-night/65 px-3 py-2 text-left backdrop-blur-md">
+                          <Icon className="size-4 shrink-0 text-story-ember" strokeWidth={1.8} />
+                          <span className="min-w-0">
+                            <span className="block truncate text-[13.5px] leading-tight text-story-ink/90">
+                              {item.label}
+                            </span>
+                            <span className="mt-0.5 block text-[10.5px] tracking-widest text-story-ink/45">
+                              轻触
+                            </span>
+                          </span>
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="absolute inset-x-0 bottom-8 z-30 flex flex-col items-center gap-2 px-6">
+                <span className="text-[11.5px] tracking-widest text-story-ink/45">
+                  已触碰 {touchedCount}/{interactions.length}
+                </span>
+                <Button
+                  onClick={() => {
+                    setExploreDone(true);
+                    setPhase("choice");
+                  }}
+                  className="h-12 rounded-full bg-story-glow px-7 text-[15.5px] font-semibold text-story-night hover:bg-story-glow/90"
+                >
+                  看够了，做出选择
+                </Button>
+              </div>
+            </>
           )}
 
           {/* 触碰后的描写 */}
@@ -395,7 +463,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             </button>
           )}
 
-          {phase === "choice" && !peeking && (
+          {phase === "choice" && (
             <div className="choice-screen absolute inset-0 z-30 flex flex-col items-center justify-end px-5 pb-10">
               <div className="w-full max-w-md">
                 <p className="choice-in flex items-center justify-center gap-3 text-[11.5px] tracking-[0.42em] text-story-glow/80">
@@ -441,7 +509,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                 {interactions.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setPeeking(true)}
+                    onClick={() => setPhase("explore")}
                     className="choice-in mx-auto mt-4 flex items-center gap-2 rounded-full border border-story-ink/15 px-4 py-2 text-[13px] text-story-ink/70"
                     style={{ animationDelay: "0.36s" }}
                   >
@@ -456,16 +524,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             </div>
           )}
 
-          {phase === "choice" && peeking && (
-            <div className="absolute inset-x-0 bottom-8 z-30 flex justify-center px-6">
-              <Button
-                onClick={() => setPeeking(false)}
-                className="h-12 rounded-full bg-story-glow px-7 text-[15.5px] font-semibold text-story-night hover:bg-story-glow/90"
-              >
-                看够了，做出选择
-              </Button>
-            </div>
-          )}
         </>
       )}
 

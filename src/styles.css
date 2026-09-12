@@ -479,9 +479,7 @@
     background-color 0.24s ease;
 }
 
-.choice-card:hover,
 .choice-card:active {
-  transform: translateY(-3px);
   border-color: oklch(0.76 0.13 245 / 70%);
   box-shadow:
     0 14px 34px oklch(0.1 0.02 260 / 60%),
@@ -545,16 +543,29 @@
 }
 
 .hotspot {
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.hotspot:hover,
-.hotspot:active {
-  transform: translate(-50%, -50%) scale(1.06);
+  transition: opacity 0.25s ease;
 }
 
 .hotspot .hotspot-dot {
   animation: hotspot-pulse 2.6s ease-out infinite;
+}
+
+/* 触点的几种不同形态 */
+.hotspot-underline {
+  background-image: linear-gradient(to right, oklch(0.76 0.13 245 / 70%), transparent);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+}
+
+.hotspot-halo {
+  animation: hotspot-pulse 3.2s ease-out infinite;
+}
+
+.hotspot-thread {
+  width: 1px;
+  height: 18px;
+  background: linear-gradient(to bottom, oklch(0.76 0.13 245 / 65%), transparent);
 }
 
 .hotspot[data-used="true"] {
@@ -589,7 +600,6 @@
   transform: translateX(-120%);
 }
 
-.choice-card:hover .choice-sheen,
 .choice-card:active .choice-sheen {
   animation: choice-sheen 0.9s ease-out;
 }
