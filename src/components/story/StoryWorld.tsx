@@ -362,7 +362,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
               <div className="absolute inset-x-0 top-24 z-20 px-8 text-center">
                 <p className="text-[11.5px] tracking-[0.42em] text-story-glow/80">停下来看看</p>
                 <p className="mt-2 text-[17px] leading-relaxed text-story-ink/85">
-                  {story.exploredPrompt ?? "在做决定之前，四周还有东西在等你伸手。"}
+                  在做决定之前，四周还有东西在等你伸手。
                 </p>
               </div>
               <div className="pointer-events-none absolute inset-0 z-20">
