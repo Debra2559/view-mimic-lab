@@ -124,21 +124,30 @@ function AnswerPage() {
         <p className="mt-3 text-[16px] text-muted-foreground">{post.questionMeta}</p>
 
         {story && (
-          <div className="mt-5 flex items-center gap-3">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" aria-hidden="true" />
-            <button
-              type="button"
-              onClick={() => setStoryId(post.storyId!)}
-              className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-primary/25 bg-primary-soft/30 px-3 py-1.5 text-[13px] font-medium text-primary/90 backdrop-blur-sm transition-colors hover:border-primary/45 hover:bg-primary-soft/50 hover:text-primary"
-              aria-label={`${story.portal.title}，${story.portal.action}`}
-            >
-              <span className="portal-chip-glow absolute inset-0 rounded-full opacity-60" aria-hidden="true" />
-              <Sparkles className="relative size-3.5" strokeWidth={1.8} />
-              <span className="relative">进入这个世界</span>
-              <ChevronRight className="relative size-3.5 opacity-60 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
-            </button>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary/20 to-transparent" aria-hidden="true" />
-          </div>
+          <button
+            type="button"
+            onClick={() => setStoryId(post.storyId!)}
+            className="portal-chip group relative mt-5 flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-primary/20 bg-primary-soft/25 p-2 pr-3 text-left backdrop-blur-sm transition-colors hover:border-primary/40 hover:bg-primary-soft/40"
+            aria-label={`${story.portal.title}，${story.portal.action}`}
+          >
+            <span className="portal-chip-glow absolute inset-0 opacity-50" aria-hidden="true" />
+            <img
+              src={story.background}
+              alt={story.backgroundAlt}
+              className="relative size-[52px] shrink-0 rounded-xl object-cover"
+              loading="lazy"
+            />
+            <span className="relative min-w-0 flex-1">
+              <span className="flex items-center gap-1 text-[12px] font-medium text-primary/80">
+                <Sparkles className="size-3" strokeWidth={1.8} />
+                {story.portal.title}
+              </span>
+              <span className="mt-0.5 block truncate text-[14px] font-semibold text-foreground/90">
+                {story.portal.action}
+              </span>
+            </span>
+            <ChevronRight className="relative size-4 shrink-0 text-primary/60 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+          </button>
         )}
       </header>
 
