@@ -23,6 +23,7 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
   const [nodeIndex, setNodeIndex] = useState(0);
   const [choice, setChoice] = useState<ChoiceKey | null>(null);
   const [muted, setMuted] = useState(true);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setPhase("intro"), 1300);
@@ -55,20 +56,6 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
     setChoice(key);
     setNodeIndex(0);
     setPhase("dialogue");
-  };
-
-  const share = async () => {
-    const text = `我在「穿越进高赞回答」里抵达了结局《${activeEnding?.title}》。${activeEnding?.summary}`;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: "穿越进高赞回答", text });
-      } else {
-        await navigator.clipboard.writeText(text);
-        toast.success("结局文案已复制，可以粘贴分享");
-      }
-    } catch {
-      /* 用户取消分享 */
-    }
   };
 
   return (
