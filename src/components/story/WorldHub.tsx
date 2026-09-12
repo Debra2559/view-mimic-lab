@@ -206,6 +206,8 @@ export function WorldHub({
       <div className="relative grid grid-cols-2 gap-3.5 px-4 pb-14 pt-4 [perspective:800px]">
         {filtered.map((world, index) => {
           const Icon = ICONS[world.card.icon];
+          const rank = getHeatRank(world.id) || null;
+          const post = getPost(world.id);
           return (
             <div
               key={world.id}
