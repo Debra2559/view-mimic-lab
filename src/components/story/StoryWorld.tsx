@@ -1,7 +1,7 @@
 import { ChevronRight, RotateCcw, Share2, VolumeX, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 
+import { ShareSheet } from "@/components/story/ShareSheet";
 import {
   CHARACTER_NAME,
   CHARACTER_SPRITES,
