@@ -37,7 +37,8 @@ import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
 type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
-type ChoiceKey = "A" | "B";
+/** 结局 key，父分支 + 字母构成树状路径，如 A -> AB -> ABA */
+type ChoiceKey = string;
 
 const EMBERS = [8, 22, 37, 54, 68, 81, 92];
 
@@ -83,7 +84,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     return () => window.clearTimeout(timer);
   }, [phase, activeId]);
 
-  const activeEnding: Ending | null = choice ? story.endings[choice] : null;
+  const activeEnding: Ending | null = (choice ? story.endings[choice] : null) ?? null;
   const activeNodes: StoryNode[] = activeEnding ? activeEnding.nodes : story.nodes;
   const activeNode = activeNodes[nodeIndex];
   const speaker = activeNode ? getCharacter(activeNode.speaker) : undefined;
@@ -94,7 +95,12 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     }
   }, [phase, activeEnding, story.id]);
 
-  const totalEndings = Object.keys(story.endings).length;
+  /** 终局 = 没有后续岔路的结局 */
+  const finalEndings = Object.values(story.endings).filter((item) => !item.next);
+  const totalEndings = finalEndings.length;
+  const unlockedFinal = finalEndings.filter((item) => unlocked.includes(item.key)).length;
+  const depth = activeEnding ? activeEnding.key.length : 0;
+  const parentKey = depth > 1 ? activeEnding!.key.slice(0, -1) : null;
   const branchTotal = story.nodes.length + 1;
   const progress = activeEnding
     ? 1
