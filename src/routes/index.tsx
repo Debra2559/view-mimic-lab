@@ -145,54 +145,49 @@ function FeedPage() {
   );
 }
 
-function FeedCard({ item, onDismiss }: { item: FeedItem; onDismiss: () => void }) {
-  const body = (
-    <>
-      <h2 className="text-[21px] font-bold leading-snug">{item.title}</h2>
-      <div className="mt-2.5 flex items-center gap-2">
-        {item.avatar ? (
-          <img src={item.avatar} alt={`${item.author}头像`} className="size-7 rounded-full object-cover" />
-        ) : (
-          <span
-            className={`grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[13px] font-bold text-white ${item.accent}`}
-            aria-hidden="true"
-          >
-            {item.author.slice(0, 1)}
-          </span>
-        )}
-        <span className="text-[15px] font-medium">{item.author}</span>
-        {item.verified && <BadgeCheck className="size-4.5 fill-primary text-background" aria-label="已认证" />}
-      </div>
-      <p className="mt-2 line-clamp-2 text-[17px] leading-relaxed text-foreground/85">{item.excerpt}</p>
-      {item.spark && (
-        <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary-soft/50 px-3 py-1 text-[12px] font-semibold text-primary">
-          ⚡ 检测到可穿越的世界线
-        </p>
-      )}
-    </>
-  );
-
+function FeedCard({ item, onDismiss }: { item: FeedPost; onDismiss: () => void }) {
   return (
     <li className="relative px-5 py-5">
-      {item.to ? (
-        <Link to={item.to} className="block" aria-label={`阅读回答：${item.title}`}>
-          {body}
-        </Link>
-      ) : (
-        <div>{body}</div>
-      )}
+      <Link
+        to="/answer/$id"
+        params={{ id: item.id }}
+        className="block"
+        aria-label={`阅读回答：${item.title}`}
+      >
+        <h2 className="text-[21px] font-bold leading-snug">{item.title}</h2>
+        <div className="mt-2.5 flex items-center gap-2">
+          {item.avatar ? (
+            <img src={item.avatar} alt={`${item.author}头像`} className="size-7 rounded-full object-cover" />
+          ) : (
+            <span
+              className={`grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br text-[13px] font-bold text-white ${item.accent}`}
+              aria-hidden="true"
+            >
+              {item.author.slice(0, 1)}
+            </span>
+          )}
+          <span className="text-[15px] font-medium">{item.author}</span>
+          {item.verified && <BadgeCheck className="size-4.5 fill-primary text-background" aria-label="已认证" />}
+        </div>
+        <p className="mt-2 line-clamp-2 text-[17px] leading-relaxed text-foreground/85">{item.excerpt}</p>
+        {item.storyId && (
+          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary-soft/50 px-3 py-1 text-[12px] font-semibold text-primary">
+            <Sparkles className="size-3.5" />检测到可穿越的世界线
+          </p>
+        )}
+      </Link>
       <div className="mt-3 flex items-center gap-7 text-muted-foreground">
         <span className="flex items-center gap-1.5 text-[14px]">
           <ArrowBigUp className="size-6" strokeWidth={1.6} />
-          {item.upvotes}
+          {formatCount(item.upvotes)}
         </span>
         <span className="flex items-center gap-1.5 text-[14px]">
           <Star className="size-6" strokeWidth={1.6} />
-          {item.stars}
+          {formatCount(item.stars)}
         </span>
         <span className="flex items-center gap-1.5 text-[14px]">
           <MessageCircle className="size-6" strokeWidth={1.6} />
-          {item.comments}
+          {formatCount(item.comments)}
         </span>
         <button
           type="button"
@@ -206,6 +201,7 @@ function FeedCard({ item, onDismiss }: { item: FeedItem; onDismiss: () => void }
     </li>
   );
 }
+
 
 function TabItem({
   label,
