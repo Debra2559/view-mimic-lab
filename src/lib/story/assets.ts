@@ -15,6 +15,22 @@ export const BACKGROUNDS = {
     src: bgDusk,
     alt: "永远停在黄昏的城市街道，太阳压在地平线上",
   },
+  mind: {
+    src: coverMind,
+    alt: "深夜街边咖啡店，霓虹灯下人们的心声在空气里浮动",
+  },
+  mosquito: {
+    src: coverMosquito,
+    alt: "夏夜湿地，水面安静得没有一丝虫鸣",
+  },
+  money: {
+    src: coverMoney,
+    alt: "时间银行大厅，倒计时在每个人手腕上发光",
+  },
+  rewind: {
+    src: coverRewind,
+    alt: "循环中的清晨房间，闹钟永远停在同一分钟",
+  },
 } as const;
 
 export type BackgroundKey = keyof typeof BACKGROUNDS;

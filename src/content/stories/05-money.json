@@ -1,0 +1,67 @@
+{
+  "id": "money",
+  "chapterLabel": "世界线 · 05",
+  "card": {
+    "question": "如果钱可以买时间，会怎样？",
+    "hook": "你的余额，只剩 37 小时零 12 分。",
+    "category": "时间循环",
+    "tags": ["反乌托邦", "抉择"],
+    "players": "4.2 万人进入",
+    "cover": "ember",
+    "coverImage": "money",
+    "icon": "hourglass"
+  },
+  "portal": {
+    "title": "检测到可进入的世界线",
+    "action": "触碰裂缝，看看你的余额还剩多久"
+  },
+  "background": "money",
+  "cast": ["zhouyan"],
+  "introLines": [
+    "你低头看向手腕，那里浮着一行数字。",
+    "37:12:05，正在一秒一秒往下走。"
+  ],
+  "nodes": [
+    { "speaker": "narrator", "text": "时间成为货币的第七年。工资按小时发放，房租按天扣除，没人再说“浪费时间”这四个字。" },
+    { "speaker": "narrator", "text": "时间银行的大厅很亮，亮得像医院。柜台后面的人抬起头。" },
+    { "speaker": "zhouyan", "expression": "calm", "text": "余额 37 小时 12 分。按您目前的支出，明天下午两点归零。" },
+    { "speaker": "zhouyan", "expression": "tense", "text": "系统给您留了一个选项：您母亲的账户里还有 300 小时，可以一键划转。她本人已授权。" },
+    { "speaker": "narrator", "text": "屏幕上跳出确认框。300 小时，对她而言，是整整十二天的余命。" },
+    { "speaker": "zhouyan", "expression": "tense", "text": "另一个选项是签下 5 年期的加班契约，用未来换现在。大部分人选后者。" }
+  ],
+  "choicePrompt": "光标在闪。你的选择是——",
+  "choices": [
+    {
+      "key": "A",
+      "label": "签下契约，把账单留给未来的自己。",
+      "innerVoice": "我的时间可以透支，她的不行。",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "接受她的转账，先活过明天。",
+      "innerVoice": "她说过，她愿意。",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "预支的十二天",
+      "summary": "当时间能买卖，最贵的永远是不肯拿走别人那份的人。",
+      "nodes": [
+        { "speaker": "narrator", "text": "你按下了契约键。未来五年，你每天多工作三小时，账面上一分不剩。" },
+        { "speaker": "zhouyan", "expression": "relieved", "text": "上周您母亲来过，把那 300 小时换成了一张去海边的票。她说，总算能自己花一次。" },
+        { "speaker": "narrator", "text": "你很累，但你知道那十二天没有被你花掉。这就够了。" }
+      ]
+    },
+    "B": {
+      "title": "她替你付的账",
+      "summary": "你活了下来，只是从此每一秒都写着别人的名字。",
+      "nodes": [
+        { "speaker": "narrator", "text": "转账在 0.4 秒内完成。你的手腕亮起 337 小时，她的那行数字暗了下去。" },
+        { "speaker": "zhouyan", "expression": "calm", "text": "系统记录：转出方于第 12 天余额归零。这是合规操作。" },
+        { "speaker": "narrator", "text": "后来你再没敢看自己的手腕。那上面的每一秒，都不是你的。" }
+      ]
+    }
+  }
+}

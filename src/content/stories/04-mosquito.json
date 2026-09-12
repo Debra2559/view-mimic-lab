@@ -1,0 +1,67 @@
+{
+  "id": "mosquito",
+  "chapterLabel": "世界线 · 04",
+  "card": {
+    "question": "如果蚊子从世界上消失，会怎样？",
+    "hook": "夏夜安静得可怕，然后池塘先出事了。",
+    "category": "生态自然",
+    "tags": ["生态", "连锁反应"],
+    "players": "5.6 万人进入",
+    "cover": "forest",
+    "coverImage": "mosquito",
+    "icon": "bug"
+  },
+  "portal": {
+    "title": "检测到可进入的世界线",
+    "action": "触碰裂缝，走进那个没有蚊子的夏夜"
+  },
+  "background": "mosquito",
+  "cast": ["heyu"],
+  "introLines": [
+    "夏天的晚上，你忽然发现耳边太安静了。",
+    "安静到不正常。"
+  ],
+  "nodes": [
+    { "speaker": "narrator", "text": "第 41 天。全球蚊虫种群归零，没有人知道原因。起初所有人都在庆祝。" },
+    { "speaker": "narrator", "text": "你站在湿地观测站的木栈道上，水面平得像玻璃，一只蜻蜓也没有。" },
+    { "speaker": "heyu", "expression": "calm", "text": "你来得正好。帮我看看这管水样——幼虫没了之后，吃幼虫的那些也跟着没了。" },
+    { "speaker": "heyu", "expression": "tense", "text": "池塘里的鱼在减少，靠鱼活的鸟在迁走，靠鸟传粉的那几种植物今年一朵都没开。" },
+    { "speaker": "narrator", "text": "他把一叠观测表推到你面前。上面的曲线全部朝下，像被人一起按住了。" },
+    { "speaker": "heyu", "expression": "tense", "text": "这份数据发出去，会被骂危言耸听。压下来，明年就来不及了。" }
+  ],
+  "choicePrompt": "手里是还没发出去的报告。你的选择是——",
+  "choices": [
+    {
+      "key": "A",
+      "label": "把数据公开，让所有人看见这条断掉的链。",
+      "innerVoice": "被骂总比被淹没好。",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "再等三个月，凑齐更完整的证据。",
+      "innerVoice": "不完整的结论，只会被当成噪音。",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "第一个说出口的人",
+      "summary": "生态链上没有多余的一环，包括你最讨厌的那一环。",
+      "nodes": [
+        { "speaker": "narrator", "text": "报告在第二天冲上热搜。骂声很大，但三所高校在一周内建起了联合观测网。" },
+        { "speaker": "heyu", "expression": "relieved", "text": "两年后，湿地的蜻蜓回来了一些。不算多，但曲线终于开始往上拐。" },
+        { "speaker": "narrator", "text": "你终于明白：所谓“会怎样”，从来不是猜出来的，是有人先把它说出来。" }
+      ]
+    },
+    "B": {
+      "title": "等来的完整证据",
+      "summary": "证据终于齐了，只是能改变的窗口已经关上了。",
+      "nodes": [
+        { "speaker": "narrator", "text": "三个月后，数据终于完整。那时候，这片湿地的鸟类名录已经少了十一行。" },
+        { "speaker": "heyu", "expression": "tense", "text": "我们没有错，我们只是……慢了一个季节。" },
+        { "speaker": "narrator", "text": "夏夜依旧安静。再也没有蚊子，也再没有那些追着蚊子飞的东西。" }
+      ]
+    }
+  }
+}
