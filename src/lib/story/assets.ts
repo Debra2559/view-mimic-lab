@@ -1,6 +1,10 @@
 /** 统一画风资源库：生成的世界线只能从这里挑背景与封面，保证画风一致。 */
 import bgCorridor from "@/assets/story/bg-corridor.jpg";
 import bgDusk from "@/assets/story/bg-dusk-city.jpg";
+import coverMind from "@/assets/story/cover-mind.jpg";
+import coverMoney from "@/assets/story/cover-money.jpg";
+import coverMosquito from "@/assets/story/cover-mosquito.jpg";
+import coverRewind from "@/assets/story/cover-rewind.jpg";
 
 export const BACKGROUNDS = {
   corridor: {
@@ -24,3 +28,15 @@ export const COVERS = {
 } as const;
 
 export type CoverKey = keyof typeof COVERS;
+
+/** 剧情文本文件里 coverImage 可以引用的封面图 */
+export const COVER_IMAGES = {
+  corridor: bgCorridor,
+  dusk: bgDusk,
+  mind: coverMind,
+  mosquito: coverMosquito,
+  money: coverMoney,
+  rewind: coverRewind,
+} as const;
+
+export type CoverImageKey = keyof typeof COVER_IMAGES;
