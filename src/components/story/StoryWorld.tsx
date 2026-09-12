@@ -1,19 +1,38 @@
 import {
+  Bike,
   ChevronRight,
+  Clock,
+  DoorOpen,
+  Ear,
+  Eye,
+  Flame,
+  Hand,
   LayoutGrid,
+  Lightbulb,
+  Package,
   Pause,
   Play,
   RotateCcw,
   Share2,
+  Smartphone,
   Sparkles,
+  StickyNote,
   VolumeX,
+  Wind,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ShareSheet } from "@/components/story/ShareSheet";
 import { WorldHub } from "@/components/story/WorldHub";
-import { getCharacter, getStory, type Ending, type Story, type StoryNode } from "@/lib/story";
+import {
+  getCharacter,
+  getStory,
+  type Ending,
+  type Interaction,
+  type Story,
+  type StoryNode,
+} from "@/lib/story";
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
@@ -21,6 +40,21 @@ type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
 type ChoiceKey = "A" | "B";
 
 const EMBERS = [8, 22, 37, 54, 68, 81, 92];
+
+const INTERACTION_ICONS = {
+  hand: Hand,
+  flame: Flame,
+  door: DoorOpen,
+  phone: Smartphone,
+  package: Package,
+  ear: Ear,
+  eye: Eye,
+  clock: Clock,
+  bike: Bike,
+  wind: Wind,
+  light: Lightbulb,
+  note: StickyNote,
+} as const;
 
 export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () => void }) {
   const [activeId, setActiveId] = useState(storyId);
@@ -32,6 +66,10 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [shareOpen, setShareOpen] = useState(false);
   const [hubOpen, setHubOpen] = useState(false);
   const [unlocked, setUnlocked] = useState<string[]>([]);
+  const [touched, setTouched] = useState<string[]>([]);
+  const [活, setActiveInteraction] = useState<Interaction | null>(null);
+  const [peeking, setPeeking] = useState(false);
+
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
 
