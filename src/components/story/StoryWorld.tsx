@@ -258,20 +258,28 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                 </Button>
               </div>
             </div>
-            <div
-              className="progress-bar mt-3 h-[3px] w-full overflow-hidden rounded-full bg-story-ink/15"
-              role="progressbar"
-              aria-label="剧情进度"
-              aria-valuenow={Math.round(progress * 100)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <span
-                className="block h-full w-full rounded-full bg-gradient-to-r from-story-glow to-story-ember"
-                style={{ transform: `scaleX(${progress})` }}
-              />
+            <div className="mt-3 flex items-center gap-3">
+              <div
+                className="progress-bar h-[3px] min-w-0 flex-1 overflow-hidden rounded-full bg-story-ink/15"
+                role="progressbar"
+                aria-label="剧情进度"
+                aria-valuenow={Math.round(progress * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+              >
+                <span
+                  className="block h-full w-full rounded-full bg-gradient-to-r from-story-glow to-story-ember"
+                  style={{ transform: `scaleX(${progress})` }}
+                />
+              </div>
+              {interactions.length > 0 && (
+                <span className="shrink-0 rounded-full bg-story-night/55 px-2.5 py-0.5 text-[11px] tracking-wider text-story-ink/70 backdrop-blur-md">
+                  探索 {touchedCount}/{interactions.length}
+                </span>
+              )}
             </div>
           </header>
+
 
           {phase === "dialogue" && activeNode && speaker && (
             <img
