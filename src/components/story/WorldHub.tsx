@@ -138,6 +138,24 @@ export function WorldHub({
             </button>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={() => setForgeOpen(true)}
+          className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-dashed border-story-glow/45 bg-story-glow/10 px-4 py-3 text-left"
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-story-glow/20 text-story-glow">
+            <Wand2 className="size-4.5" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[14.5px] font-semibold text-story-ink">
+              投喂一条知乎「如果」回答
+            </span>
+            <span className="block text-[12px] text-story-ink/60">
+              自动生成专属剧情、立绘与分支结局
+            </span>
+          </span>
+        </button>
       </div>
 
       {filtered.length === 0 && (
