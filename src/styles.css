@@ -68,7 +68,14 @@
   --color-story-ember: var(--story-ember);
   --color-story-glow: var(--story-glow);
   --color-story-ink: var(--story-ink);
+  --color-hub-night: var(--hub-night);
+  --color-hub-panel: var(--hub-panel);
+  --color-hub-ink: var(--hub-ink);
+  --color-hub-coral: var(--hub-coral);
+  --color-hub-glow: var(--hub-glow);
   --font-sans: var(--font-sans-ui);
+  --font-display: var(--font-display-ui);
+  --font-body: var(--font-body-ui);
 }
 
 :root {
