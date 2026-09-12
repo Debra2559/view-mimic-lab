@@ -13,6 +13,7 @@ export const spinStory: Story = {
     tags: ["硬核脑洞", "生存"],
     players: "9.4 万人进入",
     cover: "linear-gradient(150deg, oklch(0.32 0.1 268), oklch(0.58 0.14 200))",
+    coverImage: bgDusk,
     icon: "globe",
   },
   portal: {

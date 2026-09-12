@@ -1,3 +1,7 @@
+import coverMind from "@/assets/story/cover-mind.jpg";
+import coverMoney from "@/assets/story/cover-money.jpg";
+import coverMosquito from "@/assets/story/cover-mosquito.jpg";
+import coverRewind from "@/assets/story/cover-rewind.jpg";
 import { getGeneratedStories } from "./custom";
 import { corridorStory } from "./stories/corridor";
 import { spinStory } from "./stories/spin";
