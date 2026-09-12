@@ -73,7 +73,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [touched, setTouched] = useState<string[]>([]);
   const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
-  const [peeking, setPeeking] = useState(false);
+  const [exploreDone, setExploreDone] = useState(false);
 
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
