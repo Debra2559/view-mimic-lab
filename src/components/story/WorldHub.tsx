@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { WORLDS, type WorldCard } from "@/lib/worlds";
+import { HUB_ENTRIES, type HubEntry, type WorldCard } from "@/lib/story";
 import { Button } from "@/components/ui/button";
 
 const ICONS: Record<WorldCard["icon"], LucideIcon> = {
@@ -34,7 +34,7 @@ export function WorldHub({
   onEnterWorld: (id: string) => void;
   onClose: () => void;
 }) {
-  const handlePick = (world: WorldCard) => {
+  const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
       toast("这条世界线还在生成中", { description: "已为你预约，开放时第一时间通知。" });
       return;
@@ -70,8 +70,8 @@ export function WorldHub({
       </header>
 
       <div className="relative grid grid-cols-2 gap-3 px-4 pb-12 pt-4">
-        {WORLDS.map((world, index) => {
-          const Icon = ICONS[world.icon];
+        {HUB_ENTRIES.map((world, index) => {
+          const Icon = ICONS[world.card.icon];
           return (
           <button
             key={world.id}
@@ -80,7 +80,7 @@ export function WorldHub({
             style={{ animationDelay: `${index * 0.07}s` }}
             className="hub-card group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-story-ink/12 bg-story-panel text-left backdrop-blur-md"
           >
-            <div className="relative h-28 w-full overflow-hidden" style={{ background: world.cover }}>
+            <div className="relative h-28 w-full overflow-hidden" style={{ background: world.card.cover }}>
               <span className="hub-glyph absolute inset-0 grid place-items-center text-story-ink/90">
                 <Icon className="size-11" strokeWidth={1.4} />
               </span>
@@ -98,11 +98,11 @@ export function WorldHub({
 
             <div className="flex flex-1 flex-col gap-1.5 p-3">
               <h3 className="line-clamp-2 text-[14.5px] font-semibold leading-[1.5] text-story-ink">
-                {world.question}
+                {world.card.question}
               </h3>
-              <p className="line-clamp-2 text-[12.5px] leading-[1.6] text-story-ink/60">{world.hook}</p>
+              <p className="line-clamp-2 text-[12.5px] leading-[1.6] text-story-ink/60">{world.card.hook}</p>
               <div className="mt-1 flex flex-wrap gap-1">
-                {world.tags.map((tag) => (
+                {world.card.tags.map((tag) => (
                   <span
                     key={tag}
                     className="rounded-full border border-story-ink/15 px-2 py-0.5 text-[10.5px] text-story-ink/70"
@@ -111,7 +111,7 @@ export function WorldHub({
                   </span>
                 ))}
               </div>
-              <span className="mt-1 text-[11px] text-story-ink/45">{world.players}</span>
+              <span className="mt-1 text-[11px] text-story-ink/45">{world.card.players}</span>
             </div>
           </button>
           );
