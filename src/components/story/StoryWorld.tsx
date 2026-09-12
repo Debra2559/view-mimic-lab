@@ -337,9 +337,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                   {activeInteraction.label}
                 </span>
                 <span className="mt-3 block text-[16.5px] leading-[1.85] text-story-ink/92">
-                  {touched.includes(activeInteraction.id) && activeInteraction.after
-                    ? activeInteraction.response
-                    : activeInteraction.response}
+                  {activeInteraction.response}
                 </span>
                 <span className="mt-4 block text-right text-[12px] text-story-ink/45">点击任意处收起</span>
               </span>
