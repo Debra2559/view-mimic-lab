@@ -1,25 +1,16 @@
 import { ChevronRight, LayoutGrid, RotateCcw, Share2, VolumeX, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ShareSheet } from "@/components/story/ShareSheet";
 import { WorldHub } from "@/components/story/WorldHub";
-import {
-  CHARACTER_NAME,
-  CHARACTER_SPRITES,
-  CHOICES,
-  ENDINGS,
-  INTRO_LINES,
-  MAIN_NODES,
-  STORY_BACKGROUND,
-  type Ending,
-  type StoryNode,
-} from "@/lib/story";
+import { getCharacter, getStory, type Ending, type Story, type StoryNode } from "@/lib/story";
 import { Button } from "@/components/ui/button";
 
 type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
 type ChoiceKey = "A" | "B";
 
-export function StoryWorld({ onExit }: { onExit: () => void }) {
+export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () => void }) {
+  const [activeId, setActiveId] = useState(storyId);
   const [phase, setPhase] = useState<Phase>("transition");
   const [nodeIndex, setNodeIndex] = useState(0);
   const [choice, setChoice] = useState<ChoiceKey | null>(null);
@@ -27,11 +18,13 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [hubOpen, setHubOpen] = useState(false);
 
+  const story: Story = useMemo(() => getStory(activeId), [activeId]);
 
   useEffect(() => {
+    if (phase !== "transition") return;
     const timer = window.setTimeout(() => setPhase("intro"), 1300);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [phase, activeId]);
 
   const restart = () => {
     setChoice(null);
@@ -41,28 +34,25 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
 
   const enterWorld = (id: string) => {
     setHubOpen(false);
-    if (id === "corridor") {
-      setChoice(null);
-      setNodeIndex(0);
-      setPhase("transition");
-      window.setTimeout(() => setPhase("intro"), 1300);
-    }
+    setActiveId(id);
+    setChoice(null);
+    setNodeIndex(0);
+    setPhase("transition");
   };
 
-
-  const activeNodes: StoryNode[] = choice ? ENDINGS[choice].nodes : MAIN_NODES;
+  const activeEnding: Ending | null = choice ? story.endings[choice] : null;
+  const activeNodes: StoryNode[] = activeEnding ? activeEnding.nodes : story.nodes;
   const activeNode = activeNodes[nodeIndex];
-  const activeEnding: Ending | null = choice ? ENDINGS[choice] : null;
+  const speaker = activeNode ? getCharacter(activeNode.speaker) : undefined;
 
   const advance = () => {
-    if (phase === "dialogue") {
-      if (nodeIndex < activeNodes.length - 1) {
-        setNodeIndex((value) => value + 1);
-      } else if (choice) {
-        setPhase("ending");
-      } else {
-        setPhase("choice");
-      }
+    if (phase !== "dialogue") return;
+    if (nodeIndex < activeNodes.length - 1) {
+      setNodeIndex((value) => value + 1);
+    } else if (choice) {
+      setPhase("ending");
+    } else {
+      setPhase("choice");
     }
   };
 
@@ -75,8 +65,9 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-story-night text-story-ink" role="dialog" aria-label="互动故事世界">
       <img
-        src={STORY_BACKGROUND}
-        alt="凌晨的老公寓楼道，一辆正在充电的电动车渗出烟雾"
+        key={story.background}
+        src={story.background}
+        alt={story.backgroundAlt}
         width={1344}
         height={768}
         className="scene-drift absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-1000 data-[visible=true]:opacity-100"
@@ -96,7 +87,7 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
           onClick={() => setPhase("dialogue")}
           className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-6 bg-story-night px-8 text-center"
         >
-          {INTRO_LINES.map((line) => (
+          {story.introLines.map((line) => (
             <p key={line} className="text-[19px] leading-[1.9] text-story-ink/90">
               {line}
             </p>
@@ -112,7 +103,7 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
         <>
           <header className="absolute inset-x-0 top-0 z-20 flex items-center justify-between px-4 pt-4">
             <span className="rounded-full border border-story-ink/20 bg-story-panel px-3 py-1 text-[12px] tracking-widest text-story-ink/80">
-              {choice ? "世界线 · 分歧之后" : "世界线 · 01"}
+              {choice ? `${story.chapterLabel} · 分歧之后` : story.chapterLabel}
             </span>
             <div className="flex items-center gap-2">
               <Button
@@ -124,7 +115,6 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
               >
                 <LayoutGrid className="size-5" />
               </Button>
-
               <Button
                 variant="ghost"
                 size="icon"
@@ -146,11 +136,11 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
             </div>
           </header>
 
-          {phase === "dialogue" && activeNode?.speaker === "linxia" && (
+          {phase === "dialogue" && activeNode && speaker && (
             <img
-              key={`sprite-${choice ?? "main"}-${nodeIndex}`}
-              src={CHARACTER_SPRITES[activeNode.expression ?? "calm"]}
-              alt={`${CHARACTER_NAME}的半身立绘`}
+              key={`sprite-${story.id}-${choice ?? "main"}-${nodeIndex}`}
+              src={speaker.sprites[activeNode.expression ?? "calm"]}
+              alt={`${speaker.name}的半身立绘`}
               width={768}
               height={1024}
               className="sprite-rise absolute bottom-40 left-1/2 z-10 w-[62%] max-w-[340px] -translate-x-1/2 drop-shadow-[0_8px_32px_oklch(0.1_0.02_260/60%)] sm:bottom-44"
@@ -158,19 +148,24 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
           )}
 
           {phase === "dialogue" && activeNode && (
-            <DialogueBox key={`dialogue-${choice ?? "main"}-${nodeIndex}`} node={activeNode} onAdvance={advance} />
+            <DialogueBox
+              key={`dialogue-${story.id}-${choice ?? "main"}-${nodeIndex}`}
+              node={activeNode}
+              speakerName={speaker?.name}
+              onAdvance={advance}
+            />
           )}
 
           {phase === "choice" && (
             <div className="absolute inset-0 z-30 flex flex-col items-center justify-end gap-4 bg-story-night/60 px-6 pb-24 backdrop-blur-[2px]">
               <p className="choice-in mb-2 text-center text-[17px] font-medium text-story-ink">
-                烟雾越来越浓。你的选择是——
+                {story.choicePrompt}
               </p>
-              {CHOICES.map((option, index) => (
+              {story.choices.map((option, index) => (
                 <button
                   key={option.key}
                   type="button"
-                  onClick={() => pick(option.key)}
+                  onClick={() => pick(option.ending)}
                   className="choice-in w-full max-w-md cursor-pointer rounded-2xl border border-story-ink/15 bg-story-panel px-5 py-4 text-left backdrop-blur-md transition-colors hover:border-story-glow/60"
                   style={{ animationDelay: `${index * 0.12}s` }}
                 >
@@ -224,16 +219,25 @@ export function StoryWorld({ onExit }: { onExit: () => void }) {
       )}
 
       {hubOpen && (
-        <WorldHub currentWorldId="corridor" onEnterWorld={enterWorld} onClose={() => setHubOpen(false)} />
+        <WorldHub currentWorldId={story.id} onEnterWorld={enterWorld} onClose={() => setHubOpen(false)} />
       )}
 
-      {shareOpen && activeEnding && <ShareSheet ending={activeEnding} onClose={() => setShareOpen(false)} />}
-
+      {shareOpen && activeEnding && (
+        <ShareSheet story={story} ending={activeEnding} onClose={() => setShareOpen(false)} />
+      )}
     </div>
   );
 }
 
-function DialogueBox({ node, onAdvance }: { node: StoryNode; onAdvance: () => void }) {
+function DialogueBox({
+  node,
+  speakerName,
+  onAdvance,
+}: {
+  node: StoryNode;
+  speakerName?: string | undefined;
+  onAdvance: () => void;
+}) {
   const [shown, setShown] = useState(0);
   const doneRef = useRef(false);
   const typing = shown < node.text.length;
@@ -262,8 +266,6 @@ function DialogueBox({ node, onAdvance }: { node: StoryNode; onAdvance: () => vo
     }
   }, [typing, node.text.length, onAdvance]);
 
-  const isNarration = node.speaker === "narrator";
-
   return (
     <button
       type="button"
@@ -272,9 +274,9 @@ function DialogueBox({ node, onAdvance }: { node: StoryNode; onAdvance: () => vo
       className="absolute inset-x-0 bottom-0 z-20 cursor-pointer px-4 pb-6 pt-10 text-left"
     >
       <div className="rounded-2xl border border-story-ink/12 bg-story-panel px-5 pb-5 pt-4 backdrop-blur-md">
-        {!isNarration && (
+        {speakerName && (
           <span className="absolute -top-3 left-6 rounded-full border border-story-glow/40 bg-story-night px-3 py-0.5 text-[13px] font-semibold text-story-glow">
-            {CHARACTER_NAME}
+            {speakerName}
           </span>
         )}
         <p className="min-h-[3.4em] text-[16.5px] leading-[1.75] text-story-ink/95">

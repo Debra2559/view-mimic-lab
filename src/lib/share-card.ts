@@ -1,4 +1,4 @@
-import { STORY_BACKGROUND, type Ending } from "@/lib/story";
+import type { Ending, Story } from "@/lib/story";
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -26,7 +26,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
 }
 
 /** 生成竖版结局分享卡片（750×1200 PNG dataURL），用于保存/分享。 */
-export async function generateEndingCard(ending: Ending): Promise<string> {
+export async function generateEndingCard(story: Story, ending: Ending): Promise<string> {
   const W = 750;
   const H = 1200;
   const canvas = document.createElement("canvas");
@@ -36,7 +36,7 @@ export async function generateEndingCard(ending: Ending): Promise<string> {
   if (!ctx) throw new Error("无法创建画布");
 
   // 背景：楼道场景 cover 绘制
-  const bg = await loadImage(STORY_BACKGROUND);
+  const bg = await loadImage(story.background);
   const scale = Math.max(W / bg.width, H / bg.height);
   const bw = bg.width * scale;
   const bh = bg.height * scale;
@@ -69,7 +69,7 @@ export async function generateEndingCard(ending: Ending): Promise<string> {
   // 结局标签
   ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
   ctx.font = "400 28px 'PingFang SC', 'Microsoft YaHei', sans-serif";
-  ctx.fillText("我抵达的结局", pad, 480);
+  ctx.fillText(`我在「${story.card.question}」抵达的结局`, pad, 480);
 
   // 结局称号
   ctx.fillStyle = "#ffffff";
@@ -104,8 +104,8 @@ export async function generateEndingCard(ending: Ending): Promise<string> {
   return canvas.toDataURL("image/png");
 }
 
-export function buildShareText(ending: Ending): string {
-  return `我在「穿越进高赞回答」里抵达了结局《${ending.title}》——${ending.summary} 你也来试试，点进回答就能穿越进它的世界。`;
+export function buildShareText(story: Story, ending: Ending): string {
+  return `我穿越进了高赞回答「${story.card.question}」，抵达结局《${ending.title}》——${ending.summary} 你也来试试，点进回答就能穿越进它的世界。`;
 }
 
 export function downloadDataUrl(dataUrl: string, filename: string) {

@@ -4,21 +4,21 @@ import QRCode from "qrcode";
 import { toast } from "sonner";
 
 import { buildShareText, downloadDataUrl, generateEndingCard } from "@/lib/share-card";
-import type { Ending } from "@/lib/story";
+import type { Ending, Story } from "@/lib/story";
 import { Button } from "@/components/ui/button";
 
-export function ShareSheet({ ending, onClose }: { ending: Ending; onClose: () => void }) {
+export function ShareSheet({ story, ending, onClose }: { story: Story; ending: Ending; onClose: () => void }) {
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [tab, setTab] = useState<"weibo" | "wechat" | null>(null);
 
-  const shareText = buildShareText(ending);
+  const shareText = buildShareText(story, ending);
   const pageUrl = window.location.href;
 
   useEffect(() => {
     let cancelled = false;
-    generateEndingCard(ending)
+    generateEndingCard(story, ending)
       .then((url) => {
         if (!cancelled) setCardUrl(url);
       })
@@ -31,7 +31,7 @@ export function ShareSheet({ ending, onClose }: { ending: Ending; onClose: () =>
     return () => {
       cancelled = true;
     };
-  }, [ending, pageUrl]);
+  }, [story, ending, pageUrl]);
 
   const copyText = async () => {
     try {
