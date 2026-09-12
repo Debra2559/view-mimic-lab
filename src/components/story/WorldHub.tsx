@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Bike,
+  Flame,
   Search,
   Brain,
   Bug,
@@ -25,6 +26,8 @@ import {
   type WorldCard,
 } from "@/lib/story";
 import { removeGenerated } from "@/lib/story/custom";
+import { getHeatRank, heatLabel, heatScore, recordClick } from "@/lib/heat";
+import { getPost } from "@/lib/feed";
 import { getUnlocked } from "@/lib/story/progress";
 import { StoryForge } from "@/components/story/StoryForge";
 import { Button } from "@/components/ui/button";
@@ -80,7 +83,13 @@ export function WorldHub({
 
   const filtered = useMemo(() => {
     const q = keyword.trim().toLowerCase();
-    return entries.filter((world) => {
+    // 按热度排名：回答数、收藏数、点击量共同决定，未上榜的排最后
+    const sorted = [...entries].sort((a, b) => {
+      const ra = getHeatRank(a.id) || Number.MAX_SAFE_INTEGER;
+      const rb = getHeatRank(b.id) || Number.MAX_SAFE_INTEGER;
+      return ra - rb;
+    });
+    return sorted.filter((world) => {
       const matchCategory = category === "全部" || world.card.category === category;
       const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
       return matchCategory && (q === "" || haystack.includes(q));
@@ -97,6 +106,7 @@ export function WorldHub({
       toast("这条世界线还在生成中", { description: "已为你预约，开放时第一时间通知。" });
       return;
     }
+    recordClick(world.id);
     onEnterWorld(world.id);
   };
 
@@ -197,6 +207,8 @@ export function WorldHub({
       <div className="relative grid grid-cols-2 gap-3.5 px-4 pb-14 pt-4 [perspective:800px]">
         {filtered.map((world, index) => {
           const Icon = ICONS[world.card.icon];
+          const rank = getHeatRank(world.id) || null;
+          const post = getPost(world.id);
           return (
             <div
               key={world.id}
@@ -238,6 +250,20 @@ export function WorldHub({
 
                 {/* 顶部徽标 */}
                 <span className="absolute left-2.5 top-2.5 flex flex-col items-start gap-1.5">
+                  {rank && (
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wide backdrop-blur-md ${
+                        rank <= 3
+                          ? "border-hub-coral/50 bg-hub-coral/20 text-hub-coral"
+                          : "border-hub-ink/10 bg-hub-night/55 text-hub-ink/85"
+                      }`}
+                      title="热度由回答数、收藏数和点击量共同决定"
+                    >
+                      <Flame className="size-2.5" />
+                      No.{rank}
+                      {post && <span className="font-normal opacity-80">· {heatLabel(heatScore(post))}</span>}
+                    </span>
+                  )}
                   {world.generated ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-hub-ink/10 bg-hub-night/55 px-2 py-0.5 text-[10px] tracking-widest text-hub-glow backdrop-blur-md">
                       <Wand2 className="size-2.5" />

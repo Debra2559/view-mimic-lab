@@ -1,6 +1,7 @@
 import { Loader2, Sparkles } from "lucide-react";
 import { useState } from "react";
 
+import { recordClick } from "@/lib/heat";
 import type { Story } from "@/lib/story";
 
 /** 每条回答都可以生成自己的穿越入口：文案与目标世界线来自 Story。 */
@@ -10,6 +11,7 @@ export function PortalEntry({ story, onEnter }: { story: Story; onEnter: (storyI
   const handleClick = () => {
     if (connecting) return;
     setConnecting(true);
+    recordClick(story.id);
     window.setTimeout(() => onEnter(story.id), 900);
   };
 

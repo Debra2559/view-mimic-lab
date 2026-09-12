@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowBigUp,
   BadgeCheck,
+  Flame,
   House,
   MessageCircle,
   Mic,
@@ -11,10 +12,11 @@ import {
   Wifi,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import authorAvatar from "@/assets/author-avatar.jpg";
-import { FEED_POSTS, getAnswerCount, type FeedPost } from "@/lib/feed";
+import { getAnswerCount, type FeedPost } from "@/lib/feed";
+import { getRotatedFeed, heatLabel, heatScore, recordClick } from "@/lib/heat";
 
 
 export const Route = createFileRoute("/")({
@@ -44,7 +46,9 @@ function FeedPage() {
   const [activeTab, setActiveTab] = useState("推荐");
   const [dismissed, setDismissed] = useState<string[]>([]);
 
-  const items = FEED_POSTS.filter((item) => !dismissed.includes(item.id));
+  // 热度排序 + 每次进首页轮换一位，热榜常看常新
+  const ranked = useMemo(() => getRotatedFeed(), []);
+  const items = ranked.filter((item) => !dismissed.includes(item.id));
 
 
   return (
@@ -156,8 +160,18 @@ function FeedCard({ item, onDismiss }: { item: FeedPost; onDismiss: () => void }
         params={{ id: item.id }}
         className="block"
         aria-label={`阅读回答：${item.title}`}
+        onClick={() => recordClick(item.id)}
       >
-        <h2 className="text-[21px] font-bold leading-snug">{item.title}</h2>
+        <div className="flex items-start justify-between gap-3">
+          <h2 className="text-[21px] font-bold leading-snug">{item.title}</h2>
+          <span
+            className="mt-1 inline-flex shrink-0 items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[12px] font-semibold text-rose-500"
+            title="世界线热度：由回答数、收藏数和点击量共同决定"
+          >
+            <Flame className="size-3.5" />
+            {heatLabel(heatScore(item))}
+          </span>
+        </div>
         <div className="mt-2.5 flex items-center gap-2">
           {item.avatar ? (
             <img src={item.avatar} alt={`${item.author}头像`} className="size-7 rounded-full object-cover" />
