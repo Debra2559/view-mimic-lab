@@ -6,7 +6,6 @@ import {
   MessageCircle,
   Mic,
   Plus,
-  Search,
   Star,
   Wifi,
   X,
@@ -302,6 +301,3 @@ function TabItem({
     </button>
   );
 }
-
-// Search icon kept for parity with reference screenshot
-void Search;
