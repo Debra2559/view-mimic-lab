@@ -524,16 +524,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             </div>
           )}
 
-          {phase === "choice" && peeking && (
-            <div className="absolute inset-x-0 bottom-8 z-30 flex justify-center px-6">
-              <Button
-                onClick={() => setPeeking(false)}
-                className="h-12 rounded-full bg-story-glow px-7 text-[15.5px] font-semibold text-story-night hover:bg-story-glow/90"
-              >
-                看够了，做出选择
-              </Button>
-            </div>
-          )}
         </>
       )}
 
