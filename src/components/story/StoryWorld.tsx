@@ -440,42 +440,83 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
 
       {phase === "ending" && activeEnding && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-story-night/85 px-8 text-center backdrop-blur-sm">
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-story-night/85 px-8 py-10 text-center backdrop-blur-sm">
           <div className="ending-pop flex flex-col items-center">
             <p className="flex items-center gap-1.5 text-[13px] tracking-[0.4em] text-story-glow">
               <Sparkles className="size-3.5" />
-              结局
+              {activeEnding.next ? `第 ${depth} 幕` : "终局"}
             </p>
             <h2 className="mt-3 text-[30px] font-bold text-story-ink">「{activeEnding.title}」</h2>
             <p className="mt-6 max-w-md text-[16px] leading-[1.9] text-story-ink/85">{activeEnding.summary}</p>
 
-            <div className="mt-6 flex items-center gap-2">
-              {Object.values(story.endings).map((item) => {
-                const got = unlocked.includes(item.key);
-                return (
-                  <span
-                    key={item.key}
-                    className="rounded-full border px-3 py-1 text-[12px] data-[got=true]:border-story-glow/60 data-[got=true]:text-story-glow data-[got=false]:border-story-ink/20 data-[got=false]:text-story-ink/40"
-                    data-got={got}
-                  >
-                    {got ? `「${item.title}」` : "未解锁结局"}
-                  </span>
-                );
-              })}
-            </div>
-            <p className="mt-2 text-[12px] text-story-ink/50">
-              结局图鉴 {unlocked.length}/{totalEndings}
-            </p>
+            {!activeEnding.next && (
+              <>
+                <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+                  {finalEndings.map((item) => {
+                    const got = unlocked.includes(item.key);
+                    return (
+                      <span
+                        key={item.key}
+                        className="rounded-full border px-3 py-1 text-[12px] data-[got=true]:border-story-glow/60 data-[got=true]:text-story-glow data-[got=false]:border-story-ink/20 data-[got=false]:text-story-ink/40"
+                        data-got={got}
+                      >
+                        {got ? `「${item.title}」` : "未解锁"}
+                      </span>
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-[12px] text-story-ink/50">
+                  结局图鉴 {unlockedFinal}/{totalEndings}
+                </p>
+              </>
+            )}
           </div>
 
+          {/* 故事还能往下长：继续延伸的岔路 */}
+          {activeEnding.next && (
+            <div className="mt-8 w-full max-w-md">
+              <p className="text-[15px] leading-relaxed text-story-ink/75">{activeEnding.next.prompt}</p>
+              <div className="mt-4 flex flex-col gap-3">
+                {activeEnding.next.choices.map((option, index) => (
+                  <button
+                    key={option.ending}
+                    type="button"
+                    onClick={() => pick(option.ending)}
+                    className="choice-in choice-card group relative w-full cursor-pointer overflow-hidden rounded-[20px] border border-story-ink/12 bg-story-night/55 px-5 py-4 text-left backdrop-blur-xl"
+                    style={{ animationDelay: `${0.1 + index * 0.12}s` }}
+                  >
+                    <span
+                      className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-story-glow to-story-ember opacity-70"
+                      aria-hidden="true"
+                    />
+                    <span className="choice-sheen" aria-hidden="true" />
+                    <span className="flex items-start gap-3.5">
+                      <span className="choice-key mt-0.5 grid size-8 shrink-0 place-items-center rounded-full border border-story-glow/50 bg-story-night/60 text-[13px] font-bold text-story-glow">
+                        {option.key}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-[17.5px] font-semibold leading-snug text-story-ink">
+                          {option.label}
+                        </span>
+                        <span className="mt-1.5 block text-[13.5px] leading-relaxed text-story-ink/55">
+                          {option.innerVoice}
+                        </span>
+                      </span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-8 flex w-full max-w-md flex-col gap-3">
-            {unlocked.length < totalEndings && (
+            {!activeEnding.next && unlockedFinal < totalEndings && (
               <Button
-                onClick={replayOther}
+                onClick={backToFork}
                 className="h-12 rounded-full bg-story-glow text-[16px] font-semibold text-story-night hover:bg-story-glow/90"
               >
                 <Sparkles className="size-4" />
-                去看另一种选择的结局
+                回到上一个岔路，走另一条
               </Button>
             )}
             <Button
