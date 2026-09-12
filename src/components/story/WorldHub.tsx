@@ -1,5 +1,7 @@
+import { useMemo, useState } from "react";
 import {
   Bike,
+  Search,
   Brain,
   Bug,
   Globe2,
@@ -13,7 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { HUB_ENTRIES, STORY_MAP, type HubEntry, type WorldCard } from "@/lib/story";
+import { HUB_ENTRIES, STORY_MAP, WORLD_CATEGORIES, type HubEntry, type WorldCard } from "@/lib/story";
 import { getUnlocked } from "@/lib/story/progress";
 import { Button } from "@/components/ui/button";
 
@@ -35,6 +37,18 @@ export function WorldHub({
   onEnterWorld: (id: string) => void;
   onClose: () => void;
 }) {
+  const [keyword, setKeyword] = useState("");
+  const [category, setCategory] = useState("全部");
+
+  const filtered = useMemo(() => {
+    const q = keyword.trim().toLowerCase();
+    return HUB_ENTRIES.filter((world) => {
+      const matchCategory = category === "全部" || world.card.category === category;
+      const haystack = `${world.card.question}${world.card.hook}${world.card.tags.join("")}${world.card.category}`.toLowerCase();
+      return matchCategory && (q === "" || haystack.includes(q));
+    });
+  }, [keyword, category]);
+
   const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
       toast("这条世界线还在生成中", { description: "已为你预约，开放时第一时间通知。" });
@@ -70,8 +84,54 @@ export function WorldHub({
         </Button>
       </header>
 
+      <div className="relative px-4 pt-4">
+        <label className="relative block">
+          <span className="sr-only">搜索「如果」世界线</span>
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-story-ink/45" />
+          <input
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder="搜索「如果……会怎样」"
+            className="h-11 w-full rounded-full border border-story-ink/15 bg-story-panel pl-9 pr-9 text-[14px] text-story-ink outline-none backdrop-blur-md placeholder:text-story-ink/40 focus:border-story-glow/60"
+          />
+          {keyword && (
+            <button
+              type="button"
+              aria-label="清空搜索"
+              onClick={() => setKeyword("")}
+              className="absolute right-2.5 top-1/2 grid size-6 -translate-y-1/2 place-items-center rounded-full bg-story-ink/10 text-story-ink/70"
+            >
+              <X className="size-3.5" />
+            </button>
+          )}
+        </label>
+
+        <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {["全部", ...WORLD_CATEGORIES].map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setCategory(item)}
+              className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] transition-colors ${
+                category === item
+                  ? "border-story-glow/60 bg-story-glow/15 text-story-glow"
+                  : "border-story-ink/15 bg-story-panel text-story-ink/65"
+              }`}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="relative px-4 py-16 text-center text-[13px] text-story-ink/50">
+          没有找到这条世界线，换个关键词试试。
+        </p>
+      )}
+
       <div className="relative grid grid-cols-2 gap-3 px-4 pb-12 pt-4">
-        {HUB_ENTRIES.map((world, index) => {
+        {filtered.map((world, index) => {
           const Icon = ICONS[world.card.icon];
           return (
           <button
