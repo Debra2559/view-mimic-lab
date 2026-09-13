@@ -93,9 +93,19 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
   useEffect(() => {
     if (phase !== "transition") return;
-    const timer = window.setTimeout(() => setPhase("intro"), 1300);
+    // 第一次接入时多停留一会儿，让向导露个脸
+    const timer = window.setTimeout(
+      () => {
+        if (showMascot) {
+          window.localStorage.setItem(MASCOT_SEEN_KEY, "1");
+          setShowMascot(false);
+        }
+        setPhase("intro");
+      },
+      showMascot ? 2600 : 1300,
+    );
     return () => window.clearTimeout(timer);
-  }, [phase, activeId]);
+  }, [phase, activeId, showMascot]);
 
   const activeEnding: Ending | null = (choice ? story.endings[choice] : null) ?? null;
   const activeNodes: StoryNode[] = activeEnding ? activeEnding.nodes : story.nodes;
@@ -230,20 +240,29 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
       {phase === "transition" && (
         <div className="transition-zoom absolute inset-0 grid place-items-center bg-background">
-          <p className="text-[17px] font-medium tracking-[0.3em] text-muted-foreground">世界线接入中</p>
+          <div className="flex flex-col items-center gap-5">
+            {/* IP 向导：第一次进入时出来接引 */}
+            {showMascot ? (
+              <img
+                src={greetingAsset.url}
+                alt="穿越向导"
+                width={120}
+                height={120}
+                className="size-28 animate-bounce object-contain drop-shadow-[0_8px_24px_oklch(0.1_0.02_260/50%)]"
+              />
+            ) : null}
+            <p className="text-[17px] font-medium tracking-[0.3em] text-muted-foreground">世界线接入中</p>
+            {showMascot && (
+              <p className="text-[13px] text-muted-foreground/80">嗨，我是你的穿越向导，正在为你打开通道……</p>
+            )}
+          </div>
         </div>
       )}
 
       {phase === "intro" && (
         <button
           type="button"
-          onClick={() => {
-            if (typeof window !== "undefined") {
-              window.localStorage.setItem(MASCOT_SEEN_KEY, "1");
-            }
-            setShowMascot(false);
-            setPhase("dialogue");
-          }}
+          onClick={() => setPhase("dialogue")}
           className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-6 bg-story-night px-8 text-center"
         >
           <span className="rounded-full border border-story-glow/40 px-4 py-1 text-[12px] tracking-[0.3em] text-story-glow">
@@ -259,24 +278,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             <ChevronRight className="size-4" />
           </span>
 
-          {/* IP 向导：第一次进入互动世界时出来打招呼 */}
-          {showMascot && (
-            <div className="pointer-events-none absolute bottom-6 left-6 flex items-end gap-3">
-              <img
-                src={greetingAsset.url}
-                alt="穿越向导"
-                width={120}
-                height={120}
-                className="size-28 object-contain drop-shadow-[0_8px_24px_oklch(0.1_0.02_260/50%)]"
-              />
-              <div className="max-w-[210px] rounded-2xl border border-story-glow/30 bg-story-panel px-4 py-3 text-left shadow-[0_12px_40px_oklch(0.08_0.02_260/45%)]">
-                <p className="text-[13px] leading-relaxed text-story-ink/90">
-                  嗨，我是你的穿越向导。点一下屏幕，睁开眼睛进入这个世界。
-                </p>
-                <span className="mt-1 block text-[11px] text-story-ink/50">点击任意处开始</span>
-              </div>
-            </div>
-          )}
         </button>
       )}
 
