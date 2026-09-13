@@ -420,17 +420,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
                   ))}
                 </div>
 
-                {interactions.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setPhase("explore")}
-                    className="choice-in mx-auto mt-4 flex items-center gap-2 rounded-full border border-story-ink/15 px-4 py-2 text-[13px] text-story-ink/70"
-                    style={{ animationDelay: "0.36s" }}
-                  >
-                    <Eye className="size-4" />
-                    先再看看四周（{touchedCount}/{interactions.length}）
-                  </button>
-                )}
                 <p className="mt-3 text-center text-[11.5px] text-story-ink/40">
                   每个选择都会写进你的结局图鉴
                 </p>
