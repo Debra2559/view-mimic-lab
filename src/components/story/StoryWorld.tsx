@@ -1,25 +1,13 @@
 import {
-  Bike,
   ChevronRight,
-  Clock,
-  DoorOpen,
-  Ear,
-  Eye,
-  Flame,
-  Hand,
   LayoutGrid,
-  Lightbulb,
-  Package,
   Pause,
   Play,
   RotateCcw,
   Share2,
-  Smartphone,
   Sparkles,
-  StickyNote,
   Volume2,
   VolumeX,
-  Wind,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -31,7 +19,6 @@ import {
   getCharacter,
   getStory,
   type Ending,
-  type Interaction,
   type Story,
   type StoryNode,
 } from "@/lib/story";
@@ -40,29 +27,12 @@ import { Ambience } from "@/lib/story/ambience";
 import { Button } from "@/components/ui/button";
 import greetingAsset from "@/assets/mascot/greeting.gif.asset.json";
 
-type Phase = "transition" | "intro" | "dialogue" | "explore" | "choice" | "ending";
+type Phase = "transition" | "intro" | "dialogue" | "choice" | "ending";
 
-/** 触点的几种呈现形态，避免全是圆形 icon */
-const HOTSPOT_VARIANTS = ["pin", "tag", "halo", "card"] as const;
 /** 结局 key，父分支 + 字母构成树状路径，如 A -> AB -> ABA */
 type ChoiceKey = string;
 
 const EMBERS = [8, 22, 37, 54, 68, 81, 92];
-
-const INTERACTION_ICONS = {
-  hand: Hand,
-  flame: Flame,
-  door: DoorOpen,
-  phone: Smartphone,
-  package: Package,
-  ear: Ear,
-  eye: Eye,
-  clock: Clock,
-  bike: Bike,
-  wind: Wind,
-  light: Lightbulb,
-  note: StickyNote,
-} as const;
 
 const MASCOT_SEEN_KEY = "portal-mascot-seen";
 
