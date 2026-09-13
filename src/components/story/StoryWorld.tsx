@@ -262,12 +262,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
       {phase === "intro" && (
         <button
           type="button"
-          onClick={() => {
-            if (typeof window !== "undefined") {
-              window.localStorage.setItem(MASCOT_SEEN_KEY, "1");
-            }
-            setPhase("dialogue");
-          }}
+          onClick={() => setPhase("dialogue")}
           className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-6 bg-story-night px-8 text-center"
         >
           <span className="rounded-full border border-story-glow/40 px-4 py-1 text-[12px] tracking-[0.3em] text-story-glow">
