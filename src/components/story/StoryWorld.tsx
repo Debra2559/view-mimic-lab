@@ -38,6 +38,7 @@ import {
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Ambience } from "@/lib/story/ambience";
 import { Button } from "@/components/ui/button";
+import greetingAsset from "@/assets/mascot/greeting.gif.asset.json";
 
 type Phase = "transition" | "intro" | "dialogue" | "explore" | "choice" | "ending";
 
@@ -63,6 +64,8 @@ const INTERACTION_ICONS = {
   note: StickyNote,
 } as const;
 
+const MASCOT_SEEN_KEY = "portal-mascot-seen";
+
 export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () => void }) {
   const [activeId, setActiveId] = useState(storyId);
   const [phase, setPhase] = useState<Phase>("transition");
@@ -76,7 +79,16 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [touched, setTouched] = useState<string[]>([]);
   const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
   const [exploreDone, setExploreDone] = useState(false);
+  const [showMascot, setShowMascot] = useState(false);
   const ambienceRef = useRef<Ambience | null>(null);
+
+  /** IP 向导只在用户第一次进入互动世界时出现 */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.localStorage.getItem(MASCOT_SEEN_KEY) !== "1") {
+      setShowMascot(true);
+    }
+  }, []);
 
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
@@ -285,7 +297,13 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
       {phase === "intro" && (
         <button
           type="button"
-          onClick={() => setPhase("dialogue")}
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.localStorage.setItem(MASCOT_SEEN_KEY, "1");
+            }
+            setShowMascot(false);
+            setPhase("dialogue");
+          }}
           className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-6 bg-story-night px-8 text-center"
         >
           <span className="rounded-full border border-story-glow/40 px-4 py-1 text-[12px] tracking-[0.3em] text-story-glow">
@@ -300,6 +318,25 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             睁开眼睛
             <ChevronRight className="size-4" />
           </span>
+
+          {/* IP 向导：第一次进入互动世界时出来打招呼 */}
+          {showMascot && (
+            <div className="pointer-events-none absolute bottom-6 left-6 flex items-end gap-3">
+              <img
+                src={greetingAsset.url}
+                alt="穿越向导"
+                width={120}
+                height={120}
+                className="size-28 object-contain drop-shadow-[0_8px_24px_oklch(0.1_0.02_260/50%)]"
+              />
+              <div className="max-w-[210px] rounded-2xl border border-story-glow/30 bg-story-panel px-4 py-3 text-left shadow-[0_12px_40px_oklch(0.08_0.02_260/45%)]">
+                <p className="text-[13px] leading-relaxed text-story-ink/90">
+                  嗨，我是你的穿越向导。点一下屏幕，睁开眼睛进入这个世界。
+                </p>
+                <span className="mt-1 block text-[11px] text-story-ink/50">点击任意处开始</span>
+              </div>
+            </div>
+          )}
         </button>
       )}
 
