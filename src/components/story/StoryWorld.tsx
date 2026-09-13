@@ -167,26 +167,13 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     }
   };
 
-  const touch = (item: Interaction) => {
-    ambienceRef.current?.blip(520 + (item.id.length % 5) * 70);
-    setActiveInteraction(item);
-    setTouched((list) => (list.includes(item.id) ? list : [...list, item.id]));
-  };
-
-
   const advance = useCallback(() => {
     setNodeIndex((value) => {
       if (value < activeNodes.length - 1) return value + 1;
-      if (choice) {
-        setPhase("ending");
-      } else if (interactions.length > 0 && !exploreDone) {
-        setPhase("explore");
-      } else {
-        setPhase("choice");
-      }
+      setPhase(choice ? "ending" : "choice");
       return value;
     });
-  }, [activeNodes.length, choice, interactions.length, exploreDone]);
+  }, [activeNodes.length, choice]);
 
   const pick = (key: ChoiceKey) => {
     setChoice(key);
