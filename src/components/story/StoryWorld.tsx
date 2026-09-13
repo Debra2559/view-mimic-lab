@@ -168,13 +168,12 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   };
 
   const advance = useCallback(() => {
-    console.log("advance called", nodeIndex, activeNodes.length, choice);
     setNodeIndex((value) => {
       if (value < activeNodes.length - 1) return value + 1;
       setPhase(choice ? "ending" : "choice");
       return value;
     });
-  }, [activeNodes.length, choice, nodeIndex]);
+  }, [activeNodes.length, choice]);
 
   const pick = (key: ChoiceKey) => {
     setChoice(key);
