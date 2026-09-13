@@ -297,7 +297,13 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
       {phase === "intro" && (
         <button
           type="button"
-          onClick={() => setPhase("dialogue")}
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              window.localStorage.setItem(MASCOT_SEEN_KEY, "1");
+            }
+            setShowMascot(false);
+            setPhase("dialogue");
+          }}
           className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-6 bg-story-night px-8 text-center"
         >
           <span className="rounded-full border border-story-glow/40 px-4 py-1 text-[12px] tracking-[0.3em] text-story-glow">
@@ -314,21 +320,23 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
           </span>
 
           {/* IP 向导：第一次进入互动世界时出来打招呼 */}
-          <div className="pointer-events-none absolute bottom-6 left-6 flex items-end gap-3">
-            <img
-              src={greetingAsset.url}
-              alt="穿越向导"
-              width={120}
-              height={120}
-              className="size-28 object-contain drop-shadow-[0_8px_24px_oklch(0.1_0.02_260/50%)]"
-            />
-            <div className="max-w-[210px] rounded-2xl border border-story-glow/30 bg-story-panel px-4 py-3 text-left shadow-[0_12px_40px_oklch(0.08_0.02_260/45%)]">
-              <p className="text-[13px] leading-relaxed text-story-ink/90">
-                嗨，我是你的穿越向导。点一下屏幕，睁开眼睛进入这个世界。
-              </p>
-              <span className="mt-1 block text-[11px] text-story-ink/50">点击任意处开始</span>
+          {showMascot && (
+            <div className="pointer-events-none absolute bottom-6 left-6 flex items-end gap-3">
+              <img
+                src={greetingAsset.url}
+                alt="穿越向导"
+                width={120}
+                height={120}
+                className="size-28 object-contain drop-shadow-[0_8px_24px_oklch(0.1_0.02_260/50%)]"
+              />
+              <div className="max-w-[210px] rounded-2xl border border-story-glow/30 bg-story-panel px-4 py-3 text-left shadow-[0_12px_40px_oklch(0.08_0.02_260/45%)]">
+                <p className="text-[13px] leading-relaxed text-story-ink/90">
+                  嗨，我是你的穿越向导。点一下屏幕，睁开眼睛进入这个世界。
+                </p>
+                <span className="mt-1 block text-[11px] text-story-ink/50">点击任意处开始</span>
+              </div>
             </div>
-          </div>
+          )}
         </button>
       )}
 
