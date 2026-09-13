@@ -33,8 +33,8 @@ export class Ambience {
     master.gain.value = 0;
     const filter = ctx.createBiquadFilter();
     filter.type = "lowpass";
-    filter.frequency.value = 700;
-    filter.Q.value = 0.7;
+    filter.frequency.value = 1200;
+    filter.Q.value = 0.5;
     filter.connect(master);
     master.connect(ctx.destination);
     this.ctx = ctx;
