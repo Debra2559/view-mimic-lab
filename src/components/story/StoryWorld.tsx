@@ -376,32 +376,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
               onAdvance={advance}
             />
           )}
-
-          {/* 探索阶段：剧情停下来，让你自己在场景里翻找 */}
-          {phase === "explore" && !activeInteraction && (
-            <>
-              <div className="absolute inset-0 z-10 bg-story-night/35" aria-hidden="true" />
-              <div className="absolute inset-x-0 top-24 z-20 px-8 text-center">
-                <p className="text-[11.5px] tracking-[0.42em] text-story-glow/80">停下来看看</p>
-                <p className="mt-2 text-[17px] leading-relaxed text-story-ink/85">
-                  在做决定之前，四周还有东西在等你伸手。
-                </p>
-              </div>
-              <div className="pointer-events-none absolute inset-0 z-20">
-                {interactions.map((item, index) => {
-                  const Icon = INTERACTION_ICONS[item.icon] ?? Hand;
-                  const used = touched.includes(item.id);
-                  const variant = HOTSPOT_VARIANTS[index % HOTSPOT_VARIANTS.length];
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => touch(item)}
-                      aria-label={item.label}
-                      data-used={used}
-                      style={{ left: `${item.x}%`, top: `${item.y}%`, animationDelay: `${index * 0.5}s` }}
-                      className="hotspot pointer-events-auto absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
-                    >
                       {variant === "pin" && (
                         <>
                           <span className="hotspot-dot grid size-11 place-items-center rounded-full border border-story-glow/50 bg-story-night/55 text-story-glow backdrop-blur-md">
