@@ -38,6 +38,7 @@ import {
 import { getUnlocked, unlockEnding } from "@/lib/story/progress";
 import { Ambience } from "@/lib/story/ambience";
 import { Button } from "@/components/ui/button";
+import greetingAsset from "@/assets/mascot/greeting.gif.asset.json";
 
 type Phase = "transition" | "intro" | "dialogue" | "explore" | "choice" | "ending";
 
