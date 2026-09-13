@@ -100,7 +100,7 @@ export class Ambience {
         voice.gain.gain.linearRampToValueAtTime(0, now + seconds);
         return;
       }
-      voice.gain.gain.linearRampToValueAtTime(0.26, now + seconds);
+      voice.gain.gain.linearRampToValueAtTime(0.18, now + seconds);
       voice.osc.frequency.linearRampToValueAtTime(freq, now + seconds);
     });
 
