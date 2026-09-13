@@ -72,11 +72,9 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
         ? "ending"
         : phase === "choice"
           ? "choice"
-          : phase === "explore"
-            ? "explore"
-            : phase === "intro" || phase === "transition"
-              ? "intro"
-              : "dialogue";
+          : phase === "intro" || phase === "transition"
+            ? "intro"
+            : "dialogue";
     ambienceRef.current?.setMood(mood);
   }, [phase, muted]);
 
