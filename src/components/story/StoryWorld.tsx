@@ -143,7 +143,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setActiveId(id);
     setChoice(null);
     setNodeIndex(0);
-    resetScene();
     setPhase("transition");
   };
 
