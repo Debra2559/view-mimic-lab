@@ -280,7 +280,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
         </button>
       )}
 
-      {(phase === "dialogue" || phase === "explore" || phase === "choice") && (
+      {(phase === "dialogue" || phase === "choice") && (
         <>
           <header className="absolute inset-x-0 top-0 z-20 px-4 pt-4">
             <div className="flex items-center justify-between">
