@@ -127,7 +127,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
   /** 回到上一个岔路口，去走没走过的那条 */
   const backToFork = () => {
-    resetScene();
     setNodeIndex(0);
     if (parentKey) {
       setChoice(parentKey);
