@@ -380,52 +380,37 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
           {phase === "choice" && (
             <div className="choice-screen absolute inset-0 z-30 flex flex-col items-center justify-end px-5 pb-10">
               <div className="w-full max-w-md">
-                <p className="choice-in flex items-center justify-center gap-3 text-[11.5px] tracking-[0.42em] text-story-glow/80">
-                  <span className="h-px w-10 bg-gradient-to-r from-transparent to-story-glow/60" />
-                  你的选择
-                  <span className="h-px w-10 bg-gradient-to-l from-transparent to-story-glow/60" />
-                </p>
-                <p className="choice-in mt-3 text-center text-[20px] font-semibold leading-[1.6] text-story-ink">
+                <p className="choice-in text-[19px] font-semibold leading-[1.65] text-story-ink">
                   {story.choicePrompt}
                 </p>
 
-                <div className="mt-6 flex flex-col gap-3.5">
+                <div className="mt-5 border-t border-story-ink/10">
                   {story.choices.map((option, index) => (
                     <button
                       key={option.key}
                       type="button"
                       onClick={() => pick(option.ending)}
-                      className="choice-in choice-card group relative w-full cursor-pointer overflow-hidden rounded-[20px] border border-story-ink/12 bg-story-night/55 px-5 py-4 text-left backdrop-blur-xl"
-                      style={{ animationDelay: `${0.1 + index * 0.12}s` }}
+                      className="choice-in group flex w-full cursor-pointer items-baseline gap-4 border-b border-story-ink/10 py-4 text-left"
+                      style={{ animationDelay: `${0.08 + index * 0.1}s` }}
                     >
-                      <span
-                        className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-b from-story-glow to-story-ember opacity-70"
-                        aria-hidden="true"
-                      />
-                      <span className="choice-sheen" aria-hidden="true" />
-                      <span className="flex items-start gap-3.5">
-                        <span className="choice-key mt-0.5 grid size-8 shrink-0 place-items-center rounded-full border border-story-glow/50 bg-story-night/60 text-[13px] font-bold text-story-glow">
-                          {option.key}
+                      <span className="font-mono text-[12px] tabular-nums text-story-glow/70">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[17px] font-medium leading-snug text-story-ink">
+                          {option.label}
                         </span>
-                        <span className="min-w-0">
-                          <span className="block text-[17.5px] font-semibold leading-snug text-story-ink">
-                            {option.label}
-                          </span>
-                          <span className="mt-1.5 block text-[13.5px] leading-relaxed text-story-ink/55">
-                            {option.innerVoice}
-                          </span>
+                        <span className="mt-1 block text-[13px] leading-relaxed text-story-ink/45">
+                          {option.innerVoice}
                         </span>
                       </span>
                     </button>
                   ))}
                 </div>
-
-                <p className="mt-3 text-center text-[11.5px] text-story-ink/40">
-                  每个选择都会写进你的结局图鉴
-                </p>
               </div>
             </div>
           )}
+
 
         </>
       )}
