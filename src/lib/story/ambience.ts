@@ -86,8 +86,9 @@ export class Ambience {
     while (this.voices.length < preset.chord.length) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = this.voices.length % 2 === 0 ? "sine" : "triangle";
-      gain.gain.value = 0.28;
+      // 只有第一声部用 triangle 增加暖意，其余用 sine 保持柔和
+      osc.type = this.voices.length === 0 ? "triangle" : "sine";
+      gain.gain.value = 0.18;
       osc.connect(gain).connect(filter);
       osc.start();
       this.voices.push({ osc, gain });
