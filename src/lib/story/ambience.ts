@@ -5,13 +5,14 @@
 
 export type Mood = "intro" | "dialogue" | "explore" | "choice" | "ending";
 
-/** 每个阶段的和弦（Hz）与整体氛围参数 */
+/** 每个阶段的和弦（Hz）与整体氛围参数
+ * 整体偏暖、偏高音区，用大三度和纯五度为主，避免低频轰鸣带来的压迫感。 */
 const MOODS: Record<Mood, { chord: number[]; cutoff: number; gain: number }> = {
-  intro: { chord: [110, 164.81, 220], cutoff: 620, gain: 0.16 },
-  dialogue: { chord: [110, 164.81, 246.94], cutoff: 780, gain: 0.2 },
-  explore: { chord: [98, 146.83, 196, 293.66], cutoff: 1100, gain: 0.18 },
-  choice: { chord: [103.83, 155.56, 207.65], cutoff: 900, gain: 0.26 },
-  ending: { chord: [130.81, 196, 261.63, 392], cutoff: 1400, gain: 0.22 },
+  intro: { chord: [196.0, 246.94, 293.66, 392.0], cutoff: 1200, gain: 0.12 },
+  dialogue: { chord: [174.61, 220.0, 261.63, 349.23], cutoff: 1400, gain: 0.13 },
+  explore: { chord: [196.0, 246.94, 293.66, 392.0, 493.88], cutoff: 1600, gain: 0.12 },
+  choice: { chord: [220.0, 261.63, 329.63, 440.0], cutoff: 1500, gain: 0.14 },
+  ending: { chord: [261.63, 329.63, 392.0, 523.25], cutoff: 1800, gain: 0.13 },
 };
 
 export class Ambience {
