@@ -602,6 +602,7 @@ function DialogueBox({
   }, [auto, typing, onAdvance]);
 
   const handleClick = useCallback(() => {
+    console.log("handleClick", typing, doneRef.current);
     if (typing) {
       setShown(node.text.length);
       return;
