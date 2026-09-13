@@ -93,9 +93,19 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
   useEffect(() => {
     if (phase !== "transition") return;
-    const timer = window.setTimeout(() => setPhase("intro"), 1300);
+    // 第一次接入时多停留一会儿，让向导露个脸
+    const timer = window.setTimeout(
+      () => {
+        if (showMascot) {
+          window.localStorage.setItem(MASCOT_SEEN_KEY, "1");
+          setShowMascot(false);
+        }
+        setPhase("intro");
+      },
+      showMascot ? 2600 : 1300,
+    );
     return () => window.clearTimeout(timer);
-  }, [phase, activeId]);
+  }, [phase, activeId, showMascot]);
 
   const activeEnding: Ending | null = (choice ? story.endings[choice] : null) ?? null;
   const activeNodes: StoryNode[] = activeEnding ? activeEnding.nodes : story.nodes;
