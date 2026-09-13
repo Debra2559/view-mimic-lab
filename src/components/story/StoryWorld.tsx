@@ -64,6 +64,8 @@ const INTERACTION_ICONS = {
   note: StickyNote,
 } as const;
 
+const MASCOT_SEEN_KEY = "portal-mascot-seen";
+
 export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () => void }) {
   const [activeId, setActiveId] = useState(storyId);
   const [phase, setPhase] = useState<Phase>("transition");
@@ -77,7 +79,16 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [touched, setTouched] = useState<string[]>([]);
   const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
   const [exploreDone, setExploreDone] = useState(false);
+  const [showMascot, setShowMascot] = useState(false);
   const ambienceRef = useRef<Ambience | null>(null);
+
+  /** IP 向导只在用户第一次进入互动世界时出现 */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.localStorage.getItem(MASCOT_SEEN_KEY) !== "1") {
+      setShowMascot(true);
+    }
+  }, []);
 
 
   const story: Story = useMemo(() => getStory(activeId), [activeId]);
