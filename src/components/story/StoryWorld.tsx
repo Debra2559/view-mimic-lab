@@ -230,7 +230,22 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
       {phase === "transition" && (
         <div className="transition-zoom absolute inset-0 grid place-items-center bg-background">
-          <p className="text-[17px] font-medium tracking-[0.3em] text-muted-foreground">世界线接入中</p>
+          <div className="flex flex-col items-center gap-5">
+            {/* IP 向导：第一次进入时出来接引 */}
+            {showMascot ? (
+              <img
+                src={greetingAsset.url}
+                alt="穿越向导"
+                width={120}
+                height={120}
+                className="size-28 animate-bounce object-contain drop-shadow-[0_8px_24px_oklch(0.1_0.02_260/50%)]"
+              />
+            ) : null}
+            <p className="text-[17px] font-medium tracking-[0.3em] text-muted-foreground">世界线接入中</p>
+            {showMascot && (
+              <p className="text-[13px] text-muted-foreground/80">嗨，我是你的穿越向导，正在为你打开通道……</p>
+            )}
+          </div>
         </div>
       )}
 
