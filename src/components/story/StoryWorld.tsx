@@ -46,9 +46,6 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
   const [shareOpen, setShareOpen] = useState(false);
   const [hubOpen, setHubOpen] = useState(false);
   const [unlocked, setUnlocked] = useState<string[]>([]);
-  const [touched, setTouched] = useState<string[]>([]);
-  const [activeInteraction, setActiveInteraction] = useState<Interaction | null>(null);
-  const [exploreDone, setExploreDone] = useState(false);
   const [showMascot, setShowMascot] = useState(false);
   const ambienceRef = useRef<Ambience | null>(null);
 
