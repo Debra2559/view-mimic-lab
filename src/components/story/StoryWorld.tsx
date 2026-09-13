@@ -119,19 +119,9 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     ? 1
     : Math.min((nodeIndex + (phase === "choice" ? 1 : 0) + 1) / branchTotal, 1);
 
-  const interactions = story.interactions ?? [];
-  const touchedCount = interactions.filter((item) => touched.includes(item.id)).length;
-
-  const resetScene = () => {
-    setTouched([]);
-    setActiveInteraction(null);
-    setExploreDone(false);
-  };
-
   const restart = () => {
     setChoice(null);
     setNodeIndex(0);
-    resetScene();
     setPhase("intro");
   };
 
