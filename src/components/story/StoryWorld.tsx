@@ -446,8 +446,10 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
 
 
       {phase === "ending" && activeEnding && (
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center overflow-y-auto bg-gradient-to-b from-story-night/75 via-story-night/85 to-story-night px-8 py-10 text-center backdrop-blur-[2px]">
-          <div className="ending-pop flex flex-col items-center">
+        /* 不要用 justify-center + overflow-y-auto：内容高于容器时顶部会被裁掉且滚不上去。
+           改用「子元素 my-auto」——有空间时垂直居中，空间不够时可完整滚动。 */
+        <div className="absolute inset-0 z-30 flex flex-col items-center overflow-y-auto bg-gradient-to-b from-story-night/75 via-story-night/85 to-story-night px-8 py-10 text-center backdrop-blur-[2px]">
+          <div className="ending-pop my-auto flex flex-col items-center">
             <p className="flex items-center gap-1.5 text-[13px] tracking-[0.4em] text-story-glow">
               <Sparkles className="size-3.5" />
               {activeEnding.next ? `第 ${depth} 幕` : "终局"}

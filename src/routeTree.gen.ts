@@ -12,8 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MeRouteImport } from './routes/me'
 import { Route as AnswerIdRouteImport } from './routes/answer.$id'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as WorldStoryIdRouteImport } from './routes/world.$storyId'
 import { Route as ApiZhihuCallbackRouteImport } from './routes/api.zhihu.callback'
+import { Route as ApiZhihuDebugRouteImport } from './routes/api.zhihu.debug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -30,6 +32,11 @@ const AnswerIdRoute = AnswerIdRouteImport.update({
   path: '/answer/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorldStoryIdRoute = WorldStoryIdRouteImport.update({
   id: '/world/$storyId',
   path: '/world/$storyId',
@@ -40,50 +47,78 @@ const ApiZhihuCallbackRoute = ApiZhihuCallbackRouteImport.update({
   path: '/api/zhihu/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiZhihuDebugRoute = ApiZhihuDebugRouteImport.update({
+  id: '/api/zhihu/debug',
+  path: '/api/zhihu/debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/me': typeof MeRoute
   '/answer/$id': typeof AnswerIdRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/world/$storyId': typeof WorldStoryIdRoute
   '/api/zhihu/callback': typeof ApiZhihuCallbackRoute
+  '/api/zhihu/debug': typeof ApiZhihuDebugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/me': typeof MeRoute
   '/answer/$id': typeof AnswerIdRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/world/$storyId': typeof WorldStoryIdRoute
   '/api/zhihu/callback': typeof ApiZhihuCallbackRoute
+  '/api/zhihu/debug': typeof ApiZhihuDebugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/me': typeof MeRoute
   '/answer/$id': typeof AnswerIdRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/world/$storyId': typeof WorldStoryIdRoute
   '/api/zhihu/callback': typeof ApiZhihuCallbackRoute
+  '/api/zhihu/debug': typeof ApiZhihuDebugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/me' | '/answer/$id' | '/world/$storyId' | '/api/zhihu/callback'
+    | '/'
+    | '/me'
+    | '/answer/$id'
+    | '/auth/callback'
+    | '/world/$storyId'
+    | '/api/zhihu/callback'
+    | '/api/zhihu/debug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/me' | '/answer/$id' | '/world/$storyId' | '/api/zhihu/callback'
+  to:
+    | '/'
+    | '/me'
+    | '/answer/$id'
+    | '/auth/callback'
+    | '/world/$storyId'
+    | '/api/zhihu/callback'
+    | '/api/zhihu/debug'
   id:
     | '__root__'
     | '/'
     | '/me'
     | '/answer/$id'
+    | '/auth/callback'
     | '/world/$storyId'
     | '/api/zhihu/callback'
+    | '/api/zhihu/debug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   MeRoute: typeof MeRoute
   AnswerIdRoute: typeof AnswerIdRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   WorldStoryIdRoute: typeof WorldStoryIdRoute
   ApiZhihuCallbackRoute: typeof ApiZhihuCallbackRoute
+  ApiZhihuDebugRoute: typeof ApiZhihuDebugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -109,6 +144,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnswerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/world/$storyId': {
       id: '/world/$storyId'
       path: '/world/$storyId'
@@ -123,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiZhihuCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/zhihu/debug': {
+      id: '/api/zhihu/debug'
+      path: '/api/zhihu/debug'
+      fullPath: '/api/zhihu/debug'
+      preLoaderRoute: typeof ApiZhihuDebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -130,8 +179,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   MeRoute: MeRoute,
   AnswerIdRoute: AnswerIdRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   WorldStoryIdRoute: WorldStoryIdRoute,
   ApiZhihuCallbackRoute: ApiZhihuCallbackRoute,
+  ApiZhihuDebugRoute: ApiZhihuDebugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

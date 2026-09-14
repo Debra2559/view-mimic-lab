@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { ZhihuAvatar } from "@/components/story/ZhihuAvatar";
+import { clearZhihuProfileCache } from "@/components/story/LoginGate";
 import {
   zhihuAuthState,
   zhihuContents,
@@ -83,6 +85,8 @@ function MePage() {
   const [followeesPaging, setFolloweesPaging] = useState<PagingState | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  /** 服务端数据通道还没就绪（属运维配置问题，不给用户看技术细节） */
+  const [dataUnavailable, setDataUnavailable] = useState(false);
   const [loginHint, setLoginHint] = useState("");
 
   // 登录态
@@ -104,7 +108,12 @@ function MePage() {
         totals: page.paging.Totals,
       });
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "读取创作失败");
+      const msg = e instanceof Error ? e.message : "";
+      if (msg.includes("ZHIHU_SERVER_NOT_READY") || msg.includes("Access Secret")) {
+        setDataUnavailable(true);
+      } else {
+        setError(msg || "读取创作失败");
+      }
     } finally {
       setLoading(false);
     }
@@ -122,7 +131,12 @@ function MePage() {
         totals: page.paging.Totals,
       });
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "读取关注失败");
+      const msg = e instanceof Error ? e.message : "";
+      if (msg.includes("ZHIHU_SERVER_NOT_READY") || msg.includes("Access Secret")) {
+        setDataUnavailable(true);
+      } else {
+        setError(msg || "读取关注失败");
+      }
     } finally {
       setLoading(false);
     }
@@ -154,6 +168,7 @@ function MePage() {
 
   const doLogout = async () => {
     await zhihuLogout();
+    clearZhihuProfileCache();
     setContents([]);
     setFollowees([]);
     setContentsPaging(null);
@@ -193,31 +208,67 @@ function MePage() {
       {/* 用户信息 */}
       <header className="border-b border-border px-5 py-5">
         <div className="flex items-center gap-3">
-          {profile?.avatar ? (
-            <img src={profile.avatar} alt="" className="size-14 rounded-full object-cover" />
-          ) : (
-            <span className="grid size-14 place-items-center rounded-full bg-kanshan-sky text-kanshan-blue">
-              <UserRound className="size-7" />
-            </span>
-          )}
+          <ZhihuAvatar
+            src={profile?.avatar}
+            className="size-14 rounded-full object-cover"
+            fallbackClassName="grid size-14 place-items-center rounded-full bg-kanshan-sky text-kanshan-blue"
+            iconClassName="size-7"
+          />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[18px] font-bold">
-              {profile?.name ?? (state.authorized ? "已授权的知乎用户" : "未登录")}
+              {profile?.name ?? (state.authorized ? "你的知乎账号" : "未登录")}
             </p>
             <p className="mt-0.5 line-clamp-2 text-[12.5px] text-muted-foreground">
               {profile?.headline ??
-                (state.authorized
-                  ? "知乎接口未返回昵称/头像，所以这里只显示授权状态"
-                  : "用知乎账号登录后，可读取你的创作与关注（公开范围）")}
+                (state.authorized ? "授权成功" : "用知乎账号登录后，可读取你的创作与关注（公开范围）")}
             </p>
           </div>
         </div>
+
+        {/* 资料接口诊断：把"卡在哪一步"如实摊开，便于修，而不是静默失败 */}
+        {state.authorized && !profile && (state.profileAttempts?.length ?? 0) > 0 && (
+          <div className="mt-3 rounded-xl border border-dashed border-border px-3 py-2.5 text-left text-[11.5px] leading-relaxed text-muted-foreground">
+            <p className="mb-1 font-medium text-foreground/75">昵称 / 头像没取到，每次尝试的结果：</p>
+            {state.profileAttempts?.map((attempt, index) => (
+              <div key={index} className="mb-1.5 last:mb-0">
+                <p className="break-words">
+                  · {attempt.variant} → HTTP {attempt.status}
+                  {attempt.code ? ` · code ${attempt.code}` : ""}
+                  {attempt.message ? ` · ${attempt.message}` : ""}
+                </p>
+                {attempt.rawKeys?.length ? (
+                  <p className="break-words opacity-90">· 字段: {attempt.rawKeys.join(", ")}</p>
+                ) : null}
+                {attempt.samples?.length ? (
+                  <p className="break-words opacity-90">· 取值: {attempt.samples.join("；")}</p>
+                ) : null}
+              </div>
+            ))}
+            <p className="mt-1 opacity-70">（这段是排查信息，接通后会隐藏）</p>
+          </div>
+        )}
+
+        {/* 数据即身份：拿不到昵称头像，就用真实数量说明"你是谁" */}
+        {state.authorized && (contentsPaging || followeesPaging) && (
+          <div className="mt-4 flex items-center gap-4 text-[12.5px] text-muted-foreground">
+            {contentsPaging && (
+              <span>
+                创作 <strong className="text-foreground">{contentsPaging.totals}</strong> 篇
+              </span>
+            )}
+            {followeesPaging && (
+              <span>
+                关注 <strong className="text-foreground">{followeesPaging.totals}</strong> 人
+              </span>
+            )}
+          </div>
+        )}
 
         {/* 状态与说明：如实标注，不假装 */}
         <div className="mt-4 space-y-2 text-[12px]">
           {state.authorized && (
             <p className="inline-flex items-center gap-1.5 rounded-full bg-kanshan-sky/50 px-3 py-1 text-kanshan-blue">
-              ✅ 已用知乎账号登录
+              ✅ 已用知乎账号登录（会话已建立）
               {state.expiresAt ? ` · 令牌有效至 ${new Date(state.expiresAt).toLocaleString("zh-CN")}` : ""}
             </p>
           )}
@@ -227,18 +278,18 @@ function MePage() {
               未登录：当前展示的是本应用凭据所属账号的公开数据（演示模式）
             </p>
           )}
-          {!credentials.configured && (
+          {!credentials.loginReady && (
             <p className="inline-flex items-start gap-1.5 rounded-xl border border-dashed border-border px-3 py-2 text-muted-foreground">
               <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
               <span>
-                凭证未配置完整，缺少：{credentials.missing.join(" / ")}。
+                登录还差：{credentials.missing.filter((m) => m !== "accessSecret").join(" / ") || "appId / appKey / redirectUri"}。
                 <br />
-                在项目根目录建一个 <code className="rounded bg-muted px-1">zhihu.credentials.local.json</code>
-                （不入 git），或设置同名环境变量；OAuth 的 appId / appKey 需要在黑客松活动页登记项目后获取。
+                配置写在项目根目录的 <code className="rounded bg-muted px-1">zhihu.credentials.local.json</code>
+                （不入 git）或同名环境变量；OAuth 的 appId / appKey 来自黑客松活动页。
               </span>
             </p>
           )}
-          {!state.authorized && credentials.configured && (
+          {!state.authorized && credentials.loginReady && (
             <button
               type="button"
               onClick={() => void startLogin()}
@@ -387,9 +438,17 @@ function MePage() {
         </div>
       )}
 
-      {!canRead && (
-        <p className="px-6 py-10 text-center text-[13px] text-muted-foreground">
-          配置好凭证（或在活动页登记 OAuth 应用）后，这里会显示你的创作与关注列表。
+      {dataUnavailable && (
+        <p className="px-8 py-10 text-center text-[13px] leading-relaxed text-muted-foreground">
+          已登录成功 ✓
+          <br />
+          你的创作与关注列表还在接入中，稍后再回来看看。
+        </p>
+      )}
+
+      {!canRead && !dataUnavailable && (
+        <p className="px-8 py-10 text-center text-[13px] leading-relaxed text-muted-foreground">
+          登录后这里会显示你的创作与关注。
         </p>
       )}
     </main>

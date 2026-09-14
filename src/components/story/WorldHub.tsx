@@ -239,7 +239,7 @@ export function WorldHub({
         </p>
       )}
 
-      <div className="relative grid grid-cols-2 gap-3.5 px-4 pb-14 pt-4 [perspective:800px]">
+      <div className="relative grid grid-cols-1 gap-3.5 px-4 pb-14 pt-4 min-[380px]:grid-cols-2 [perspective:800px]">
         {filtered.map((world, index) => {
           const Icon = ICONS[world.card.icon];
           const rank = getHeatRank(world.id) || null;
@@ -257,10 +257,12 @@ export function WorldHub({
                 type="button"
                 onClick={() => handlePick(world)}
                 style={{ animationDelay: `${index * 0.07}s` }}
-                className="hub-card group relative block aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-3xl border border-kanshan-line bg-white text-left shadow-sm transition-shadow duration-300 hover:shadow-lg"
+                className="hub-card group relative flex w-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-kanshan-line bg-white text-left shadow-sm transition-shadow duration-300 hover:shadow-lg min-[380px]:aspect-[3/4]"
               >
-                {/* 上半：封面图区 */}
-                <span className="relative block h-1/2 w-full overflow-hidden">
+                {/* 上半：封面图区（显式 flex 子项：早前 button 的默认 align-items:center
+                    会把唯一在流内的子元素垂直居中，导致图片上方空一块、且与下方信息区重叠）
+                    单列（<380px）时封面用自己的 16:10 比例，卡片高度随内容收缩，避免中段留大空白 */}
+                <span className="relative block aspect-[16/10] w-full shrink-0 overflow-hidden min-[380px]:aspect-auto min-[380px]:h-[44%]">
                   {world.card.coverImage ? (
                     <img
                       src={world.card.coverImage}
@@ -322,25 +324,27 @@ export function WorldHub({
                   </span>
                 </span>
 
-                {/* 下半：白色信息区（知乎图文卡片风） */}
-                <span className="absolute inset-x-0 bottom-0 flex h-1/2 flex-col gap-1.5 bg-white p-3.5">
-                  <span className="line-clamp-2 text-[15px] font-semibold leading-[1.45] text-hub-ink">
+                {/* 下半：白色信息区（知乎图文卡片风）
+                    用 flex-1 + min-h-0 吃掉剩余高度：既不与封面重叠，也不会把文字压扁。
+                    每个文字块都是 shrink-0，极端窄屏只会裁切、绝不再互相重叠。 */}
+                <span className="flex min-h-0 flex-1 flex-col gap-1 bg-white p-2.5 min-[420px]:gap-1.5 min-[420px]:p-3.5">
+                  <span className="line-clamp-2 shrink-0 text-[13.5px] font-semibold leading-[1.4] text-hub-ink min-[420px]:text-[15px] min-[420px]:leading-[1.45]">
                     {world.card.question}
                   </span>
-                  <span className="line-clamp-2 text-[12px] leading-[1.55] text-hub-ink/60">
+                  <span className="line-clamp-1 shrink-0 text-[11.5px] leading-[1.45] text-hub-ink/60 min-[420px]:line-clamp-2 min-[420px]:text-[12px] min-[420px]:leading-[1.55]">
                     {world.card.hook}
                   </span>
-                  <span className="mt-auto flex flex-wrap gap-1">
+                  <span className="mt-auto flex shrink-0 flex-nowrap gap-1 overflow-hidden">
                     {world.card.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-kanshan-sky px-2 py-0.5 text-[10.5px] text-kanshan-deep"
+                        className="shrink-0 whitespace-nowrap rounded-full bg-kanshan-sky px-2 py-0.5 text-[10.5px] text-kanshan-deep"
                       >
                         {tag}
                       </span>
                     ))}
                   </span>
-                  <span className="mt-0.5 flex items-center justify-between gap-1.5 text-[11px] text-hub-ink/55">
+                  <span className="mt-0.5 flex shrink-0 items-center justify-between gap-1.5 text-[11px] text-hub-ink/55">
                     <span className="flex min-w-0 items-center gap-1">
                       {/* 每条世界线名下有自己的一只看山——它是这条线的画师 */}
                       <img

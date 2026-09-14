@@ -30,8 +30,21 @@ export interface ZhihuSession {
   token: string;
   /** 到期时间（毫秒时间戳） */
   expiresAt: number;
-  /** 交换 token 时若响应里带了用户信息就一并存下（官方文档未定义该 endpoint，拿不到就是 undefined） */
+  /** 授权后调用 /user 取到的昵称/头像（拿不到就是 undefined） */
   profile?: ZhihuProfile | undefined;
+  /** 资料诊断的版本号：诊断结构升级后，老会话会自动重跑一次（见 zhihu.functions） */
+  profileDiagVersion?: number | undefined;
+  /** 取资料失败时的每次尝试记录（用于如实告诉用户卡在哪一步，不含任何密钥） */
+  profileAttempts?:
+    | Array<{
+        variant: string;
+        status: number;
+        code?: number;
+        message?: string;
+        rawKeys?: string[];
+        samples?: string[];
+      }>
+    | undefined;
 }
 
 function encode(session: ZhihuSession): string {

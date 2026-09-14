@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { StoryWorld } from "@/components/story/StoryWorld";
+import { LoginPromptSheet, useZhihuAuth } from "@/components/story/LoginGate";
 import { QuoteCardSheet } from "@/components/story/QuoteCardSheet";
 import { Button } from "@/components/ui/button";
 import { getContributors, getPost, type SideAnswer } from "@/lib/feed";
@@ -86,6 +87,17 @@ function AnswerPage() {
     left: number;
   } | null>(null);
   const [quoteOpen, setQuoteOpen] = useState(false);
+
+  // 硬门禁：剧场（裂缝入口）与金句卡都需要先登录知乎账号
+  const gate = useZhihuAuth();
+  const [gateFeature, setGateFeature] = useState("");
+  const requireLogin = (feature: string, run: () => void) => {
+    if (gate.authorized) {
+      run();
+      return;
+    }
+    setGateFeature(feature);
+  };
 
   // 划中正文里的句子 → 浮出「生成金句卡」
   useEffect(() => {
@@ -196,7 +208,7 @@ function AnswerPage() {
         {story && (
           <button
             type="button"
-            onClick={() => setStoryId(post.storyId!)}
+            onClick={() => requireLogin("剧场", () => setStoryId(post.storyId!))}
             className="portal-chip group relative mt-5 flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-kanshan-line bg-gradient-to-r from-kanshan-sky/70 to-white p-2 pr-3 text-left backdrop-blur-sm transition-all duration-200 hover:border-kanshan-blue/40 hover:shadow-md"
             aria-label={`${story.portal.title}，${story.portal.action}`}
           >
@@ -295,7 +307,7 @@ function AnswerPage() {
           {story && (
             <Button
               variant="outline"
-              onClick={() => setStoryId(post.storyId!)}
+              onClick={() => requireLogin("剧场", () => setStoryId(post.storyId!))}
               className="mt-6 h-12 w-full rounded-full border-primary/40 text-[16px] font-semibold text-primary hover:text-primary"
             >
               <Sparkles className="size-[18px]" />
@@ -358,12 +370,16 @@ function AnswerPage() {
 
       {storyId && <StoryWorld storyId={storyId} onExit={() => setStoryId(null)} />}
 
+      {gateFeature && (
+        <LoginPromptSheet feature={gateFeature} open onClose={() => setGateFeature("")} />
+      )}
+
       {/* 划线金句：在正文里划中一句话，浮出入口 */}
       {selection && !quoteOpen && (
         <button
           type="button"
           onMouseDown={(event) => event.preventDefault()}
-          onClick={() => setQuoteOpen(true)}
+          onClick={() => requireLogin("金句卡", () => setQuoteOpen(true))}
           style={{ top: selection.top, left: selection.left }}
           className="fixed z-40 inline-flex -translate-x-1/2 cursor-pointer items-center gap-1.5 rounded-full bg-kanshan-blue px-3.5 py-2 text-[13px] font-semibold text-white shadow-lg shadow-kanshan-blue/30 transition-transform hover:scale-105"
         >

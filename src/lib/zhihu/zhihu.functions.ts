@@ -14,31 +14,78 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+/** 诊断结构版本：改了取值方式就 +1，老会话会自动重跑一次 */
+const PROFILE_DIAG_VERSION = 2;
+
 export interface ZhihuUserSummary {
   /** 是否已用知乎账号登录（有 OAuth token） */
   authorized: boolean;
   /** 未登录但在演示模式下读取凭据所属账号的数据 */
   demoMode: boolean;
   profile: { name?: string; avatar?: string; headline?: string; urlToken?: string } | null;
+  /** 取资料失败时的尝试记录（用于如实说明卡在哪一步） */
+  profileAttempts:
+    | Array<{
+        variant: string;
+        status: number;
+        code?: number;
+        message?: string;
+        rawKeys?: string[];
+        samples?: string[];
+      }>
+    | null;
   expiresAt: number | null;
   /** 凭证配置状况（只含布尔与字段名，绝不含值） */
-  credentials: { configured: boolean; source: string; missing: string[] };
+  credentials: {
+    /** 四项齐全（含 Access Secret，可读数据） */
+    configured: boolean;
+    /** 登录可用：appId + appKey + redirectUri 齐了即可，不需要 Access Secret */
+    loginReady: boolean;
+    /** 服务端是否已具备读取用户数据的条件（运维配置，不向用户暴露细节） */
+    dataReady: boolean;
+    source: string;
+    missing: string[];
+  };
 }
 
 /** 登录态 + 凭证配置状况（不含任何密钥） */
-export const zhihuAuthState = createServerFn({ method: "GET" }).handler(async (): Promise<ZhihuUserSummary> => {
+// 用 POST 而不是 GET：GET 的 RPC 响应可能被浏览器缓存，会出现"代码改了页面还是旧结果"
+export const zhihuAuthState = createServerFn({ method: "POST" }).handler(async (): Promise<ZhihuUserSummary> => {
   const { zhihuCredentialStatus } = await import("@/lib/zhihu/credentials.server");
   const { readSession } = await import("@/lib/zhihu/oauth.server");
 
   const credentials = zhihuCredentialStatus();
-  const session = readSession();
+  let session = readSession();
+
+  // 存量会话可能没存过资料，或诊断结构是旧版本 —— 这两种情况补抓一次并写回。
+  // 用版本号而不是"只试一次"，既能避免每次开页面都请求知乎，又能在诊断升级后自动重跑。
+  if (session && !session.profile && (session.profileDiagVersion ?? 0) < PROFILE_DIAG_VERSION) {
+    try {
+      const { fetchZhihuProfile } = await import("@/lib/zhihu/api.server");
+      const { writeSession } = await import("@/lib/zhihu/oauth.server");
+      const result = await fetchZhihuProfile(session.token);
+      session = {
+        ...session,
+        ...(result.profile ? { profile: result.profile } : {}),
+        ...(result.attempts.length ? { profileAttempts: result.attempts } : {}),
+        profileDiagVersion: PROFILE_DIAG_VERSION,
+      };
+      writeSession(session);
+    } catch {
+      /* 忽略：拿不到就保持"已授权但无资料"的状态 */
+    }
+  }
+
   return {
     authorized: Boolean(session),
     demoMode: !session && credentials.configured,
     profile: session?.profile ?? null,
+    profileAttempts: session?.profileAttempts ?? null,
     expiresAt: session?.expiresAt ?? null,
     credentials: {
       configured: credentials.configured,
+      loginReady: credentials.loginReady,
+      dataReady: credentials.dataReady,
       source: credentials.source,
       missing: credentials.missing,
     },
@@ -46,7 +93,7 @@ export const zhihuAuthState = createServerFn({ method: "GET" }).handler(async ()
 });
 
 /** 生成授权地址；前端拿到后直接跳转 */
-export const zhihuLoginUrl = createServerFn({ method: "GET" }).handler(async () => {
+export const zhihuLoginUrl = createServerFn({ method: "POST" }).handler(async () => {
   const { zhihuCredentialStatus } = await import("@/lib/zhihu/credentials.server");
   const { buildAuthorizeUrl, resolveRedirectUri } = await import("@/lib/zhihu/oauth.server");
 
@@ -94,6 +141,7 @@ export const zhihuCompleteLogin = createServerFn({ method: "POST" })
 
     const { getZhihuCredentials } = await import("@/lib/zhihu/credentials.server");
     const { exchangeCode, resolveRedirectUri, writeSession } = await import("@/lib/zhihu/oauth.server");
+    const { fetchZhihuProfile } = await import("@/lib/zhihu/api.server");
 
     const credentials = getZhihuCredentials();
     if (!credentials.appId || !credentials.appKey) {
@@ -103,18 +151,59 @@ export const zhihuCompleteLogin = createServerFn({ method: "POST" })
       };
     }
 
+    const redirectUri = resolveRedirectUri();
     try {
-      const session = await exchangeCode(data.code, resolveRedirectUri());
-      writeSession(session);
+      const session = await exchangeCode(data.code, redirectUri);
+      // 授权后立刻取昵称/头像：拿不到也不影响登录，但会把失败原因记下来
+      let profile = session.profile ?? undefined;
+      let profileAttempts = session.profileAttempts;
+      try {
+        const result = await fetchZhihuProfile(session.token);
+        if (result.profile) profile = result.profile;
+        profileAttempts = result.attempts;
+      } catch {
+        /* 资料接口失败不影响授权本身 */
+      }
+      writeSession({
+        ...session,
+        ...(profile ? { profile } : {}),
+        ...(profileAttempts ? { profileAttempts } : {}),
+      });
       return { ok: true, message: "" };
     } catch (err) {
-      return { ok: false, message: err instanceof Error ? err.message : "换取 token 失败" };
+      const detail = err instanceof Error ? err.message : "换取 token 失败";
+      // 回显本次使用的回调地址：回调地址必须与活动页登记值逐字符一致，否则换 token 会被拒
+      return { ok: false, message: `${detail}\n\n本次使用的回调地址：${redirectUri}` };
     }
   });
 
 const PageInput = z.object({
   offset: z.number().int().min(0).default(0),
   limit: z.number().int().min(1).max(50).default(20),
+});
+
+/**
+ * 一次性排查用：把知乎 /user 的原始返回**脱敏**后打出来。
+ * 只保留公开字段（fullname / avatar_path / headline / url 等）与字段名清单，
+ * phone / phone_no / email / uid / hash_id 这类隐私字段会被剔除，不下发。
+ */
+export const zhihuProfileDebug = createServerFn({ method: "POST" }).handler(async () => {
+  const { readSession } = await import("@/lib/zhihu/oauth.server");
+  const { fetchZhihuProfile } = await import("@/lib/zhihu/api.server");
+  const session = readSession();
+  if (!session) return { ok: false as const, reason: "未登录：请先完成知乎授权", raw: null };
+  const { accessSecret } = await import("@/lib/zhihu/credentials.server").then((m) => ({
+    accessSecret: m.getZhihuCredentials().accessSecret,
+  }));
+  const result = await fetchZhihuProfile(session.token);
+  return {
+    ok: true as const,
+    reason: "",
+    accessSecretConfigured: Boolean(accessSecret),
+    parsed: result.profile,
+    attempts: result.attempts,
+    raw: result.rawSanitized ?? null,
+  };
 });
 
 /** 我的创作 */

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "projectName": "看山画境",
+  "projectSlug": "kanshan-huajing",
+  "oauth": {
+    "enabled": true,
+    "appId": "680",
+    "redirectUri": "https://kanshan-huajing-65152.app.workbuddy.host/api/zhihu/callback",
+    "credentialService": "zhihu-hackathon:kanshan-huajing:e2736a7c98",
+    "credentialAccount": "oauth-app-key",
+    "callbackPath": "/api/zhihu/callback"
+  },
+  "host": "127.0.0.1",
+  "port": 8080
+}

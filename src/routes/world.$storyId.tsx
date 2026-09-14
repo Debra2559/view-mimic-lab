@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 import { StoryWorld } from "@/components/story/StoryWorld";
+import { LoginGateInline } from "@/components/story/LoginGate";
 import { getPost } from "@/lib/feed";
 
 /**
@@ -39,5 +40,10 @@ function WorldPage() {
     }
   };
 
-  return <StoryWorld storyId={storyId} onExit={exit} />;
+  // 硬门禁：世界线（剧场）需要先登录知乎账号
+  return (
+    <LoginGateInline feature="这条世界线">
+      <StoryWorld storyId={storyId} onExit={exit} />
+    </LoginGateInline>
+  );
 }

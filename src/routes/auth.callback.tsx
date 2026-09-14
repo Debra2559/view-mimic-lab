@@ -4,7 +4,7 @@ import { AlertTriangle, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { zhihuCompleteLogin } from "@/lib/zhihu/zhihu.functions";
 
 /**
- * 知乎 OAuth 回调地址。
+ * 知乎 OAuth 回调地址（别名路径 /auth/callback，与 /api/zhihu/callback 同一实现）。
  *
  * 必须在黑客松活动页把同一个地址登记为回调地址（`redirect_uri` 必须与登记值完全一致）。
  * 官方实测回调参数是 `authorization_code`（这里同时兼容 `code`），且不保证带 `state`。
@@ -13,7 +13,7 @@ import { zhihuCompleteLogin } from "@/lib/zhihu/zhihu.functions";
  * 生产构建会被 import-protection 判定为"客户端导入了服务端模块"而直接失败。
  * 换 token、写 cookie 都放在服务端函数 `zhihuCompleteLogin` 里（客户端拿到的只是 RPC 桩）。
  */
-export const Route = createFileRoute("/api/zhihu/callback")({
+export const Route = createFileRoute("/auth/callback")({
   loader: async ({ location }) => {
     const params = new URLSearchParams(location.searchStr ? String(location.searchStr) : "");
     const code = params.get("authorization_code") ?? params.get("code") ?? "";

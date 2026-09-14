@@ -28,6 +28,9 @@ import { ArticleCard } from "@/components/story/ArticleCard";
 import { IMPORTED_ARTICLES, type ImportedArticle } from "@/lib/articles";
 import { MASCOT_STILL } from "@/lib/story/mascot";
 import { WorldHub } from "@/components/story/WorldHub";
+import { LoginGateOverlay, useZhihuAuth } from "@/components/story/LoginGate";
+import { ZhihuAvatar } from "@/components/story/ZhihuAvatar";
+import { zhihuAuthState } from "@/lib/zhihu/zhihu.functions";
 
 
 export const Route = createFileRoute("/")({
@@ -44,6 +47,8 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  // 在服务端就把登录态取好交给首屏：否则 SSR HTML 里先是默认头像，水合后才换成真头像（会闪）
+  loader: async () => ({ zhihu: await zhihuAuthState() }),
   component: FeedPage,
 });
 
@@ -58,7 +63,10 @@ function FeedPage() {
   const [dismissed, setDismissed] = useState<string[]>([]);
   /** 首页直接打开「世界线大厅」：否则金句剧场这类没有推荐流帖子的内容无处可找 */
   const [hubOpen, setHubOpen] = useState(false);
+  const [hubGateOpen, setHubGateOpen] = useState(false);
   const navigate = useNavigate();
+  // 知乎登录态：首屏用 loader（服务端）给的值，客户端再刷新一次
+  const zhihu = useZhihuAuth(Route.useLoaderData().zhihu);
 
   // 热度排序 + 每次进首页轮换一位，热榜常看常新。
   // 轮换依赖 sessionStorage，挂载后再启用，避免服务端与客户端首屏不一致。
@@ -198,7 +206,15 @@ function FeedPage() {
         <TabItem label="首页" active>
           <House className="size-7 fill-foreground" strokeWidth={1.6} />
         </TabItem>
-        <TabItem label="看山画境" onClick={() => setHubOpen(true)}>
+        <TabItem
+          label="看山画境"
+          onClick={() => {
+            // 硬门禁：看山画境需要先登录知乎账号
+            void zhihuAuthState()
+              .then((s) => (s.authorized ? setHubOpen(true) : setHubGateOpen(true)))
+              .catch(() => setHubGateOpen(true));
+          }}
+        >
           <span className="grid size-7 place-items-center rounded-full bg-kanshan-sky">
             <img
               src={MASCOT_STILL.idle}
@@ -222,10 +238,28 @@ function FeedPage() {
         <TabItem label="消息" badge="99+">
           <MessageCircle className="size-7" strokeWidth={1.8} />
         </TabItem>
-        <TabItem label="我的">
-          <img src={authorAvatar} alt="我的头像" className="size-7 rounded-full object-cover" />
+        <TabItem label="我的" onClick={() => navigate({ to: "/me" })}>
+          <span className="relative">
+            <ZhihuAvatar
+              /* 已登录就只认知乎头像：拿不到时用图标占位，绝不回退成"默认头像照片"
+                 （回退成默认头像 = 用户看到的"闪回未认证头像"） */
+              src={zhihu.state?.profile?.avatar ?? (zhihu.authorized ? undefined : authorAvatar)}
+              alt="我的头像"
+              className="size-7 rounded-full object-cover"
+              fallbackClassName="grid size-7 place-items-center rounded-full bg-kanshan-sky text-kanshan-blue"
+              iconClassName="size-4"
+            />
+            {/* 已登录时给一个小蓝点，和未登录区分开 */}
+            {zhihu.authorized && (
+              <span className="absolute -bottom-0.5 -right-0.5 size-2.5 rounded-full border-2 border-background bg-[#0084ff]" />
+            )}
+          </span>
         </TabItem>
       </nav>
+
+      {hubGateOpen && (
+        <LoginGateOverlay feature="看山画境" onClose={() => setHubGateOpen(false)} />
+      )}
 
       {hubOpen && (
         <WorldHub

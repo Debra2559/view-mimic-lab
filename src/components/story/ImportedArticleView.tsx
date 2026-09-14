@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 
 import { QuoteCardSheet } from "@/components/story/QuoteCardSheet";
+import { LoginPromptSheet, useZhihuAuth } from "@/components/story/LoginGate";
 import type { ImportedArticle } from "@/lib/articles";
 import { buildFlashShareText, flashToQuote } from "@/lib/flash-card";
 import { FLASH_CARDS } from "@/lib/story/flash";
@@ -18,6 +19,10 @@ import { mascotFor } from "@/lib/story/mascot";
 export function ImportedArticleView({ article }: { article: ImportedArticle }) {
   const flash = FLASH_CARDS.find((card) => card.id === article.flashId);
   const [open, setOpen] = useState(false);
+
+  // 产品约定：金句卡需要先登录知乎账号
+  const gate = useZhihuAuth();
+  const [gateOpen, setGateOpen] = useState(false);
   const [highlight, setHighlight] = useState(false);
 
   // 扫码 / 分享链接回流：滚到金句段 → 高亮 → 自动弹出金句卡
@@ -99,7 +104,7 @@ export function ImportedArticleView({ article }: { article: ImportedArticle }) {
                 {isFlash && (
                   <button
                     type="button"
-                    onClick={() => setOpen(true)}
+                    onClick={() => (gate.authorized ? setOpen(true) : setGateOpen(true))}
                     className="ml-1 inline-flex items-center gap-1 rounded-full bg-kanshan-blue px-2 py-0.5 align-middle text-[11px] font-semibold text-white transition-transform hover:scale-105"
                   >
                     <Quote className="size-2.5" />
@@ -124,6 +129,8 @@ export function ImportedArticleView({ article }: { article: ImportedArticle }) {
           </a>
         </div>
       </div>
+
+      {gateOpen && <LoginPromptSheet feature="金句卡" open onClose={() => setGateOpen(false)} />}
 
       {open && flash && (
         <QuoteCardSheet
