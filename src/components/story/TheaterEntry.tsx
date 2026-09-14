@@ -15,7 +15,7 @@ import { mascotFor } from "@/lib/story/mascot";
  */
 export function TheaterEntry({ story, onEnter }: { story: Story; onEnter: (id: string) => void }) {
   return (
-    <li className="relative">
+    <div className="relative">
       <button
         type="button"
         onClick={() => onEnter(story.id)}
@@ -90,6 +90,6 @@ export function TheaterEntry({ story, onEnter }: { story: Story; onEnter: (id: s
           </span>
         </div>
       </button>
-    </li>
+    </div>
   );
 }

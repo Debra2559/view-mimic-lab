@@ -20,7 +20,7 @@ export function FlashCard({ card }: { card: FlashCardData }) {
   const searchUrl = `https://www.zhihu.com/search?type=content&q=${encodeURIComponent(card.question)}`;
 
   return (
-    <li id={`flashcard-${card.id}`} className="relative scroll-mt-24 transition-shadow duration-500">
+    <div id={`flashcard-${card.id}`} className="relative scroll-mt-24 transition-shadow duration-500">
       <div
         className="group relative flex min-h-[430px] flex-col overflow-hidden px-5 py-5"
         style={{ background: `linear-gradient(160deg, ${card.colors[0]}, ${card.colors[1]})` }}
@@ -108,6 +108,6 @@ export function FlashCard({ card }: { card: FlashCardData }) {
           onClose={() => setShareOpen(false)}
         />
       )}
-    </li>
+    </div>
   );
 }

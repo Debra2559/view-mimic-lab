@@ -24,10 +24,8 @@ import {
   heatScore,
   recordClick,
 } from "@/lib/heat";
-import { FLASH_CARDS, type FlashCardData } from "@/lib/story/flash";
-import { FlashCard } from "@/components/story/FlashCard";
-import { STORIES, type Story } from "@/lib/story";
-import { TheaterEntry } from "@/components/story/TheaterEntry";
+import { FlashCardCarousel } from "@/components/story/FlashCardCarousel";
+import { TheaterCarousel } from "@/components/story/TheaterCarousel";
 import { MASCOT_STILL } from "@/lib/story/mascot";
 import { WorldHub } from "@/components/story/WorldHub";
 
@@ -89,36 +87,24 @@ function FeedPage() {
   );
   const items = ranked.filter((item) => !dismissed.includes(item.id));
 
-  // 金句剧场（L2）：没有推荐流对应帖子，必须自己在信息流里露脸
-  const theaterStories = useMemo(
-    () => STORIES.filter((story) => story.chapterLabel.startsWith("金句剧场")),
-    [],
-  );
-
-  // 把回答、金句闪卡、金句剧场混排——
-  // 不是所有内容都有世界线，闪卡负责"一句话"，剧场负责"一次选择"。
+  // 闪卡与剧场各只在主页出现一次（轮播）：剧场插在第 2 条后，闪卡插在第 4 条后。
+  // 不是所有内容都有世界线——闪卡负责"一句话"，剧场负责"一次选择"。
   const mixed = useMemo(() => {
     const out: Array<
       | { type: "post"; item: FeedPost }
-      | { type: "flash"; card: FlashCardData }
-      | { type: "theater"; story: Story }
+      | { type: "theater-carousel" }
+      | { type: "flash-carousel" }
     > = [];
-    let flashIndex = 0;
-    let theaterIndex = 0;
     items.forEach((item, index) => {
       out.push({ type: "post", item });
-      // 第 2 条之后先露一次金句剧场，之后每 6 条再露一个
-      if ((index === 1 || (index + 1) % 6 === 0) && theaterStories[theaterIndex]) {
-        out.push({ type: "theater", story: theaterStories[theaterIndex]! });
-        theaterIndex += 1;
-      }
-      if ((index + 1) % 4 === 0 && flashIndex < FLASH_CARDS.length) {
-        out.push({ type: "flash", card: FLASH_CARDS[flashIndex]! });
-        flashIndex += 1;
-      }
+      if (index === 1) out.push({ type: "theater-carousel" });
+      if (index === 3) out.push({ type: "flash-carousel" });
     });
+    // 帖子太少时兜底：保证两个轮播总能出现
+    if (items.length < 2) out.push({ type: "theater-carousel" });
+    if (items.length < 4) out.push({ type: "flash-carousel" });
     return out;
-  }, [items, theaterStories]);
+  }, [items]);
 
 
   return (
@@ -193,14 +179,14 @@ function FeedPage() {
               hydrated={hydrated}
               onDismiss={() => setDismissed((ids) => [...ids, entry.item.id])}
             />
-          ) : entry.type === "flash" ? (
-            <FlashCard key={entry.card.id} card={entry.card} />
+          ) : entry.type === "theater-carousel" ? (
+            <li key="theater-carousel" className="pb-3">
+              <TheaterCarousel onEnter={(id) => void navigate({ to: "/world/$storyId", params: { storyId: id } })} />
+            </li>
           ) : (
-            <TheaterEntry
-              key={entry.story.id}
-              story={entry.story}
-              onEnter={(id) => void navigate({ to: "/world/$storyId", params: { storyId: id } })}
-            />
+            <li key="flash-carousel" className="pb-3">
+              <FlashCardCarousel />
+            </li>
           ),
         )}
       </ul>
