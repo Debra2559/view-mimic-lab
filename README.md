@@ -3,7 +3,6 @@
 > **看山引路，画境作答**  
 > 把知乎的问题和故事，画成一段可以走进去的互动影游。
 
-**在线 Demo**：https://view-mimic-lab.lovable.app/answer/rewind  
 **GitHub**：https://github.com/Debra2559/view-mimic-lab
 
 ---
@@ -152,10 +151,6 @@ bun run dev
 - AI 生成功能为技术演示，生成结果需人工审核后使用。
 
 ---
-
-## 团队与致谢
-
-本项目由 Lovable 辅助构建，感谢 Lovable 提供的可视化开发与快速迭代能力。
 
 ---
 
