@@ -34,12 +34,15 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
+/** 中文排版避头尾：这些字符不允许出现在行首（宁可让上一行略微超宽） */
+const NO_LINE_START = new Set([..."，。！？；：、」』）】〉》—…·"]);
+
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
   const lines: string[] = [];
   let line = "";
   for (const char of text) {
     const next = line + char;
-    if (ctx.measureText(next).width > maxWidth && line) {
+    if (ctx.measureText(next).width > maxWidth && line && !NO_LINE_START.has(char)) {
       lines.push(line);
       line = char;
     } else {
@@ -127,42 +130,72 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
     ctx.fillText(input.meta, pad, quoteEnd + 74 + sourceLines.length * 46 + 26);
   }
 
-  // 底部分隔
-  const ctaY = H - 220;
+  // ── 底部品牌区（Y=920 以下）：分隔线 → 品牌行 → 左看山 / 右二维码 ──
+  // 布局约束：品牌行占满整宽但绝不进入底部带；看山与二维码分列左右两端，
+  // 中间留空，任何两个元素都不重叠。
+  const dividerY = H - 280;
   ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.moveTo(pad, ctaY - 46);
-  ctx.lineTo(W - pad, ctaY - 46);
+  ctx.moveTo(pad, dividerY);
+  ctx.lineTo(W - pad, dividerY);
   ctx.stroke();
 
-  // 看山 + 署名
+  // 品牌行：看山画境 · slogan（一行排开，整行可用宽度 606px，约需 520px）
+  ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+  ctx.font = "700 26px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  ctx.fillText("看山画境", pad, dividerY + 46);
+  const brandWidth = ctx.measureText("看山画境").width;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+  ctx.font = "400 22px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  ctx.fillText("· 每一篇好回答，都是一幅能走进去的画", pad + brandWidth + 14, dividerY + 46);
+
+  // 看山：左下角大尺寸主角——保持原始宽高比（不再压扁）、轻微倾斜显萌、
+  // 背后一团柔光晕让它从氛围色里跳出来。
   try {
     const mascot = await loadImage(MASCOT_STILL.greeting);
-    ctx.drawImage(mascot, pad, ctaY - 16, 96, 96);
+    const scale = Math.min(200 / mascot.naturalHeight, 210 / mascot.naturalWidth);
+    const mw = mascot.naturalWidth * scale;
+    const mh = mascot.naturalHeight * scale;
+    const mx = pad;
+    const my = H - 24 - mh;
+    // 柔光晕
+    ctx.save();
+    ctx.globalAlpha = 0.16;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(mx + mw / 2, my + mh / 2, Math.min(Math.max(mw, mh) * 0.62, 100), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    // 轻微左倾，像是在跟读卡的人打招呼
+    ctx.save();
+    ctx.translate(mx + mw / 2, my + mh / 2);
+    ctx.rotate(-0.07);
+    ctx.drawImage(mascot, -mw / 2, -mh / 2, mw, mh);
+    ctx.restore();
+    // 看山的声音
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.font = "700 30px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+    ctx.fillText("吱～", mx + mw + 6, my + 46);
   } catch {
     /* 看山加载失败不影响卡片 */
   }
-  ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
-  ctx.font = "600 28px 'PingFang SC', 'Microsoft YaHei', sans-serif";
-  ctx.fillText("看山画境", pad + 112, ctaY + 30);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
-  ctx.font = "400 22px 'PingFang SC', 'Microsoft YaHei', sans-serif";
-  ctx.fillText("每一篇好回答，都是一幅能走进去的画", pad + 112, ctaY + 66);
 
-  // 二维码（右下角，白底圆角）
+  // 二维码（右下角，白底圆角 + 正下方提示；与左侧看山互不侵犯）
   try {
     const qr = await loadImage(qrDataUrl);
     const size = 148;
+    const boxX = W - pad - size - 16;
+    const boxY = dividerY + 56;
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
-    ctx.roundRect(W - pad - size - 8, ctaY - 16, size + 16, size + 16, 14);
+    ctx.roundRect(boxX, boxY, size + 16, size + 16, 14);
     ctx.fill();
-    ctx.drawImage(qr, W - pad - size, ctaY - 8, size, size);
+    ctx.drawImage(qr, boxX + 8, boxY + 8, size, size);
     ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
     ctx.font = "400 20px 'PingFang SC', 'Microsoft YaHei', sans-serif";
     ctx.textAlign = "right";
-    ctx.fillText(input.qrHint ?? "扫码回到这句金句", W - pad, ctaY + size + 32);
+    ctx.fillText(input.qrHint ?? "扫码回到这句金句", W - pad, boxY + size + 16 + 32);
     ctx.textAlign = "left";
   } catch {
     /* 二维码失败不阻塞 */
