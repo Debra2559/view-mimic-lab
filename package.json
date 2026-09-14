@@ -1,5 +1,7 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "kanshan-huajing",
+  "version": "0.1.0",
+  "description": "看山画境：把知乎的高质量问答 / 故事画成可以走进去的互动影游",
   "private": true,
   "sideEffects": false,
   "type": "module",
