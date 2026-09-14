@@ -27,13 +27,16 @@ PORT=8080 node app-dist/server/index.mjs
 
 ### 环境变量
 
-**只有一个，且是可选的**：
-
 | 变量 | 作用 | 不配置会怎样 |
 |---|---|---|
-| `LOVABLE_API_KEY` | 「锻造台」的 AI 生成（生成新世界线 / 检索帖子） | 只有锻造台不可用并提示「缺少 AI 配置」，**其余全部功能正常** |
+| `LOVABLE_API_KEY` | 「锻造台」的 AI 生成（生成新世界线 / 检索帖子） | 只有锻造台不可用并提示「缺少 AI 配置」，其余功能正常 |
+| `ZHIHU_OAUTH_APP_ID` / `ZHIHU_OAUTH_APP_KEY` / `ZHIHU_ACCESS_SECRET` / `ZHIHU_OAUTH_REDIRECT_URI` | 知乎账号登录与用户数据 | 右下角登录入口仍在，但点开会提示缺少哪几项；**其余功能全部正常** |
 
 也就是说：**别人克隆下来不配任何 Key，也能跑通全部既有内容**（世界线 / 剧场 / 金句卡 / 导入文章）。
+
+> 知乎那四项需要**先在黑客松活动页登记项目**才能拿到，见下方
+> [🔴 部署前必须先做这一步](#-部署前必须先做这一步填写黑客松项目的-oauth-凭证)。
+> 也可以不设环境变量，改用 `zhihu.credentials.local.json`（推荐，见同一节）。
 
 ---
 
@@ -119,6 +122,8 @@ src/
 ├─ routes/
 │  ├─ index.tsx            主页信息流（本地帖 + 导入文章）
 │  ├─ answer.$id.tsx       回答/文章页：裂缝入口、划线金句、金句卡标记
+│  ├─ me.tsx               个人页：用户信息 + 创作 / 关注（加载更多）
+│  ├─ api.zhihu.callback.tsx  知乎 OAuth 回调（换 token → 写会话 → 跳 /me）
 │  └─ world.$storyId.tsx   世界线/剧场（转场 → 入境 → 对白 → 选择 → 结局 → 图鉴）
 ├─ components/story/
 │  ├─ StoryWorld.tsx       世界线引擎（阶段机 + 打字机 + 立绘 + 观众席）
@@ -131,6 +136,11 @@ src/
 │  ├─ articles.ts          10 篇导入文章（段落 + 金句段位置）
 │  ├─ flash-card.ts        出图管线（headline / quote 双模式，750×1200 canvas）
 │  ├─ feed.ts              本地信息流帖子
+│  ├─ zhihu/               知乎登录与用户数据（全部仅服务端）
+│  │  ├─ credentials.server.ts  凭证解析（环境变量 → 本地凭据文件）
+│  │  ├─ oauth.server.ts        授权地址、换 token、会话 cookie
+│  │  ├─ api.server.ts          用户数据接口（contents / followees）
+│  │  └─ zhihu.functions.ts     前端可调用的服务端函数（handler 内动态导入服务端模块）
 │  └─ story/               story 引擎与数据
 │     ├─ flash.ts          10 张金句闪卡（标题党主标题 + 悬念 + 强调色 + 诱导文案）
 │     ├─ loader.ts         故事加载与归一化（import.meta.glob，eager）
@@ -201,6 +211,121 @@ scripts/
   其余全部内容（13 个故事、10 张闪卡、导入文章）都是**人工整理 / 真实数据**，不是运行时 AI 生成。
 - **合规处理**：涉及真实案件当事人、真实战队与选手的剧本参考，已全部虚构化；
   不出现真实姓名、不指向任何真实的人与组织；结尾不给「攻略」，只给自省。
+
+---
+
+## 知乎账号登录（OAuth）
+
+右下角常驻一个知乎账号入口：未登录显示「用知乎登录」，登录后显示头像与昵称，
+点击进入 **`/me` 个人页**——上面是用户信息，下面按「创作 / 关注的人」两个页签列数据，
+都走接口的 `Paging.IsEnd` + `Paging.NextOffset` 翻页，可**点击加载更多**。
+
+---
+
+### 🔴 部署前必须先做这一步：填写黑客松项目的 OAuth 凭证
+
+**不填这一步，登录按钮点下去会提示缺少 appId，`/me` 也只能显示配置清单 —— 这是有意设计的（不静默失败）。**
+
+按顺序做四件事：
+
+| 步骤 | 做什么 | 拿到什么 |
+|---|---|---|
+| 1️⃣ | 打开**黑客松活动页**，找到我们报名的项目 | — |
+| 2️⃣ | 在项目的「知乎登录回调地址」里填：`https://<你的域名>/api/zhihu/callback`<br>（本地调试可填 `http://localhost:8080/api/zhihu/callback`） | 登记好回调地址 |
+| 3️⃣ | 保存项目后，活动页会分配 OAuth 凭证 | **`appId`** 与 **`appKey`** |
+| 4️⃣ | 到开放平台个人中心 <https://developer.zhihu.com/profile> 取 | **`accessSecret`** |
+
+然后把四项填进凭据文件（**本地与线上用的是同一个文件**）：
+
+```bash
+cp zhihu.credentials.example.json zhihu.credentials.local.json
+# 编辑 zhihu.credentials.local.json，填入：
+#   appId         ← 活动页分配（公开信息）
+#   appKey        ← 活动页分配（保密）
+#   accessSecret  ← developer.zhihu.com/profile（保密）
+#   redirectUri   ← 必须与第 2 步登记的回调地址【完全一致】
+```
+
+或者改用环境变量（部署平台注入 Secret 时更方便，会覆盖上面的文件）：
+
+```bash
+ZHIHU_OAUTH_APP_ID / ZHIHU_OAUTH_APP_KEY / ZHIHU_ACCESS_SECRET / ZHIHU_OAUTH_REDIRECT_URI
+```
+
+填完重启服务即可：右下角出现「用知乎登录」，点进去完成授权，个人页就有数据了。
+
+> **⚠️ 两条硬约束，别踩**
+> 1. **`zhihu.credentials.local.json` 不要提交进 git**（已在 `.gitignore` 里）。这是公开仓库，
+>    密钥一旦提交就会永久留在 git 历史里。知乎官方规定：App Key 与 Access Secret
+>    "禁止写入源码、`.env`、URL、日志、截图、视频、前端响应或 Agent 输出"。
+> 2. **`redirectUri` 必须与活动页登记值逐字符一致**（包括 `https` 与结尾有没有斜杠），
+>    否则知乎会拒绝授权回调。
+
+---
+
+### 需要四个配置项
+
+| 字段 | 从哪里来 | 是否公开 |
+|---|---|---|
+| `appId` | **黑客松活动页**登记项目后分配 | 公开（会出现在授权地址里） |
+| `appKey` | 同上 | **保密**（后端换 token 用） |
+| `accessSecret` | 开放平台个人中心 <https://developer.zhihu.com/profile> | **保密**（鉴权调用方） |
+| `redirectUri` | 你自己定，但**必须与活动页登记的回调地址完全一致** | 公开 |
+
+配置方式（二选一，环境变量优先）：
+
+```bash
+# 方式一：环境变量（部署平台的 Secret）
+export ZHIHU_OAUTH_APP_ID=...
+export ZHIHU_OAUTH_APP_KEY=...
+export ZHIHU_ACCESS_SECRET=...
+export ZHIHU_OAUTH_REDIRECT_URI=https://你的域名/api/zhihu/callback
+
+# 方式二：本地凭据文件（复制示例后填写）
+cp zhihu.credentials.example.json zhihu.credentials.local.json
+# 然后编辑 zhihu.credentials.local.json
+```
+
+> ⚠️ **`zhihu.credentials.local.json` 不进 git**（已在 `.gitignore` 里），但**要随离线部署一起上传**——
+> 本项目的独立部署就是这样拿到密钥的。
+>
+> **绝对不要把 appKey / accessSecret 写进被跟踪的源码或前端代码。** 知乎开放平台的规则明确写着
+> "禁止写入源码、`.env`、URL、日志、截图、视频、前端响应或 Agent 输出"；而本仓库是公开仓库，
+> 一旦提交就会永久留在 git 历史里。密钥只在本项目的服务端使用，前端只拿得到公开的 `appId`。
+
+### 回调地址
+
+在活动页登记的回调地址，需要和实际路由一致：
+
+```
+https://<你的域名>/api/zhihu/callback
+```
+
+路由实现见 `src/routes/api.zhihu.callback.tsx`：它读取回调里的 `authorization_code`
+（同时兼容 `code`），在服务端换取用户 token，写入 **httpOnly 会话 cookie**，然后跳到 `/me`。
+回调失败时（缺授权码、换 token 报错）会渲染一个明确的错误页，而不是白屏。
+
+### 用到的接口
+
+```text
+GET  https://openapi.zhihu.com/authorize?redirect_uri=&app_id=&response_type=code   # 授权
+POST https://openapi.zhihu.com/access_token                                        # 换 token
+GET  https://developer.zhihu.com/api/v1/user/contents?ContentType=all&Offset=&Limit=  # 创作
+GET  https://developer.zhihu.com/api/v1/user/followees?Offset=&Limit=                  # 关注
+```
+
+请求头：`Authorization: Bearer <accessSecret>`、`X-Request-Timestamp: <秒级时间戳>`、
+代表用户时再加 `X-OAuth-Token: <用户 token>`、以及 `Content-Type: application/json`。
+分页参数最大 `Limit=50`；**响应里的 `NextOffset` 是 String，要原样回传**。
+
+### 已知边界（不假装有）
+
+- **知乎没有公开「用户资料」接口**：官方 OAuth 文档自己写着"文档提到获取用户信息，但没有提供对应
+  endpoint 和响应 schema"。所以登录后若拿不到昵称/头像，个人页会**如实显示"已授权"状态**，
+  而不是编一个名字出来；如果 token 交换响应里带了用户字段，会自动显示。
+- **未登录时**：配置好 `accessSecret` 后会以「演示模式」展示**凭据所属账号**的公开数据，
+  页面顶部有明确的橙色标注。什么都没配时，页面列出缺哪几项、去哪里拿。
+- 凭证没配好时不会发起任何请求，也不会弹无意义的报错。
 
 ---
 
