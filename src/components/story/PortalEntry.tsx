@@ -12,7 +12,7 @@ export function PortalEntry({ story, onEnter }: { story: Story; onEnter: (storyI
     if (connecting) return;
     setConnecting(true);
     recordClick(story.id);
-    window.setTimeout(() => onEnter(story.id), 900);
+    window.setTimeout(() => onEnter(story.id), 260);
   };
 
   return (

@@ -102,7 +102,7 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
         }
         setPhase("intro");
       },
-      showMascot ? 2600 : 1300,
+      showMascot ? 1200 : 450,
     );
     return () => window.clearTimeout(timer);
   }, [phase, activeId, showMascot]);
