@@ -102,7 +102,7 @@ function toStory(raw: RawStory): Story {
   };
 }
 
-const modules = import.meta.glob<{ default: RawStory }>("@/content/stories/*.json", {
+const modules = import.meta.glob<{ default: RawStory }>("../../content/stories/*.json", {
   eager: true,
 });
 
