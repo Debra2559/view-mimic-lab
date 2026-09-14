@@ -140,6 +140,9 @@ src/
 └─ assets/
    ├─ mascot/              看山素材（动图 webp + 静态 png + 大脸 mascot-peek.webp）
    └─ story/               立绘 / 场景图 / 封面图
+
+scripts/
+└─ fix-css-hashes.mjs      构建后修补 CSS 哈希不一致（见「部署」小节）
 ```
 
 ---
@@ -220,13 +223,27 @@ nitro: { preset: "node-server", output: { dir: "app-dist" } }
 
 ```bash
 npm install
-npm run build                       # 产出 app-dist/
+npm run build                       # 产出 app-dist/（构建后会跑 scripts/fix-css-hashes.mjs 修补，见下）
 PORT=8080 node app-dist/server/index.mjs
 ```
 
 > ⚠️ **改完代码必须先 `npm run build` 再部署**，否则线上跑的是旧产物。
 > `app-dist/` 是构建产物：**不要提交进 git**（但部署平台的「上传目录」里需要它存在）。
 > 服务必须监听 `PORT` 并绑定 `0.0.0.0`（反代场景需要）。
+
+### 构建后修补：CSS 哈希不一致（`scripts/fix-css-hashes.mjs`）
+
+生产构建有个坑，已在构建流程里自动修补：
+
+- **现象**：SSR 注入的 `<link rel="stylesheet" href="/assets/styles-XXXX.css">` 指向一个**不存在的文件名**（404），
+  而真实产出的是 `styles-YYYY.css`。
+- **原因**：SSR 与客户端是两次独立的构建 pass，各自对同一份 `styles.css` 算了一次内容哈希，结果不一致
+  （SSR 产物里同时残留两个名字）。
+- **后果**：样式只能等客户端 JS 注水后才注入 → 首屏 **FOUC**（先看到无样式页面）+ 控制台一个 404。
+- **修法**：构建后扫描服务端产物，把指向不存在文件的引用改写成真实产出的那个名字。
+  （不能只把 CSS 复制一份过去——服务端用的是构建期资产清单，事后新增的文件不会被服务。）
+
+所以要改构建产物目录名字时，记得同步改 `scripts/fix-css-hashes.mjs` 里的 `DIST_DIR`（默认 `app-dist`）。
 
 ---
 

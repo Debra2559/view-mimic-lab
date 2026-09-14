@@ -1,13 +1,15 @@
 {
   "name": "tanstack_start_ts",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "private": true,
   "sideEffects": false,
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "build": "vite build && node scripts/fix-css-hashes.mjs",
+    "build:dev": "vite build --mode development && node scripts/fix-css-hashes.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
