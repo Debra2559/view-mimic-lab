@@ -1,26 +1,162 @@
-# Page Replica Studio
+# 看山画境 · 知乎黑客松参赛作品
 
-先帮我复刻这个页面
+> **看山引路，画境作答**  
+> 把知乎的问题和故事，画成一段可以走进去的互动影游。
 
-This project was built with [Lovable](https://lovable.dev).
+**在线 Demo**：https://view-mimic-lab.lovable.app/answer/rewind  
+**GitHub**：https://github.com/Debra2559/view-mimic-lab
 
-**Live app**: https://view-mimic-lab.lovable.app
+---
 
-## Build with Lovable
+## 一句话讲产品
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/ce1fb90e-003d-4aad-b0d3-55dc1657ee22).
+《看山画境》把知乎的高质量问答 / 故事，改编成可以走进去的互动影游：读者在回答里看到一个「世界入口」，触碰之后穿越入境，扮演故事里的角色、做出自己的选择、走到自己的结局。
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+我们不做内容摘要、不做视频解说、不生产新内容——只给知乎沉淀了十几年的高质量长文，换一个更轻、更沉浸、更有参与感的载体。
 
-## Development
+---
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## 为什么做这件事
+
+知乎真正的优势是内容的权威、深度与结构上的多视角。但它现在最大的问题是：**打开之后累**。
+
+一个白领下班到家，已经看了一天屏幕。他知道知乎内容好，但「读不动」。碎片时间争不过小红书，中长视频争不过 B 站，即时爽感争不过抖音——知乎缺的从来不是内容，而是承载内容的形式。
+
+所以我们选择**互动影游**：
+- 比视频更有参与感
+- 比游戏更有信息密度
+- 比纯阅读更轻松、更沉浸
+
+目标是把下班后那段「有整块时间、不想再读字」的时段，重新接回知乎。
+
+---
+
+## 完整体验流程
+
+| 步骤 | 用户做什么 | 产品反馈 |
+|------|-----------|---------|
+| ① 发现 | 刷知乎式推荐流 | 看到问题卡片与热度排名 |
+| ② 触碰 | 点回答里的「裂缝卡」 | 文案变为「正在连接世界……」，页面轻微失焦 |
+| ③ 转场 | 等 1.3–2.6 秒 | 全屏「世界线接入中」；首次进入时看山出来接引 |
+| ④ 入境 | 点「睁开眼睛」 | 进入故事场景，角色立绘、背景、氛围音就位 |
+| ⑤ 走剧情 | 点击推进对白 | 逐字显示、立绘随情绪换表情、背景音随阶段变化 |
+| ⑥ 做选择 | 在岔路口二选一 | 每个选项都有代价，没有标准答案 |
+| ⑦ 抵达结局 | 看到自己的结局 | 结局称号 + 结局文案 + 图鉴进度 |
+| ⑧ 留下 | 分享 / 重启 / 回到回答 | 生成 750×1200 结局卡，扫码直达同一条世界线 |
+
+---
+
+## 核心机制
+
+### 1. 一个问题 = 一个可穿越世界
+每个问题关联一条独立世界线；一个问题下的多个回答，共同构成这个世界的不同视角与分支素材。
+
+### 2. 树状结局
+结局不是固定终点，而是一棵可以无限往下分叉的树：
+
+```text
+A ──┬── AA（终局）
+    └── AB ──┬── ABA（终局）
+             └── ABB（终局）
+```
+
+只有没有后续岔路的结局才算「终局」，计入结局图鉴。
+
+### 3. 选择必须有代价
+- 不给标准答案
+- 每个选项都带一句内心独白
+- 利益和责任的拉扯，让玩家感到「这个选择是我做的」
+
+### 4. 三种内容形态
+
+| 层级 | 形态 | 适合内容 | 时长 |
+|------|------|---------|------|
+| L1 完整世界线 | 多幕剧情 + 多次选择 | 长故事、强叙事回答 | 3–10 分钟 |
+| L2 金句剧场 | 单幕 + 一次选择 | 中等观点文、科普类问答 | 60–90 秒 |
+| L3 金句闪卡 | 3 秒画面卡 | 短回答、神回答、清单 | 3–10 秒 |
+
+当前版本已上线 **7 条 L1 完整世界线**：
+
+1. **走廊** —— 外卖员凌晨遇火情
+2. **循环** —— 第 47 次的同一天
+3. **读心** —— 突然能听见心声
+4. **蚊子** —— 蚊子消失后的世界
+5. **货币** —— 时间变成货币
+6. **重来** —— 每日从零开始
+7. **停育** —— 改编自「如果所有穷人突然停止生育」
+
+---
+
+## 技术亮点
+
+- **React + Tailwind CSS + TanStack Start**：全栈 React 框架，支持 SSR/SSG 与边缘部署。
+- **数据驱动的故事注册表**：所有剧情、角色、立绘、选择、结局都写在可编辑的 JSON 文件里（`src/content/stories/*.json`），新增一条世界线只需新增一个 JSON。
+- **统一画风与角色立绘库**：所有世界线共享同一套角色、背景、封面资源，保证视觉一致性。
+- **AI 改编 Skill**：输入知乎问题 + 回答原文，自动生成完整世界线结构（开场、对白、岔路、结局），并以严格 JSON Schema 约束输出。
+- **Web Audio 实时合成氛围音乐**：不依赖音频文件，按剧情阶段实时切换和弦与情绪。
+- **结局分享卡**：结局页生成 750×1200 PNG 卡片，支持保存、复制文案、扫码直达 `/world/:id`。
+- **热度排名系统**：综合回答数、收藏、赞同、评论与本地点击，为世界线排序并显示 Flame 热度值。
+- **结局图鉴与本地进度**：localStorage 记录已解锁结局，增加收集与重玩动力。
+
+---
+
+## 项目结构
+
+```text
+src/
+  components/story/      # 故事世界组件（舞台、对白、选项、结局、分享等）
+  content/stories/       # 可编辑的世界线 JSON
+  content/upcoming.json  # 即将开启的世界线
+  lib/story/             # 故事类型、资源映射、加载器、AI 生成
+  lib/feed.ts            # 知乎式推荐流数据
+  lib/heat.ts            # 热度计算
+  lib/share-card.ts      # 结局分享卡生成
+  routes/                # TanStack Start 路由
+  styles.css             # 全局样式与设计 token
+```
+
+---
+
+## 本地开发
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+# 1. 克隆仓库
+git clone https://github.com/Debra2559/view-mimic-lab.git
+cd view-mimic-lab
+
+# 2. 安装依赖
+bun install
+# 或 npm install
+
+# 3. 启动开发服务器
+bun run dev
+# 或 npm run dev
+
+# 4. 打开浏览器访问 http://localhost:8080
 ```
+
+---
+
+## 如何新增一条世界线
+
+1. 在 `src/content/stories/` 新建一个 JSON 文件，参考 `01-corridor.json` 的格式。
+2. 从统一资源库（`src/lib/story/cast.ts`、`src/lib/story/assets.ts`）选择角色、背景、封面。
+3. 编写开场、对白、选择、结局。
+4. 保存后刷新页面，大厅会自动出现这张世界线卡片。
+
+---
+
+## 产品边界与声明
+
+- 本项目为知乎黑客松参赛作品，Demo 中的「知乎回答」内容为原创示例或经改编的知乎风格文本，用于展示互动影游形态，不代表知乎官方立场。
+- AI 生成功能为技术演示，生成结果需人工审核后使用。
+
+---
+
+## 团队与致谢
+
+本项目由 Lovable 辅助构建，感谢 Lovable 提供的可视化开发与快速迭代能力。
+
+---
+
+*看山引路，画境作答。读到一个好回答，就走进它背后的世界。*
