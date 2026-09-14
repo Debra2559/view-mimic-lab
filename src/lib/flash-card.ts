@@ -1,29 +1,48 @@
 /**
- * 金句卡（canvas 生成 750×1200 PNG）——闪卡与"划线金句"共用同一套出图逻辑。
+ * 分享卡出图（canvas 750×1200 PNG）——两种模式：
  *
- * 对应 PRD 的划线金句闭环：金句是钩子，扫卡上的二维码，
- * 打开会直接落在这句金句所在的位置（闪卡 / 原文段落）并高亮。
+ * 1) headline：金句闪卡的海报卡。看山大脸铺满画面（大眼审视、鼻子贴镜头），
+ *    标题党主标题 + 高饱和数字 + 悬念副题，二维码缩小并配强利益诱导。
+ * 2) quote：划线金句。用户在回答里划中的那句话做主角，扫码回到原文那一句。
+ *
+ * 两种模式共用：加载图、避头尾换行、二维码落地（扫码回到对应位置并高亮）。
  */
 import type { FlashCardData } from "@/lib/story/flash";
-import { MASCOT_STILL } from "@/lib/story/mascot";
+import { MASCOT_PEEK, MASCOT_STILL } from "@/lib/story/mascot";
 
-/** 出图所需的通用输入：闪卡和划线都归一到这个结构 */
-export interface QuoteCardInput {
-  /** 那句金句 */
-  quote: string;
-  /** 来源：原提问 / 回答标题 */
+/** 海报卡（金句闪卡）：标题党 + 悬念 */
+export interface HeadlineCardInput {
+  mode: "headline";
+  /** 主标题前缀 */
+  headlineLead: string;
+  /** 高饱和放大的关键词/数字 */
+  headlineNumber: string;
+  /** 主标题后缀 */
+  headlineTail?: string;
+  /** 悬念副题 */
+  teaser: string;
+  /** 来源（知乎热榜提问） */
   source: string;
-  /** 来源说明，如「2340 万热度」「知乎回答」 */
-  meta?: string;
-  /** 顶部标签，默认「金 句 闪 卡」 */
-  label?: string;
-  /** 氛围色对 [起点, 终点] */
+  /** 冷色底 [起点, 终点] */
   colors: readonly [string, string];
-  /** 背景装饰字；缺省取金句的首个汉字 */
-  glyph?: string;
-  /** 二维码下方的提示语 */
+  /** 强调色 */
+  accent: string;
+  /** 二维码下方诱导语 */
   qrHint?: string;
 }
+
+/** 划线金句卡：用户划中的那句话做主角 */
+export interface QuoteLineCardInput {
+  mode: "quote";
+  quote: string;
+  source: string;
+  meta?: string;
+  label?: string;
+  colors: readonly [string, string];
+  qrHint?: string;
+}
+
+export type QuoteCardInput = HeadlineCardInput | QuoteLineCardInput;
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -53,56 +72,170 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
   return lines;
 }
 
-function pickGlyph(input: QuoteCardInput): string {
-  if (input.glyph) return input.glyph;
-  const chinese = input.quote.match(/[\u4e00-\u9fa5]/);
-  return chinese ? chinese[0]! : "句";
+/** 等比铺满（cover）并居中绘制 */
+function drawCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+) {
+  const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight);
+  const dw = img.naturalWidth * scale;
+  const dh = img.naturalHeight * scale;
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
 }
 
-/** 生成竖版金句卡（750×1200 PNG dataURL）。 */
-export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string): Promise<string> {
-  const W = 750;
-  const H = 1200;
-  const canvas = document.createElement("canvas");
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("无法创建画布");
+/** 白底圆角二维码 + 下方/侧边诱导语 */
+function drawQr(
+  ctx: CanvasRenderingContext2D,
+  qr: HTMLImageElement,
+  boxX: number,
+  boxY: number,
+  size: number,
+  hint: string,
+  hintAlign: "right" | "below",
+  W: number,
+  pad: number,
+) {
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.roundRect(boxX - 8, boxY - 8, size + 16, size + 16, 14);
+  ctx.fill();
+  ctx.drawImage(qr, boxX, boxY, size, size);
 
-  // 背景渐变
+  ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+  ctx.font = "600 25px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  ctx.textAlign = hintAlign === "right" ? "right" : "center";
+  if (hintAlign === "right") {
+    ctx.fillText(hint, W - pad, boxY + size + 44);
+  } else {
+    ctx.fillText(hint, boxX + size / 2, boxY + size + 44);
+  }
+  ctx.textAlign = "left";
+}
+
+/** ① 海报卡：看山大脸 + 标题党 + 悬念 + 小二维码 */
+async function renderHeadlineCard(
+  ctx: CanvasRenderingContext2D,
+  input: HeadlineCardInput,
+  qrDataUrl: string,
+  W: number,
+  H: number,
+) {
+  const pad = 64;
+
+  // 看山大脸铺满画面
+  try {
+    const peek = await loadImage(MASCOT_PEEK);
+    drawCover(ctx, peek, 0, 0, W, H);
+  } catch {
+    /* 素材缺失时退回纯色底 */
+  }
+
+  // 冷色层：用卡片自己的冷色给画面染色（上重下轻，保持大脸可见）
+  const tint = ctx.createLinearGradient(0, 0, W * 0.4, H);
+  tint.addColorStop(0, `${input.colors[0]}d9`);
+  tint.addColorStop(0.55, `${input.colors[1]}59`);
+  tint.addColorStop(1, `${input.colors[1]}bf`);
+  ctx.fillStyle = tint;
+  ctx.fillRect(0, 0, W, H);
+
+  // 文字区压暗（顶部）+ 底部托底
+  const topScrim = ctx.createLinearGradient(0, 0, 0, H * 0.62);
+  topScrim.addColorStop(0, "rgba(6,10,20,0.94)");
+  topScrim.addColorStop(0.55, "rgba(6,10,20,0.62)");
+  topScrim.addColorStop(1, "rgba(6,10,20,0)");
+  ctx.fillStyle = topScrim;
+  ctx.fillRect(0, 0, W, H * 0.62);
+
+  const bottomScrim = ctx.createLinearGradient(0, H * 0.66, 0, H);
+  bottomScrim.addColorStop(0, "rgba(6,10,20,0)");
+  bottomScrim.addColorStop(1, "rgba(5,8,16,0.85)");
+  ctx.fillStyle = bottomScrim;
+  ctx.fillRect(0, H * 0.66, W, H * 0.34);
+
+  const maxWidth = W - pad * 2;
+
+  // 主标题前缀
+  let y = 150;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.82)";
+  ctx.font = "500 33px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  ctx.fillText(input.headlineLead, pad, y);
+
+  // 高饱和关键词：大到能当画面主角，太宽自动降字号
+  y += 118;
+  let numFont = 132;
+  ctx.font = `800 ${numFont}px 'PingFang SC', 'Microsoft YaHei', sans-serif`;
+  while (ctx.measureText(input.headlineNumber).width > maxWidth && numFont > 64) {
+    numFont -= 6;
+    ctx.font = `800 ${numFont}px 'PingFang SC', 'Microsoft YaHei', sans-serif`;
+  }
+  ctx.fillStyle = input.accent;
+  ctx.fillText(input.headlineNumber, pad, y);
+
+  // 主标题后缀
+  if (input.headlineTail) {
+    y += 62;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
+    ctx.font = "600 36px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+    for (const line of wrapText(ctx, input.headlineTail, maxWidth).slice(0, 2)) {
+      ctx.fillText(line, pad, y);
+      y += 50;
+    }
+  }
+
+  // 悬念副题（与数字拉开距离，避免贴到一起）
+  y += 66;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.72)";
+  ctx.font = "400 31px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  for (const line of wrapText(ctx, input.teaser, maxWidth).slice(0, 3)) {
+    ctx.fillText(line, pad, y);
+    y += 46;
+  }
+
+  // 来源（小字，压在画面中部偏下）
+  y += 20;
+  ctx.fillStyle = "rgba(255, 255, 255, 0.42)";
+  ctx.font = "400 22px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  for (const line of wrapText(ctx, input.source, maxWidth).slice(0, 2)) {
+    ctx.fillText(line, pad, y);
+    y += 34;
+  }
+
+  // 品牌（左下）
+  ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+  ctx.font = "700 24px 'PingFang SC', 'Microsoft YaHei', sans-serif";
+  ctx.fillText("看山画境", pad, H - 58);
+
+  // 二维码（缩小，右下角）+ 强利益诱导
+  try {
+    const qr = await loadImage(qrDataUrl);
+    const size = 138;
+    drawQr(ctx, qr, W - pad - size, H - 98 - size, size, input.qrHint ?? "扫码查看详细通报", "right", W, pad);
+  } catch {
+    /* 二维码失败不阻塞 */
+  }
+}
+
+/** ② 划线金句卡：用户划中的那句话做主角 */
+async function renderQuoteCard(
+  ctx: CanvasRenderingContext2D,
+  input: QuoteLineCardInput,
+  qrDataUrl: string,
+  W: number,
+  H: number,
+) {
+  const pad = 72;
+
   const bg = ctx.createLinearGradient(0, 0, W * 0.5, H);
   bg.addColorStop(0, input.colors[0]);
   bg.addColorStop(1, input.colors[1]);
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // 超大话题字：按实际墨迹边界计算位置与字号，保证整字完整落在卡内右上角
-  const glyphChar = pickGlyph(input);
-  const glyphMargin = 44; // 距画布上/右边距
-  const glyphMax = 380; // 墨迹目标边长
-  let glyphFont = 420;
-  ctx.font = `900 ${glyphFont}px 'Songti SC', SimSun, serif`;
-  const probe = ctx.measureText(glyphChar);
-  const probeW = probe.actualBoundingBoxLeft + probe.actualBoundingBoxRight;
-  const probeH = probe.actualBoundingBoxAscent + probe.actualBoundingBoxDescent;
-  if (probeW > 0 && probeH > 0) {
-    glyphFont = Math.round(glyphFont * Math.min(1, glyphMax / Math.max(probeW, probeH)));
-  }
-  ctx.save();
-  ctx.globalAlpha = 0.13;
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `900 ${glyphFont}px 'Songti SC', SimSun, serif`;
   ctx.textAlign = "left";
-  const gm = ctx.measureText(glyphChar);
-  const glyphX = W - glyphMargin - (gm.actualBoundingBoxRight || 0);
-  const glyphY = glyphMargin + (gm.actualBoundingBoxAscent || glyphFont * 0.8);
-  ctx.fillText(glyphChar, glyphX, glyphY);
-  ctx.restore();
-
-  const pad = 72;
-  ctx.textAlign = "left";
-
-  // 顶部标签
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
   ctx.font = "500 26px 'PingFang SC', 'Microsoft YaHei', sans-serif";
   ctx.fillText(input.label ?? "金 句 闪 卡", pad, 140);
@@ -114,7 +247,6 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
   ctx.lineTo(pad + 90, 178);
   ctx.stroke();
 
-  // 金句：衬线大字，自动换行；过长时自动降字号
   let quoteFont = 64;
   let quoteLines: string[] = [];
   for (; quoteFont >= 44; quoteFont -= 4) {
@@ -130,7 +262,6 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
   });
   const quoteEnd = quoteTop + Math.max(quoteLines.length - 1, 0) * lineHeight;
 
-  // 来源
   ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
   ctx.font = "400 28px 'PingFang SC', 'Microsoft YaHei', sans-serif";
   const sourceLines = wrapText(ctx, input.source, W - pad * 2).slice(0, 2);
@@ -144,9 +275,6 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
     ctx.fillText(input.meta, pad, quoteEnd + 74 + sourceLines.length * 46 + 26);
   }
 
-  // ── 底部品牌区（Y=920 以下）：分隔线 → 品牌行 → 左看山 / 右二维码 ──
-  // 布局约束：品牌行占满整宽但绝不进入底部带；看山与二维码分列左右两端，
-  // 中间留空，任何两个元素都不重叠。
   const dividerY = H - 280;
   ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
   ctx.lineWidth = 1;
@@ -155,7 +283,6 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
   ctx.lineTo(W - pad, dividerY);
   ctx.stroke();
 
-  // 品牌行：看山画境 · slogan（一行排开，整行可用宽度 606px，约需 520px）
   ctx.fillStyle = "rgba(255, 255, 255, 0.92)";
   ctx.font = "700 26px 'PingFang SC', 'Microsoft YaHei', sans-serif";
   ctx.fillText("看山画境", pad, dividerY + 46);
@@ -164,8 +291,6 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
   ctx.font = "400 22px 'PingFang SC', 'Microsoft YaHei', sans-serif";
   ctx.fillText("· 每一篇好回答，都是一幅能走进去的画", pad + brandWidth + 14, dividerY + 46);
 
-  // 看山：左下角大尺寸主角——保持原始宽高比（不再压扁）、轻微倾斜显萌、
-  // 背后一团柔光晕让它从氛围色里跳出来。
   try {
     const mascot = await loadImage(MASCOT_STILL.greeting);
     const scale = Math.min(200 / mascot.naturalHeight, 210 / mascot.naturalWidth);
@@ -173,7 +298,6 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
     const mh = mascot.naturalHeight * scale;
     const mx = pad;
     const my = H - 24 - mh;
-    // 柔光晕
     ctx.save();
     ctx.globalAlpha = 0.16;
     ctx.fillStyle = "#ffffff";
@@ -181,13 +305,11 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
     ctx.arc(mx + mw / 2, my + mh / 2, Math.min(Math.max(mw, mh) * 0.62, 100), 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
-    // 轻微左倾，像是在跟读卡的人打招呼
     ctx.save();
     ctx.translate(mx + mw / 2, my + mh / 2);
     ctx.rotate(-0.07);
     ctx.drawImage(mascot, -mw / 2, -mh / 2, mw, mh);
     ctx.restore();
-    // 看山的声音
     ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
     ctx.font = "700 30px 'PingFang SC', 'Microsoft YaHei', sans-serif";
     ctx.fillText("吱～", mx + mw + 6, my + 46);
@@ -195,38 +317,48 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
     /* 看山加载失败不影响卡片 */
   }
 
-  // 二维码（右下角，白底圆角 + 正下方提示；与左侧看山互不侵犯）
   try {
     const qr = await loadImage(qrDataUrl);
     const size = 148;
-    const boxX = W - pad - size - 16;
+    const boxX = W - pad - size - 8;
     const boxY = dividerY + 56;
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.roundRect(boxX, boxY, size + 16, size + 16, 14);
-    ctx.fill();
-    ctx.drawImage(qr, boxX + 8, boxY + 8, size, size);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-    ctx.font = "400 20px 'PingFang SC', 'Microsoft YaHei', sans-serif";
-    ctx.textAlign = "right";
-    ctx.fillText(input.qrHint ?? "扫码回到这句金句", W - pad, boxY + size + 16 + 32);
-    ctx.textAlign = "left";
+    drawQr(ctx, qr, boxX, boxY, size, input.qrHint ?? "扫码回到这句金句", "below", W, pad);
   } catch {
     /* 二维码失败不阻塞 */
+  }
+}
+
+/** 生成竖版分享卡（750×1200 PNG dataURL）。 */
+export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string): Promise<string> {
+  const W = 750;
+  const H = 1200;
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("无法创建画布");
+
+  if (input.mode === "headline") {
+    await renderHeadlineCard(ctx, input, qrDataUrl, W, H);
+  } else {
+    await renderQuoteCard(ctx, input, qrDataUrl, W, H);
   }
 
   return canvas.toDataURL("image/png");
 }
 
-/** 金句闪卡 → 通用出图输入 */
+/** 金句闪卡 → 海报卡输入 */
 export function flashToQuote(card: FlashCardData): QuoteCardInput {
   return {
-    quote: card.quote,
+    mode: "headline",
+    headlineLead: card.headlineLead,
+    headlineNumber: card.headlineNumber,
+    headlineTail: card.headlineTail,
+    teaser: card.teaser,
     source: card.question,
-    meta: card.heat,
-    label: `金 句 闪 卡 · ${card.category}`,
     colors: card.colors,
-    glyph: card.glyph,
+    accent: card.accent,
+    qrHint: card.qrHint,
   };
 }
 
@@ -236,10 +368,15 @@ export function generateFlashCard(card: FlashCardData, qrDataUrl: string): Promi
 }
 
 export function buildFlashShareText(card: FlashCardData): string {
-  return `「${card.quote}」——来自知乎热榜「${card.question}」。这句话值得你停下来看一眼。`;
+  const headline = `${card.headlineLead}${card.headlineNumber}${card.headlineTail ?? ""}`;
+  return `${headline}——${card.teaser}（来自知乎热榜「${card.question}」）`;
 }
 
-/** 划线金句的分享文案 */
+/** 分享文案（两种模式通用） */
 export function buildQuoteShareText(input: QuoteCardInput): string {
+  if (input.mode === "headline") {
+    const headline = `${input.headlineLead}${input.headlineNumber}${input.headlineTail ?? ""}`;
+    return `${headline}——${input.teaser}（来自知乎热榜「${input.source}」）`;
+  }
   return `在知乎读到一句：「${input.quote}」——出自「${input.source}」。`;
 }

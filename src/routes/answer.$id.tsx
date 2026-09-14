@@ -367,6 +367,7 @@ function AnswerPage() {
       {quoteOpen && selection && (
         <QuoteCardSheet
           input={{
+            mode: "quote",
             quote: selection.text,
             source: post.title,
             meta: `${post.author} · 知乎回答`,

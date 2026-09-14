@@ -15,10 +15,18 @@ import mascotGreeting from "@/assets/mascot/mascot-greeting.webp";
 import mascotGreetingStill from "@/assets/mascot/mascot-greeting.png";
 import mascotIdle from "@/assets/mascot/mascot-idle.gif";
 import mascotIdleStill from "@/assets/mascot/mascot-idle.png";
+import mascotPeek from "@/assets/mascot/mascot-peek.webp";
 import mascotSleepy from "@/assets/mascot/mascot-sleepy.gif";
 import mascotSleepyStill from "@/assets/mascot/mascot-sleepy.png";
 import mascotWander from "@/assets/mascot/mascot-wander.gif";
 import mascotWanderStill from "@/assets/mascot/mascot-wander.png";
+
+/**
+ * 「贴镜头」的看山大脸：狐狸脸占满画面、大眼睛直视、
+ * 大鼻子贴着镜头（透视夸张）。用于金句海报的主视觉——
+ * 像看山凑近了在审视这条信息。
+ */
+export const MASCOT_PEEK = mascotPeek;
 
 export type MascotKey = "greeting" | "idle" | "sleepy" | "wander" | "computer" | "dribble";
 

@@ -31,9 +31,14 @@ export function TheaterEntry({ story, onEnter }: { story: Story; onEnter: (id: s
         ) : (
           <span className="absolute inset-0" style={{ background: story.card.cover }} aria-hidden="true" />
         )}
+        {/* 只在文字区压暗（封面保持明亮，不再整卡压一层暗色） */}
         <span
           aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.16_0.03_265/0.55)_0%,oklch(0.13_0.03_265/0.72)_45%,oklch(0.1_0.03_265/0.92)_100%)]"
+          className="absolute inset-x-0 top-0 h-[22%] bg-[linear-gradient(180deg,rgba(6,10,20,0.72)_0%,rgba(6,10,20,0)_100%)]"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-[72%] bg-[linear-gradient(0deg,rgba(5,8,16,0.94)_0%,rgba(6,10,20,0.72)_46%,rgba(6,10,20,0)_100%)]"
         />
 
         {/* 顶部：剧场编号 + 时长 */}
