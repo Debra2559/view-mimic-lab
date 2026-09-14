@@ -5,7 +5,7 @@
 
 **在线 Demo**：https://view-mimic-lab.lovable.app/answer/rewind  
 **GitHub**：https://github.com/Debra2559/view-mimic-lab
-
+**产品说明书**:https://mcnh3urui6xv.feishu.cn/wiki/Ws6Hw6b4lirAPQkdNwscQU9mnb3
 ---
 
 ## 一句话讲产品
@@ -146,16 +146,8 @@ bun run dev
 
 ---
 
-## 产品边界与声明
 
-- 本项目为知乎黑客松参赛作品，Demo 中的「知乎回答」内容为原创示例或经改编的知乎风格文本，用于展示互动影游形态，不代表知乎官方立场。
-- AI 生成功能为技术演示，生成结果需人工审核后使用。
 
----
-
-## 团队与致谢
-
-本项目由 Lovable 辅助构建，感谢 Lovable 提供的可视化开发与快速迭代能力。
 
 ---
 
