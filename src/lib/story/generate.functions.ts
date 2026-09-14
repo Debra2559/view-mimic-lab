@@ -143,87 +143,86 @@ const SYSTEM = `你是一个「知乎回答 → 互动乙游世界线」的改�
 - hook 一句话 15~28 字，tags 恰好 3 个 2~4 字词，introLines 恰好 2 句。
 - portalTitle 形如「检测到可进入的世界线」，portalAction 是行动召唤，如「触碰裂缝，成为那个……」。`;
 
+function getAiConfig() {
+  const apiKey = process.env["AI_API_KEY"];
+  const baseUrl = (process.env["AI_BASE_URL"] ?? "https://api.openai.com/v1").replace(/\/$/, "");
+  const model = process.env["AI_MODEL"] ?? "gpt-4o-mini";
+  return { apiKey, baseUrl, model };
+}
+
+async function* streamOpenAiJson(system: string, user: string, model: string) {
+  const { apiKey, baseUrl } = getAiConfig();
+  if (!apiKey) throw new Error("缺少 AI 配置，无法生成世界线");
+
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      stream: true,
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user },
+      ],
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    const detail = await res.text().catch(() => "");
+    if (res.status === 429) throw new Error("生成太频繁了，稍等一下再试。");
+    if (res.status === 402 || res.status === 403) throw new Error("AI 额度或权限不足，请检查配置后再试。");
+    throw new Error(`生成失败（${res.status}）${detail.slice(0, 200)}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed || !trimmed.startsWith("data:")) continue;
+      const payload = trimmed.slice(5).trim();
+      if (!payload || payload === "[DONE]") continue;
+      try {
+        const event = JSON.parse(payload) as {
+          choices?: Array<{ delta?: { content?: string } }>;
+        };
+        const delta = event.choices?.[0]?.delta?.content;
+        if (typeof delta === "string") yield delta;
+      } catch {
+        /* 忽略非 JSON 的心跳行 */
+      }
+    }
+  }
+}
+
+async function completeOpenAiJson(system: string, user: string, model: string) {
+  let text = "";
+  for await (const chunk of streamOpenAiJson(system, user, model)) {
+    text += chunk;
+  }
+  return text;
+}
+
 export const generateStory = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => Input.parse(data))
   .handler(async ({ data }) => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("缺少 AI 配置，无法生成世界线");
-
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": apiKey,
-        "X-Lovable-AIG-SDK": "fetch",
-      },
-      body: JSON.stringify({
-        model: "openai/gpt-6-astra",
-        stream: true,
-        reasoning: { effort: "low" },
-        instructions: SYSTEM,
-        input: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "input_text",
-                text: `提问：${data.question}\n\n回答原文：\n${data.answer}`,
-              },
-            ],
-          },
-        ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "portal_story",
-            strict: true,
-            schema: jsonSchema,
-          },
-        },
-      }),
-    });
-
-    if (!res.ok || !res.body) {
-      const detail = await res.text().catch(() => "");
-      if (res.status === 429) throw new Error("生成太频繁了，稍等一下再试。");
-      if (res.status === 402) throw new Error("AI 额度已用完，请在工作区补充额度后再生成。");
-      throw new Error(`生成失败（${res.status}）${detail.slice(0, 200)}`);
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-    let text = "";
-
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-      for (const line of lines) {
-        if (!line.startsWith("data:")) continue;
-        const payload = line.slice(5).trim();
-        if (!payload || payload === "[DONE]") continue;
-        try {
-          const event = JSON.parse(payload) as {
-            type?: string;
-            delta?: string;
-            response?: { output_text?: string };
-          };
-          if (event.type === "response.output_text.delta" && typeof event.delta === "string") {
-            text += event.delta;
-          } else if (event.type === "response.completed" && event.response?.output_text) {
-            if (!text) text = event.response.output_text;
-          }
-        } catch {
-          /* 忽略非 JSON 的心跳行 */
-        }
-      }
-    }
-
+    const { model } = getAiConfig();
+    const text = await completeOpenAiJson(
+      SYSTEM,
+      `提问：${data.question}\n\n回答原文：\n${data.answer}`,
+      model,
+    );
     if (!text.trim()) throw new Error("这次没有生成出剧情，请再试一次。");
-
     return GeneratedSchema.parse(JSON.parse(text)) as GeneratedStoryData;
   });
 
@@ -277,66 +276,9 @@ const DISCOVER_SYSTEM = `你是互动世界线的选题编辑，负责检索适�
 - 优先选择有真实抉择、有连锁后果、能让人代入的题目，避免纯科普罗列。
 - 全部中文，不要出现「知乎」「AI」字样，不要编造具体用户名。`;
 
-async function askGateway(system: string, user: string, name: string, schema: unknown) {
-  const apiKey = process.env["LOVABLE_API_KEY"];
-  if (!apiKey) throw new Error("缺少 AI 配置，无法检索帖子");
-
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Lovable-API-Key": apiKey,
-      "X-Lovable-AIG-SDK": "fetch",
-    },
-    body: JSON.stringify({
-      model: "openai/gpt-6-astra",
-      stream: true,
-      reasoning: { effort: "low" },
-      instructions: system,
-      input: [{ role: "user", content: [{ type: "input_text", text: user }] }],
-      text: { format: { type: "json_schema", name, strict: true, schema } },
-    }),
-  });
-
-  if (!res.ok || !res.body) {
-    const detail = await res.text().catch(() => "");
-    if (res.status === 429) throw new Error("请求太频繁了，稍等一下再试。");
-    if (res.status === 402) throw new Error("AI 额度已用完，请在工作区补充额度后再试。");
-    throw new Error(`请求失败（${res.status}）${detail.slice(0, 200)}`);
-  }
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let text = "";
-
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-    for (const line of lines) {
-      if (!line.startsWith("data:")) continue;
-      const payload = line.slice(5).trim();
-      if (!payload || payload === "[DONE]") continue;
-      try {
-        const event = JSON.parse(payload) as {
-          type?: string;
-          delta?: string;
-          response?: { output_text?: string };
-        };
-        if (event.type === "response.output_text.delta" && typeof event.delta === "string") {
-          text += event.delta;
-        } else if (event.type === "response.completed" && event.response?.output_text) {
-          if (!text) text = event.response.output_text;
-        }
-      } catch {
-        /* 忽略心跳行 */
-      }
-    }
-  }
-
+async function askGateway(system: string, user: string) {
+  const { model } = getAiConfig();
+  const text = await completeOpenAiJson(system, user, model);
   if (!text.trim()) throw new Error("这次没有返回结果，请再试一次。");
   return JSON.parse(text) as unknown;
 }
@@ -350,6 +292,6 @@ export const discoverPosts = createServerFn({ method: "POST" })
     const user = keyword
       ? `检索方向：${keyword}。给出 6 条相关的「如果」高赞问答。`
       : "给出 6 条当下最适合改编成互动剧情的「如果」高赞问答，题材尽量分散。";
-    const raw = await askGateway(DISCOVER_SYSTEM, user, "candidate_posts", postsJsonSchema);
+    const raw = await askGateway(DISCOVER_SYSTEM, user);
     return PostListSchema.parse(raw).posts.slice(0, 6);
   });
