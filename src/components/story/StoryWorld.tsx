@@ -39,12 +39,34 @@ const EMBERS = [8, 22, 37, 54, 68, 81, 92];
 /** 向导是否已经接过引，按世界线分别记录：每进入一条新世界线都该有向导 */
 const MASCOT_SEEN_PREFIX = "portal-mascot-seen:";
 
+/** 背景音开关的本地记忆：用户开过一次，之后就默认开着 */
+const AMBIENCE_PREF_KEY = "kanshan_ambience_on";
+
+function readAmbiencePref(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(AMBIENCE_PREF_KEY) === "on";
+  } catch {
+    return false;
+  }
+}
+
+function writeAmbiencePref(on: boolean) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(AMBIENCE_PREF_KEY, on ? "on" : "off");
+  } catch {
+    /* 隐私模式下写不进去，忽略 */
+  }
+}
+
 export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () => void }) {
   const [activeId, setActiveId] = useState(storyId);
   const [phase, setPhase] = useState<Phase>("transition");
   const [nodeIndex, setNodeIndex] = useState(0);
   const [choice, setChoice] = useState<ChoiceKey | null>(null);
-  const [muted, setMuted] = useState(true);
+  // 默认静音；但用户手动开过一次后会记住，下次进剧场自动响应
+  const [muted, setMuted] = useState(() => !readAmbiencePref());
   const [auto, setAuto] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [hubOpen, setHubOpen] = useState(false);
@@ -76,6 +98,21 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     ambienceRef.current?.setMood(mood);
   }, [phase, muted]);
 
+  /** 记住过"开启"的用户：进剧场自动响起。浏览器要求用户手势，
+   *  所以先尝试直接启动，再挂一次性监听在首个交互时补一次（start 幂等）。 */
+  useEffect(() => {
+    if (muted) return;
+    const amb = (ambienceRef.current ??= new Ambience());
+    void amb.start("dialogue");
+    const resume = () => void amb.start("dialogue");
+    window.addEventListener("pointerdown", resume, { once: true });
+    window.addEventListener("keydown", resume, { once: true });
+    return () => {
+      window.removeEventListener("pointerdown", resume);
+      window.removeEventListener("keydown", resume);
+    };
+  }, [muted]);
+
   useEffect(() => () => ambienceRef.current?.dispose(), []);
 
   const toggleSound = async () => {
@@ -83,10 +120,12 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
       ambienceRef.current ??= new Ambience();
       await ambienceRef.current.start("dialogue");
       setMuted(false);
+      writeAmbiencePref(true);
       return;
     }
     ambienceRef.current?.mute();
     setMuted(true);
+    writeAmbiencePref(false);
   };
 
   /** 结束转场、进入入境页（转场可见即可，等待感降到最低） */
