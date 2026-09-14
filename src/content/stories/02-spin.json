@@ -1,0 +1,232 @@
+{
+  "id": "spin",
+  "chapterLabel": "世界线 · 02",
+  "card": {
+    "question": "如果地球停止自转，会怎样？",
+    "hook": "第 1 天，你所在的城市永远停在了黄昏。",
+    "category": "硬核脑洞",
+    "tags": [
+      "硬核脑洞",
+      "生存"
+    ],
+    "players": "9.4 万人进入",
+    "cover": "dusk",
+    "coverImage": "dusk",
+    "icon": "globe"
+  },
+  "portal": {
+    "title": "检测到可进入的世界线",
+    "action": "触碰裂缝，走进那个永远的黄昏"
+  },
+  "background": "dusk",
+  "cast": [
+    "chenmo"
+  ],
+  "introLines": [
+    "回答里的那句“会怎样”忽然亮了起来。",
+    "再抬头时，太阳已经三十六个小时没有动过。"
+  ],
+  "nodes": [
+    {
+      "speaker": "narrator",
+      "text": "第 1 天 17:04。太阳卡在地平线上，影子拉得比整条街还长，风停了。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "手机推送最后一条消息后就断了网：【全球自转速率异常，请就近避险】。"
+    },
+    {
+      "speaker": "chenmo",
+      "expression": "tense",
+      "text": "别往西边走。西半球现在是永夜，气温三小时掉了二十度。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "他是城郊气象站的观测员陈默，手里那台老式风速计，是这座城市仅剩还在工作的仪器。"
+    },
+    {
+      "speaker": "chenmo",
+      "expression": "tense",
+      "text": "赤道的海水正在往两极堆。我们这儿撑不了太久——站里有一份完整的观测记录，得有人带出去。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "远处传来低沉的轰鸣，像海，又像整块大陆在挪动。你身后是撤离车队最后一班车。"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "window",
+      "label": "摸摸窗玻璃",
+      "icon": "hand",
+      "x": 30,
+      "y": 45,
+      "response": "玻璃在轻轻震。不是风——是整座楼在被某种巨大的东西缓慢推着走。"
+    },
+    {
+      "id": "sky",
+      "label": "抬头看天",
+      "icon": "eye",
+      "x": 60,
+      "y": 24,
+      "response": "太阳卡在同一个角度，已经四个小时没动过。云被撕成一条一条，全部朝着同一个方向飞。"
+    },
+    {
+      "id": "wind",
+      "label": "伸手进风里",
+      "icon": "wind",
+      "x": 74,
+      "y": 62,
+      "response": "风不是吹，是撞。你只伸出半只手，就被推得肩膀发麻。"
+    }
+  ],
+  "choicePrompt": "车门就要关了。你的选择是——",
+  "choices": [
+    {
+      "key": "A",
+      "label": "陪他回观测站，把记录带出去。",
+      "innerVoice": "如果没人知道发生了什么，活下来的人也活不明白。",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "上车。先活下来再说。",
+      "innerVoice": "数据能等，命不能等。",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "留在黄昏里的人",
+      "summary": "有人把“会怎样”记下来，后来的人才不用重新猜一遍。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你们逆着人流跑回观测站，把七十二小时的风速、气压、潮位全部抄进一个铁皮盒。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "relieved",
+          "text": "三个月后，避难营用这份记录算出了第一条安全带的位置。你抄的那几页，救了很多人。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "永远的黄昏里，你终于明白：知识才是这颗停转星球上，唯一还在转动的东西。"
+        }
+      ],
+      "next": {
+        "prompt": "记录带出来了。三个月后，避难营要决定下一步。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "跟着勘测队，往晨昏线继续走。",
+            "innerVoice": "有人得先去看看那条线到底能不能住人。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "留在营地，把观测网教给更多人。",
+            "innerVoice": "一个人走得快，一群人才走得远。",
+            "ending": "AB"
+          }
+        ]
+      }
+    },
+    "B": {
+      "title": "第一班车",
+      "summary": "所有人都只顾着逃，就没有人知道该往哪逃。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "车门在你身后合上。透过后窗，陈默的身影很快被长长的影子吞没。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "车队在第 4 天迷路了——没有人知道风向变了，也没有人知道海水正从哪一侧涌来。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "tense",
+          "text": "观测站的电台反复播着同一段空白。那份记录，最终没有人取走。"
+        }
+      ],
+      "next": {
+        "prompt": "车队停在第 4 天的荒野上，燃料只够一次单程。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "凭记忆折回观测站，找那份记录。",
+            "innerVoice": "我知道它在哪一格铁柜里。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "跟着大多数人，继续向前赌一把。",
+            "innerVoice": "人多的方向，总不会全错。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "晨昏线上的第一排帐篷",
+      "summary": "地球停转了，但人还在往能活的地方挪。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你们走了十九天，在温差最小的那条带子上插下第一根标杆。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "relieved",
+          "text": "这里白天不落，夜里不冻。第一批三百人，下个月就到。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "走得太远的人",
+      "summary": "先行者常常看不到自己带来的结果。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "勘测队在第二十四天遇上极地风墙，只有一半人回到营地。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "tense",
+          "text": "你带回的路线是对的。只是这条路线上，永远少了几个名字。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "折返的那一趟",
+      "summary": "你迟了三天，但没有迟到底。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你带着两个人徒步回到观测站，铁皮盒还在桌上，压着一张字条：留给还会回来的人。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "relieved",
+          "text": "电台重新响起来那天，车队已经在安全带上了。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "向前的第 9 天",
+      "summary": "人多的方向，不一定是海水不来的方向。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "车队在第 9 天开到了海岸线。只是那时候，海岸线已经往内陆挪了四十公里。"
+        },
+        {
+          "speaker": "chenmo",
+          "expression": "tense",
+          "text": "没有人知道风向变了。包括那些本来可以知道的人。"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,241 @@
+{
+  "id": "corridor",
+  "chapterLabel": "世界线 · 01",
+  "card": {
+    "question": "如果没人愿意多管一次闲事，会怎样？",
+    "hook": "凌晨 1:47，楼道里的电动车开始冒烟。",
+    "category": "现实向",
+    "tags": [
+      "现实向",
+      "两种结局"
+    ],
+    "players": "12.8 万人进入",
+    "cover": "ember",
+    "coverImage": "corridor",
+    "icon": "bike"
+  },
+  "portal": {
+    "title": "检测到可进入的世界线",
+    "action": "触碰裂缝，成为那个外卖员"
+  },
+  "background": "corridor",
+  "cast": [
+    "linxia"
+  ],
+  "introLines": [
+    "回答中的字忽然开始脱落。",
+    "下一秒，凌晨的冷风吹到了你的脸上。"
+  ],
+  "nodes": [
+    {
+      "speaker": "narrator",
+      "text": "凌晨 1:47。你送完今天最后一单，推开楼道那扇吱呀作响的防火门。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "一股电池烧焦的酸味钻进鼻腔。楼道拐角，一辆正在充电的电动车，座垫下正往外渗着灰白色的烟。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "烟雾旁边，堆着一人多高的纸壳和塑料瓶——是三楼阿婆攒了半个月的回收品。"
+    },
+    {
+      "speaker": "linxia",
+      "expression": "tense",
+      "text": "喂？楼下是不是有什么东西烧起来了？我在家里闻到味道了……"
+    },
+    {
+      "speaker": "narrator",
+      "text": "来电显示是楼上的邻居林夏。与此同时，手机另一头震动了一下：【下一单即将超时，距取餐点 2.3 公里】。"
+    },
+    {
+      "speaker": "linxia",
+      "expression": "tense",
+      "text": "你还在楼下吗？楼道里全是纸箱……求你了，想想办法。"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "seat",
+      "label": "摸摸车座",
+      "icon": "flame",
+      "x": 46,
+      "y": 40,
+      "response": "你把手背贴上坐垫——烫。像刚熄火的锅底。指腹缩回来时，已经红了一片。",
+      "after": "那股热度还留在指尖。"
+    },
+    {
+      "id": "boxes",
+      "label": "扒开纸箱",
+      "icon": "package",
+      "x": 22,
+      "y": 62,
+      "response": "一人多高的纸壳被你推开一条缝。最底下是几个空油壶，塑料上映着车座那点越来越亮的光。"
+    },
+    {
+      "id": "door",
+      "label": "推开楼道门",
+      "icon": "door",
+      "x": 76,
+      "y": 56,
+      "response": "防火门吱呀一声，夜风灌进来，烟被吹得贴着地面爬。你听见楼上有小孩在咳嗽。"
+    },
+    {
+      "id": "phone",
+      "label": "看一眼手机",
+      "icon": "phone",
+      "x": 68,
+      "y": 80,
+      "response": "【下一单即将超时，距取餐点 2.3 公里】。下面还有一条：本月第三次超时将取消当日全部奖励。"
+    }
+  ],
+  "choicePrompt": "烟雾越来越浓。你的选择是——",
+  "choices": [
+    {
+      "key": "A",
+      "label": "先报警。我不能当作没看见。",
+      "innerVoice": "超时会扣钱，但烟不会等我送完这一单。",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "时间来不及了，这不该由我负责。",
+      "innerVoice": "物业会管的，车主会管的……总有人比我更合适。",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "火光之前",
+      "summary": "有人愿意多管一次“闲事”，整栋楼就少付一次代价。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你按下报警键，把电动车拖离纸箱，又挨个拍响每一户的门。手掌被车座烫得发红。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "relieved",
+          "text": "明火已经灭了……消防员说，再晚十分钟，火就进电缆井了。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "凌晨的站长在电话里骂了你二十分钟。可你看着重新亮起灯的楼道，忽然觉得这一单超时，值了。"
+        }
+      ],
+      "next": {
+        "prompt": "火灭了，但这栋楼的问题还在。天亮之后——",
+        "choices": [
+          {
+            "key": "A",
+            "label": "把整栋楼的隐患拍下来，交给街道。",
+            "innerVoice": "既然管了一次，就别管一半。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "当作一次意外，继续跑我的单。",
+            "innerVoice": "我只是个外卖员，改不了一栋楼。",
+            "ending": "AB"
+          }
+        ]
+      }
+    },
+    "B": {
+      "title": "无人负责的夜晚",
+      "summary": "当每个人都觉得“不归我管”，代价会由所有人一起付。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你拧动油门。后视镜里，那点橘色的光越来越小，最后被夜色吞掉。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "第二天的新闻推送：某小区楼道深夜起火，整栋楼紧急疏散，两名住户吸入浓烟送医。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "tense",
+          "text": "她的最后一条消息停在 2:03，一直没有已读——「烟好大，我下不去楼了。」"
+        }
+      ],
+      "next": {
+        "prompt": "新闻推送之后的第三天，你又接到了那个小区的单。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "上楼去看看她。",
+            "innerVoice": "我欠那扇门一句话。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "把单转给别人，我不想再去那儿。",
+            "innerVoice": "有些地方，去了就得面对。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "换掉的那排插座",
+      "summary": "一个人的多管闲事，变成了三十户人的规矩。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你拍了四十二张照片：飞线、堆物、堵死的消防通道，一条条写进投诉单。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "relieved",
+          "text": "你没想到真的有人回你。上周电梯口装了充电桩，楼道空了，通道也通了。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "被记住的那一晚",
+      "summary": "你救下了那一夜，却没能救下下一夜。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你把那晚当成插曲，第二天继续跑单。楼道里的纸箱，三天后又堆回原位。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "tense",
+          "text": "两个月后又是一场火。这次没人闻到味，也没人敲门。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "迟到的一句对不起",
+      "summary": "承认自己转过身，是重新转回来的第一步。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你在医院的走廊等了两个小时，手里那杯粥已经凉透。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "calm",
+          "text": "我知道那晚有人经过。你能来，我就当这事过去了。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "一直没有已读",
+      "summary": "你躲开了那栋楼，却躲不开每次闻到焦味时的那一秒停顿。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你改了接单区域，那个小区从此不在你的地图上。"
+        },
+        {
+          "speaker": "linxia",
+          "expression": "tense",
+          "text": "那条 2:03 的消息，你再也没敢点开第二次。"
+        }
+      ]
+    }
+  }
+}

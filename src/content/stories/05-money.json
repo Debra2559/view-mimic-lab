@@ -1,0 +1,233 @@
+{
+  "id": "money",
+  "chapterLabel": "世界线 · 05",
+  "card": {
+    "question": "如果钱可以买时间，会怎样？",
+    "hook": "你的余额，只剩 37 小时零 12 分。",
+    "category": "时间循环",
+    "tags": [
+      "反乌托邦",
+      "抉择"
+    ],
+    "players": "4.2 万人进入",
+    "cover": "ember",
+    "coverImage": "money",
+    "icon": "hourglass"
+  },
+  "portal": {
+    "title": "检测到可进入的世界线",
+    "action": "触碰裂缝，看看你的余额还剩多久"
+  },
+  "background": "money",
+  "cast": [
+    "zhouyan"
+  ],
+  "introLines": [
+    "你低头看向手腕，那里浮着一行数字。",
+    "37:12:05，正在一秒一秒往下走。"
+  ],
+  "nodes": [
+    {
+      "speaker": "narrator",
+      "text": "时间成为货币的第七年。工资按小时发放，房租按天扣除，没人再说“浪费时间”这四个字。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "时间银行的大厅很亮，亮得像医院。柜台后面的人抬起头。"
+    },
+    {
+      "speaker": "zhouyan",
+      "expression": "calm",
+      "text": "余额 37 小时 12 分。按您目前的支出，明天下午两点归零。"
+    },
+    {
+      "speaker": "zhouyan",
+      "expression": "tense",
+      "text": "系统给您留了一个选项：您母亲的账户里还有 300 小时，可以一键划转。她本人已授权。"
+    },
+    {
+      "speaker": "narrator",
+      "text": "屏幕上跳出确认框。300 小时，对她而言，是整整十二天的余命。"
+    },
+    {
+      "speaker": "zhouyan",
+      "expression": "tense",
+      "text": "另一个选项是签下 5 年期的加班契约，用未来换现在。大部分人选后者。"
+    }
+  ],
+  "interactions": [
+    {
+      "id": "wrist",
+      "label": "看看手腕读数",
+      "icon": "clock",
+      "x": 58,
+      "y": 38,
+      "response": "皮肤下的数字在跳：31 年 4 月 12 天 07:41:09。每一秒都在肉眼可见地少下去。"
+    },
+    {
+      "id": "coffee",
+      "label": "拿起那杯咖啡",
+      "icon": "package",
+      "x": 34,
+      "y": 58,
+      "response": "标签写着：一小时十七分。你把它放回去，又拿起来，最后还是放回去了。"
+    },
+    {
+      "id": "machine",
+      "label": "触碰转账机",
+      "icon": "light",
+      "x": 74,
+      "y": 62,
+      "response": "屏幕亮起：「请确认转出寿命」。输入框在等你，光标一闪一闪，像在数你的心跳。"
+    }
+  ],
+  "choicePrompt": "光标在闪。你的选择是——",
+  "choices": [
+    {
+      "key": "A",
+      "label": "签下契约，把账单留给未来的自己。",
+      "innerVoice": "我的时间可以透支，她的不行。",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "接受她的转账，先活过明天。",
+      "innerVoice": "她说过，她愿意。",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "预支的十二天",
+      "summary": "当时间能买卖，最贵的永远是不肯拿走别人那份的人。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你按下了契约键。未来五年，你每天多工作三小时，账面上一分不剩。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "relieved",
+          "text": "上周您母亲来过，把那 300 小时换成了一张去海边的票。她说，总算能自己花一次。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "你很累，但你知道那十二天没有被你花掉。这就够了。"
+        }
+      ],
+      "next": {
+        "prompt": "契约签下的第三年，公司给了你一个新的选项。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "举报时间银行的强制加班条款。",
+            "innerVoice": "这套规则不该是唯一的活法。",
+            "ending": "AA"
+          },
+          {
+            "key": "B",
+            "label": "熬完五年，规规矩矩换回自由。",
+            "innerVoice": "我只想安全地活到期满。",
+            "ending": "AB"
+          }
+        ]
+      }
+    },
+    "B": {
+      "title": "她替你付的账",
+      "summary": "你活了下来，只是从此每一秒都写着别人的名字。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "转账在 0.4 秒内完成。你的手腕亮起 337 小时，她的那行数字暗了下去。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "calm",
+          "text": "系统记录：转出方于第 12 天余额归零。这是合规操作。"
+        },
+        {
+          "speaker": "narrator",
+          "text": "后来你再没敢看自己的手腕。那上面的每一秒，都不是你的。"
+        }
+      ],
+      "next": {
+        "prompt": "母亲的余额归零那天，你手腕上还剩 280 小时。",
+        "choices": [
+          {
+            "key": "A",
+            "label": "把剩下的时间全部捐进公共时间池。",
+            "innerVoice": "这些本来就不是我的。",
+            "ending": "BA"
+          },
+          {
+            "key": "B",
+            "label": "攒下去，让自己活得久一点。",
+            "innerVoice": "她给我的，就该好好用。",
+            "ending": "BB"
+          }
+        ]
+      }
+    },
+    "AA": {
+      "title": "被改写的条款",
+      "summary": "有人拿自己的余额，换了所有人的规则。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你把五年的工时记录全部提交给监管机构，账户当场被冻结。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "relieved",
+          "text": "新规上个月生效：任何人不得预支超过两年。您的名字写在附录里。"
+        }
+      ]
+    },
+    "AB": {
+      "title": "准时到期的人",
+      "summary": "你活过了合同，也活成了合同的形状。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "第五年最后一天，系统弹出提示：契约履行完毕，余额 0 小时 14 分。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "calm",
+          "text": "您自由了。请问，要续签吗？大部分人都会续。"
+        }
+      ]
+    },
+    "BA": {
+      "title": "还回去的 280 小时",
+      "summary": "还不回给她的，就还给别人。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你在窗口按下转出键，收款方写着：儿童急诊时间池。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "relieved",
+          "text": "系统记录：本次转入让十九个孩子多了一晚。匿名捐赠者，无备注。"
+        }
+      ]
+    },
+    "BB": {
+      "title": "替她活着",
+      "summary": "被人续过命的人，很难再理直气壮地花时间。",
+      "nodes": [
+        {
+          "speaker": "narrator",
+          "text": "你活得很省，省到连散步都要算进支出。"
+        },
+        {
+          "speaker": "zhouyan",
+          "expression": "tense",
+          "text": "您的余额已连续 400 天零支出。系统提示：这也是一种归零。"
+        }
+      ]
+    }
+  }
+}

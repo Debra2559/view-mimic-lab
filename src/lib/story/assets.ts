@@ -1,0 +1,86 @@
+/** 统一画风资源库：生成的世界线只能从这里挑背景与封面，保证画风一致。 */
+import bgCorridor from "@/assets/story/bg-corridor.jpg";
+import bgDusk from "@/assets/story/bg-dusk-city.jpg";
+import coverMind from "@/assets/story/cover-mind.jpg";
+import coverMoney from "@/assets/story/cover-money.jpg";
+import coverMosquito from "@/assets/story/cover-mosquito.jpg";
+import coverRewind from "@/assets/story/cover-rewind.jpg";
+import coverBirth from "@/assets/story/cover-birth.jpg";
+
+export const BACKGROUNDS = {
+  corridor: {
+    src: bgCorridor,
+    alt: "夜晚居民楼楼道，声控灯昏黄，墙面斑驳",
+  },
+  dusk: {
+    src: bgDusk,
+    alt: "永远停在黄昏的城市街道，太阳压在地平线上",
+  },
+  mind: {
+    src: coverMind,
+    alt: "深夜街边咖啡店，霓虹灯下人们的心声在空气里浮动",
+  },
+  mosquito: {
+    src: coverMosquito,
+    alt: "夏夜湿地，水面安静得没有一丝虫鸣",
+  },
+  money: {
+    src: coverMoney,
+    alt: "时间银行大厅，倒计时在每个人手腕上发光",
+  },
+  rewind: {
+    src: coverRewind,
+    alt: "循环中的清晨房间，闹钟永远停在同一分钟",
+  },
+  birth: {
+    src: coverBirth,
+    alt: "深夜县医院产科走廊，一排空着的婴儿床，抽屉里是没人领走的脚环",
+  },
+} as const;
+
+export type BackgroundKey = keyof typeof BACKGROUNDS;
+
+export const COVERS = {
+  night: "linear-gradient(150deg, oklch(0.28 0.08 240), oklch(0.55 0.13 300))",
+  dusk: "linear-gradient(150deg, oklch(0.32 0.1 268), oklch(0.58 0.14 200))",
+  ember: "linear-gradient(150deg, oklch(0.3 0.06 40), oklch(0.6 0.16 30))",
+  forest: "linear-gradient(150deg, oklch(0.3 0.09 160), oklch(0.58 0.14 140))",
+  violet: "linear-gradient(150deg, oklch(0.34 0.12 320), oklch(0.6 0.15 280))",
+} as const;
+
+export type CoverKey = keyof typeof COVERS;
+
+/** 剧情文本文件里 coverImage 可以引用的封面图 */
+export const COVER_IMAGES = {
+  corridor: bgCorridor,
+  dusk: bgDusk,
+  mind: coverMind,
+  mosquito: coverMosquito,
+  money: coverMoney,
+  rewind: coverRewind,
+  birth: coverBirth,
+} as const;
+
+export type CoverImageKey = keyof typeof COVER_IMAGES;
+
+/** 分叉点 / 结局用的第二张场景图，画面在关键节点切换 */
+import sceneCorridor from "@/assets/story/scene-corridor-fork.jpg";
+import sceneSpin from "@/assets/story/scene-spin-fork.jpg";
+import sceneMind from "@/assets/story/scene-mind-fork.jpg";
+import sceneMosquito from "@/assets/story/scene-mosquito-fork.jpg";
+import sceneMoney from "@/assets/story/scene-money-fork.jpg";
+import sceneRewind from "@/assets/story/scene-rewind-fork.jpg";
+import sceneBirth from "@/assets/story/scene-birth-fork.jpg";
+
+export const FORK_SCENES = {
+  corridor: sceneCorridor,
+  dusk: sceneSpin,
+  spin: sceneSpin,
+  mind: sceneMind,
+  mosquito: sceneMosquito,
+  money: sceneMoney,
+  rewind: sceneRewind,
+  birth: sceneBirth,
+} as const;
+
+export type ForkSceneKey = keyof typeof FORK_SCENES;

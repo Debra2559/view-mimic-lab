@@ -1,0 +1,66 @@
+{
+  "id": "hyrox",
+  "chapterLabel": "金句剧场 · 02",
+  "card": {
+    "question": "如果身体发出了信号，你还会继续吗？",
+    "hook": "完赛是唯一目标，还是可以商量的那个？",
+    "category": "人性实验",
+    "tags": ["单幕", "一次抉择"],
+    "players": "金句剧场",
+    "cover": "ember",
+    "coverImage": "money",
+    "icon": "hourglass"
+  },
+  "portal": {
+    "title": "检测到可进入的金句剧场",
+    "action": "一次抉择：停下，还是冲线"
+  },
+  "background": "dusk",
+  "cast": ["chenmo"],
+  "introLines": [
+    "第十八公里，你知道身体在报警。",
+    "终点拱门在两百米外，计时器还在走。"
+  ],
+  "nodes": [
+    { "speaker": "narrator", "text": "你报名的时候没想过会是这样。八公里跑、八项力量、八轮循环，报名页上写的是「挑战极限」。" },
+    { "speaker": "chenmo", "expression": "calm", "text": "你现在的状态我看得出来。停表不会有人怪你——这是比赛，不是刑场。" },
+    { "speaker": "chenmo", "expression": "tense", "text": "但我也得把话说清楚：你练了四个月，就为了这两百米。" },
+    { "speaker": "narrator", "text": "旁边已经有人在吐，也有人在走。裁判没往这边看，规则也没规定此刻必须停。" }
+  ],
+  "interactions": [],
+  "choicePrompt": "两百米。你自己心里那根线，划在哪？",
+  "choices": [
+    {
+      "key": "A",
+      "label": "停表。身体的信号比完赛重要",
+      "innerVoice": "四个月可以再来，身体不一定",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "走也要走完这两百米",
+      "innerVoice": "我来就是为了不给自己留这个借口",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "停下来的人",
+      "summary": "你停下来、退出赛道，没有成绩。四个月白练了吗？没有——你只是提前知道了自己的边界在哪。真正危险的从来不是退赛，是把「忍」当成荣誉。",
+      "nodes": [
+        { "speaker": "narrator", "text": "你走出赛道，工作人员递来一条毛巾。" },
+        { "speaker": "chenmo", "expression": "relieved", "text": "很好。会停的人，才跑得久。" },
+        { "speaker": "narrator", "text": "那天你没有成绩。但你记住了身体发出的那个信号。" }
+      ]
+    },
+    "B": {
+      "title": "冲线的人",
+      "summary": "你走完了那两百米，拿到了完赛奖牌。照片发出去，点赞很多。只有你自己知道，那之后的三个月，你连楼梯都不敢快下。",
+      "nodes": [
+        { "speaker": "narrator", "text": "你几乎是爬过终点线的。计时器停在你的名字上。" },
+        { "speaker": "chenmo", "expression": "tense", "text": "成绩有了。接下来三个月，你最好听医生的话。" },
+        { "speaker": "narrator", "text": "奖牌挂在家里。有些代价，要过很久才结账。" }
+      ]
+    }
+  }
+}

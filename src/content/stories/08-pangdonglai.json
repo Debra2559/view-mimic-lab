@@ -1,0 +1,66 @@
+{
+  "id": "pangdonglai",
+  "chapterLabel": "金句剧场 · 01",
+  "card": {
+    "question": "如果「对员工好」必须有个期限，你还愿意吗？",
+    "hook": "胖东来：学员制，四年，不续签。",
+    "category": "现实向",
+    "tags": ["单幕", "一次抉择"],
+    "players": "金句剧场",
+    "cover": "forest",
+    "coverImage": "money",
+    "icon": "hourglass"
+  },
+  "portal": {
+    "title": "检测到可进入的金句剧场",
+    "action": "一次抉择：签下，还是转身"
+  },
+  "background": "money",
+  "cast": ["zhouyan"],
+  "introLines": [
+    "面试官把合同推过来，笑着说了句「我们很人性化」。",
+    "你低头看第三条：学员制，四年，不续签。"
+  ],
+  "nodes": [
+    { "speaker": "narrator", "text": "胖东来，那个以「对员工好」出名的公司。你过五关斩六将，终于坐到了终面。" },
+    { "speaker": "zhouyan", "expression": "calm", "text": "我们给行业顶薪，配专属导师，三年让你独当一面。但合同只签四年。" },
+    { "speaker": "zhouyan", "expression": "tense", "text": "四年后不管你多优秀，都要重新竞聘。这是我们让团队保持「新鲜血液」的方式。" },
+    { "speaker": "narrator", "text": "顶薪和成长，换四年后的不确定。你忽然明白了，什么叫「有期限的好」。" }
+  ],
+  "interactions": [],
+  "choicePrompt": "笔就在手边。这一纸合同，你签，还是不签？",
+  "choices": [
+    {
+      "key": "A",
+      "label": "签。四年，够我学到真本事",
+      "innerVoice": "先把「好」拿到手，期限到了再说",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "不签。我要的是没有期限的安稳",
+      "innerVoice": "再好的待遇，也不该用倒计时来衡量",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "带着本事离开",
+      "summary": "第四年最后一天你交出工牌，市场上三家公司抢着要你——他们看中的正是胖东来教你的那套标准。你忽然懂了：所谓「有期限的好」，是逼你把「好」变成自己的。",
+      "nodes": [
+        { "speaker": "narrator", "text": "四年后你交出工牌，导师送你到门口，说「出去别忘了这套标准」。" },
+        { "speaker": "zhouyan", "expression": "relieved", "text": "你不是被辞退的，你是带着我们的标准毕业的。" },
+        { "speaker": "narrator", "text": "原来最狠的「对员工好」，是让你离开时比来时更值钱。" }
+      ]
+    },
+    "B": {
+      "title": "转身的人",
+      "summary": "你推回合同说「我想要能一直干下去的地方」。面试官点点头没挽留。很多年后你才明白：你要的「安稳」其实也是一种期限，只是它的名字叫「一辈子」。",
+      "nodes": [
+        { "speaker": "narrator", "text": "你把笔放回桌上，说了句「谢谢，我再想想」。" },
+        { "speaker": "zhouyan", "expression": "calm", "text": "理解。不是每个人都接受「好是有期限的」。" },
+        { "speaker": "narrator", "text": "走出大楼的那一刻你松了口气。但很多年后你才想明白，所有的「一辈子」，其实都是一段一段的四年。" }
+      ]
+    }
+  }
+}

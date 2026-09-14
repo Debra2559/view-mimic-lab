@@ -1,0 +1,66 @@
+{
+  "id": "yuqing",
+  "chapterLabel": "金句剧场 · 03",
+  "card": {
+    "question": "如果被公开差评，你会怎么回应？",
+    "hook": "最有杀伤力的不是那句话，是你的回应方式。",
+    "category": "商业",
+    "tags": ["单幕", "一次抉择"],
+    "players": "金句剧场",
+    "cover": "night",
+    "coverImage": "mind",
+    "icon": "brain"
+  },
+  "portal": {
+    "title": "检测到可进入的金句剧场",
+    "action": "一次抉择：先道歉，还是先讲道理"
+  },
+  "background": "mind",
+  "cast": ["zhouyan"],
+  "introLines": [
+    "一条差评被转了两万次。",
+    "品牌公关群里，两派已经吵起来了。"
+  ],
+  "nodes": [
+    { "speaker": "narrator", "text": "对方是名人，评测里说你们的产品「很一般」。这句话正在被截图、被做成表情包。" },
+    { "speaker": "zhouyan", "expression": "tense", "text": "技术部说产品参数没问题，可以出一条数据对比。法务说这句话不构成侵权，建议先发声明。" },
+    { "speaker": "zhouyan", "expression": "calm", "text": "但市场部提醒我：现在没有人想看参数。" },
+    { "speaker": "narrator", "text": "你手上有两套文案。一套讲道理，一套先认个软。发出去之后，舆论就定型了。" }
+  ],
+  "interactions": [],
+  "choicePrompt": "两套文案，只能发一套。你按哪个键？",
+  "choices": [
+    {
+      "key": "A",
+      "label": "先接住情绪：谢谢他认真吃过",
+      "innerVoice": "道理可以晚点讲，姿态必须先到",
+      "ending": "A"
+    },
+    {
+      "key": "B",
+      "label": "先讲道理：把参数摆出来",
+      "innerVoice": "没有错，为什么要道歉",
+      "ending": "B"
+    }
+  ],
+  "endings": {
+    "A": {
+      "title": "先接住的人",
+      "summary": "你发了一段不带防守的话：谢谢他认真吃过，也承认口味这件事本来就有分歧。评论区从对骂转为讨论，第二天开始有人替你们说话。",
+      "nodes": [
+        { "speaker": "narrator", "text": "文案发出去二十分钟，转发速度慢下来了。" },
+        { "speaker": "zhouyan", "expression": "relieved", "text": "舆论不是被说服的，是被接住的。" },
+        { "speaker": "narrator", "text": "后来那条差评还在，但底下多了一句「起码人家敢回应」。" }
+      ]
+    },
+    "B": {
+      "title": "讲道理的人",
+      "summary": "你把配料表、检测报告、盲测数据整理成长图发了出去。每一条都对，但没有人转发。一周后，还有人记得你们「和别人吵过架」。",
+      "nodes": [
+        { "speaker": "narrator", "text": "数据一条条列出来，评论区却只剩一句「急了」。" },
+        { "speaker": "zhouyan", "expression": "tense", "text": "我们是对的。但「对」这件事，今天没人想看。" },
+        { "speaker": "narrator", "text": "问题不在事实，在顺序——先讲道理的人，往往先输掉情绪那一局。" }
+      ]
+    }
+  }
+}
