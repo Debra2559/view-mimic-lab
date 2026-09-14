@@ -25,10 +25,10 @@ export function FlashCard({ card }: { card: FlashCardData }) {
         className="group relative flex min-h-[430px] flex-col overflow-hidden px-5 py-5"
         style={{ background: `linear-gradient(160deg, ${card.colors[0]}, ${card.colors[1]})` }}
       >
-        {/* 超大半透明话题字：独占右上角，向右上方溢出，与左上文字区互不干扰 */}
+        {/* 超大半透明话题字：完整落在卡片右上角内（不再出血被裁） */}
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute -right-10 -top-16 select-none text-[200px] font-black leading-none text-white/10 [font-family:'Songti_SC',SimSun,serif]"
+          className="pointer-events-none absolute right-4 top-7 select-none text-[156px] font-black leading-[1.25] text-white/10 [font-family:'Songti_SC',SimSun,serif]"
         >
           {card.glyph}
         </span>

@@ -76,13 +76,27 @@ export async function generateQuoteCard(input: QuoteCardInput, qrDataUrl: string
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
-  // 超大话题字，右上角半透明衬线
+  // 超大话题字：按实际墨迹边界计算位置与字号，保证整字完整落在卡内右上角
+  const glyphChar = pickGlyph(input);
+  const glyphMargin = 44; // 距画布上/右边距
+  const glyphMax = 380; // 墨迹目标边长
+  let glyphFont = 420;
+  ctx.font = `900 ${glyphFont}px 'Songti SC', SimSun, serif`;
+  const probe = ctx.measureText(glyphChar);
+  const probeW = probe.actualBoundingBoxLeft + probe.actualBoundingBoxRight;
+  const probeH = probe.actualBoundingBoxAscent + probe.actualBoundingBoxDescent;
+  if (probeW > 0 && probeH > 0) {
+    glyphFont = Math.round(glyphFont * Math.min(1, glyphMax / Math.max(probeW, probeH)));
+  }
   ctx.save();
   ctx.globalAlpha = 0.13;
   ctx.fillStyle = "#ffffff";
-  ctx.font = "900 400px 'Songti SC', SimSun, serif";
-  ctx.textAlign = "right";
-  ctx.fillText(pickGlyph(input), W + 40, 360);
+  ctx.font = `900 ${glyphFont}px 'Songti SC', SimSun, serif`;
+  ctx.textAlign = "left";
+  const gm = ctx.measureText(glyphChar);
+  const glyphX = W - glyphMargin - (gm.actualBoundingBoxRight || 0);
+  const glyphY = glyphMargin + (gm.actualBoundingBoxAscent || glyphFont * 0.8);
+  ctx.fillText(glyphChar, glyphX, glyphY);
   ctx.restore();
 
   const pad = 72;
