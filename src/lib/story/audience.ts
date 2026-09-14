@@ -20,6 +20,9 @@ const BASELINE: Record<string, Record<string, number>> = {
   pangdonglai: { A: 863, B: 1042 },
   hyrox: { A: 1276, B: 812 },
   yuqing: { A: 934, B: 1105 },
+  liurenqing: { A: 1420, B: 1680, C: 640 },
+  jintianzheyici: { A: 1180, B: 1520, C: 430 },
+  rengongchuangkou: { A: 1580, B: 940, C: 1120 },
 };
 
 type Store = Record<string, string[]>;

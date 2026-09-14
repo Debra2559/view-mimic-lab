@@ -83,7 +83,9 @@ export function TheaterEntry({ story, onEnter }: { story: Story; onEnter: (id: s
           />
           <span className="text-[11.5px] text-muted-foreground">看山画的</span>
           <span className="mx-1 text-[11.5px] text-muted-foreground/40">·</span>
-          <span className="text-[11.5px] text-muted-foreground">一次抉择 · 两个结局</span>
+          <span className="text-[11.5px] text-muted-foreground">
+            一次抉择 · {Object.keys(story.endings).length} 个结局
+          </span>
           <span className="ml-auto inline-flex items-center gap-0.5 text-[12px] font-semibold text-kanshan-blue">
             进入剧场
             <ChevronRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5" />
