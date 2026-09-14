@@ -21,10 +21,12 @@ import { toast } from "sonner";
 import {
   getEndingCount,
   getHubEntries,
+  STORIES,
   WORLD_CATEGORIES,
   type HubEntry,
   type WorldCard,
 } from "@/lib/story";
+import { TheaterEntry } from "@/components/story/TheaterEntry";
 import { removeGenerated } from "@/lib/story/custom";
 import { getHeatRank, heatLabel, heatScore, recordClick } from "@/lib/heat";
 import { getPost } from "@/lib/feed";
@@ -101,6 +103,21 @@ export function WorldHub({
     const raf = requestAnimationFrame(updateCardScales);
     return () => cancelAnimationFrame(raf);
   }, [filtered.length, updateCardScales]);
+
+  // 金句剧场：从主页搬进来的社区内容，海报卡形式，点进去玩一次抉择
+  const theaterStories = useMemo(() => {
+    const list = STORIES.filter((story) => story.chapterLabel.startsWith("金句剧场"));
+    const kw = keyword.trim();
+    if (!kw) return list;
+    return list.filter((story) =>
+      `${story.chapterLabel}${story.card.question}${story.choicePrompt}`.includes(kw),
+    );
+  }, [keyword]);
+
+  const enterTheater = (id: string) => {
+    recordClick(id);
+    onEnterWorld(id);
+  };
 
   const handlePick = (world: HubEntry) => {
     if (world.status !== "playable") {
@@ -198,6 +215,23 @@ export function WorldHub({
           </span>
         </button>
       </div>
+
+      {theaterStories.length > 0 && (
+        <div className="relative px-4 pt-5">
+          <div className="flex items-center gap-2 pb-2.5">
+            <Sparkles className="size-3.5 text-hub-glow" />
+            <span className="font-display text-[12px] tracking-[0.2em] text-hub-glow/90">金句剧场</span>
+            <span className="text-[11.5px] text-hub-ink/55">
+              单幕 · 一次抉择 · {theaterStories.length} 个
+            </span>
+          </div>
+          <div className="space-y-3">
+            {theaterStories.map((story) => (
+              <TheaterEntry key={story.id} story={story} onEnter={enterTheater} />
+            ))}
+          </div>
+        </div>
+      )}
 
       {filtered.length === 0 && (
         <p className="relative px-4 py-16 text-center text-[13px] text-hub-ink/50">

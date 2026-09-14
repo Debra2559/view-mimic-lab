@@ -20,26 +20,30 @@ import { StoryWorld } from "@/components/story/StoryWorld";
 import { QuoteCardSheet } from "@/components/story/QuoteCardSheet";
 import { Button } from "@/components/ui/button";
 import { getContributors, getPost, type SideAnswer } from "@/lib/feed";
+import { getArticle } from "@/lib/articles";
+import { ImportedArticleView } from "@/components/story/ImportedArticleView";
 import { getStory } from "@/lib/story";
 import { mascotFor } from "@/lib/story/mascot";
 
 export const Route = createFileRoute("/answer/$id")({
   loader: ({ params }) => {
-    const post = getPost(params.id);
-    if (!post) throw notFound();
-    return { post };
+    const post = getPost(params.id) ?? null;
+    const article = getArticle(params.id) ?? null;
+    if (!post && !article) throw notFound();
+    return { post, article };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return { meta: [{ title: "回答不存在 — 穿越乎" }, { name: "robots", content: "noindex" }] };
     }
-    const { post } = loaderData;
-    const description = post.excerpt.slice(0, 150);
+    const { post, article } = loaderData;
+    const title = post?.title ?? article?.title ?? "穿越乎";
+    const description = (post?.excerpt ?? article?.excerpt ?? "").slice(0, 150);
     return {
       meta: [
-        { title: `${post.title} — 穿越乎` },
+        { title: `${title} — 穿越乎` },
         { name: "description", content: description },
-        { property: "og:title", content: post.title },
+        { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
@@ -62,7 +66,11 @@ function AnswerNotFound() {
 }
 
 function AnswerPage() {
-  const { post } = Route.useLoaderData();
+  const { post, article } = Route.useLoaderData();
+
+  // 从知乎导入的真文章：金句卡挂在正文对应的那一段上
+  if (article && !post) return <ImportedArticleView article={article} />;
+
   const [followed, setFollowed] = useState(false);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);

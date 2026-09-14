@@ -24,8 +24,8 @@ import {
   heatScore,
   recordClick,
 } from "@/lib/heat";
-import { FlashCardCarousel } from "@/components/story/FlashCardCarousel";
-import { TheaterCarousel } from "@/components/story/TheaterCarousel";
+import { ArticleCard } from "@/components/story/ArticleCard";
+import { IMPORTED_ARTICLES, type ImportedArticle } from "@/lib/articles";
 import { MASCOT_STILL } from "@/lib/story/mascot";
 import { WorldHub } from "@/components/story/WorldHub";
 
@@ -87,22 +87,23 @@ function FeedPage() {
   );
   const items = ranked.filter((item) => !dismissed.includes(item.id));
 
-  // 闪卡与剧场各只在主页出现一次（轮播）：剧场插在第 2 条后，闪卡插在第 4 条后。
-  // 不是所有内容都有世界线——闪卡负责"一句话"，剧场负责"一次选择"。
+  // 主页只放文章：本地内容 + 从知乎导入的真文章（每 2 条插 1 篇）。
+  // 金句闪卡不再作为独立模块出现——它挂在文章正文里对应的那一段上；
+  // 金句剧场移进「看山画境」大厅（互动游戏社区）。
   const mixed = useMemo(() => {
     const out: Array<
       | { type: "post"; item: FeedPost }
-      | { type: "theater-carousel" }
-      | { type: "flash-carousel" }
+      | { type: "article"; item: ImportedArticle }
     > = [];
+    const queue = [...IMPORTED_ARTICLES];
     items.forEach((item, index) => {
       out.push({ type: "post", item });
-      if (index === 1) out.push({ type: "theater-carousel" });
-      if (index === 3) out.push({ type: "flash-carousel" });
+      if ((index + 1) % 2 === 0 && queue.length > 0) {
+        out.push({ type: "article", item: queue.shift()! });
+      }
     });
-    // 帖子太少时兜底：保证两个轮播总能出现
-    if (items.length < 2) out.push({ type: "theater-carousel" });
-    if (items.length < 4) out.push({ type: "flash-carousel" });
+    // 本地内容不够长时，剩余文章补在末尾
+    while (queue.length > 0) out.push({ type: "article", item: queue.shift()! });
     return out;
   }, [items]);
 
@@ -179,13 +180,12 @@ function FeedPage() {
               hydrated={hydrated}
               onDismiss={() => setDismissed((ids) => [...ids, entry.item.id])}
             />
-          ) : entry.type === "theater-carousel" ? (
-            <li key="theater-carousel" className="pb-3">
-              <TheaterCarousel onEnter={(id) => void navigate({ to: "/world/$storyId", params: { storyId: id } })} />
-            </li>
           ) : (
-            <li key="flash-carousel" className="pb-3">
-              <FlashCardCarousel />
+            <li key={entry.item.id}>
+              <ArticleCard
+                article={entry.item}
+                onEnter={(id) => void navigate({ to: "/answer/$id", params: { id } })}
+              />
             </li>
           ),
         )}
