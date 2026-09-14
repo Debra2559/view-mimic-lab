@@ -215,7 +215,7 @@ function AnswerPage() {
                 aria-hidden="true"
                 width={40}
                 height={40}
-                className="absolute -bottom-1 -right-1 size-5 rounded-full bg-white object-contain p-0.5 ring-1 ring-kanshan-line"
+                className="absolute -bottom-1 -right-1 size-5 object-contain drop-shadow-[0_1px_3px_oklch(0.25_0.03_260/35%)]"
               />
             </span>
             <span className="relative min-w-0 flex-1">

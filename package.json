@@ -1,5 +1,6 @@
 {
   "name": "tanstack_start_ts",
+  "engines": { "node": ">=20" },
   "private": true,
   "sideEffects": false,
   "type": "module",

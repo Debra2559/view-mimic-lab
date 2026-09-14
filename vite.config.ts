@@ -7,6 +7,10 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // 独立部署用 Node 服务（默认 cloudflare 目标产出的是 Worker，无法用 node 直接起）
+  // 产物目录用中性名字：平台的"构建产物目录"（.output/dist/build）会被排除在上传之外，
+  // 而这个部署环境的命令窗口很短，来不及现场构建，所以改为本地预构建、随源码上传。
+  nitro: { preset: "node-server", output: { dir: "app-dist" } },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this

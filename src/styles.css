@@ -284,7 +284,7 @@
 }
 
 .transition-zoom {
-  animation: 1.2s ease-out both transition-zoom;
+  animation: 0.7s ease-out both transition-zoom;
 }
 
 @keyframes hub-in {

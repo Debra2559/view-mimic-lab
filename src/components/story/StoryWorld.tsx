@@ -89,13 +89,23 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
     setMuted(true);
   };
 
+  /** 结束转场、进入入境页（转场可见即可，等待感降到最低） */
+  const finishTransition = useCallback(() => {
+    setMascot("none");
+    setPhase("intro");
+  }, []);
+
   useEffect(() => {
     if (phase !== "transition") return;
-    // 每次接入都由看山出来引导；首次多留一会儿，再次进入快一点
+    // 每次接入都由看山出来引导；首次稍微多留一会儿，再次进入几乎不等待
     const seenKey = MASCOT_SEEN_PREFIX + activeId;
     const firstVisit =
       typeof window !== "undefined" && window.localStorage.getItem(seenKey) !== "1";
     setMascot(firstVisit ? "first" : "again");
+    const reduced =
+      typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const timer = window.setTimeout(
       () => {
         if (firstVisit && typeof window !== "undefined") {
@@ -104,7 +114,8 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
         setMascot("none");
         setPhase("intro");
       },
-      firstVisit ? 2600 : 1600,
+      // 旧值 2600/1600 被实测出"点完入口还要硬等 2.9 秒"，这里压到 900/400
+      reduced ? 120 : firstVisit ? 900 : 400,
     );
     return () => window.clearTimeout(timer);
   }, [phase, activeId]);
@@ -248,7 +259,12 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
       )}
 
       {phase === "transition" && (
-        <div className="transition-zoom absolute inset-0 grid place-items-center bg-background">
+        <button
+          type="button"
+          onClick={finishTransition}
+          aria-label="跳过接入动画，直接进入"
+          className="transition-zoom absolute inset-0 z-30 grid cursor-pointer place-items-center bg-background"
+        >
           <div className="flex flex-col items-center gap-5">
             {/* IP 向导：每次接入都由看山来引导 */}
             {/* 不加 CSS 位移动画——动画中的亚像素重采样会让图片变糊，素材自身已带动作 */}
@@ -266,8 +282,9 @@ export function StoryWorld({ storyId, onExit }: { storyId: string; onExit: () =>
             {mascot === "again" && (
               <p className="text-[13px] text-muted-foreground/80">又见面了，正在为你打开通道</p>
             )}
+            <span className="mt-2 text-[11.5px] text-muted-foreground/60">点击任意处直接进入</span>
           </div>
-        </div>
+        </button>
       )}
 
       {phase === "intro" && (
@@ -583,7 +600,7 @@ function DialogueBox({
     if (!typing) return;
     const timer = window.setInterval(() => {
       setShown((value) => Math.min(value + 1, node.text.length));
-    }, 45);
+    }, 18);
     return () => window.clearInterval(timer);
   }, [node, typing]);
 
