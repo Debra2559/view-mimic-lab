@@ -5,8 +5,8 @@
 
 **在线 Demo**：https://view-mimic-lab.lovable.app/answer/rewind  
 **GitHub**：https://github.com/Debra2559/view-mimic-lab
-
 **产品说明书**:https://mcnh3urui6xv.feishu.cn/wiki/Ws6Hw6b4lirAPQkdNwscQU9mnb3
+
 ---
 
 ## 一句话讲产品
