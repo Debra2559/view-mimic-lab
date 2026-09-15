@@ -73,6 +73,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+/**
+ * 静态图标版本号：**浏览器对 favicon 的缓存极顽固**（换图后常几天不更新），
+ * 改图标后把这个数字 +1，链接带上 query 即可强制所有客户端重新拉取。
+ */
+const ICON_VERSION = "2";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
@@ -102,10 +108,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", sizes: "any", type: "image/x-icon" },
-      { rel: "icon", href: "/brand-icon.png", type: "image/png", sizes: "512x512" },
-      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
-      { rel: "manifest", href: "/site.webmanifest" },
+      /* 带上 ICON_VERSION 强制刷新——否则浏览器会一直用缓存里的旧图标 */
+      { rel: "icon", href: `/favicon.ico?v=${ICON_VERSION}`, sizes: "any", type: "image/x-icon" },
+      { rel: "icon", href: `/brand-icon.png?v=${ICON_VERSION}`, type: "image/png", sizes: "512x512" },
+      { rel: "apple-touch-icon", href: `/apple-touch-icon.png?v=${ICON_VERSION}`, sizes: "180x180" },
+      { rel: "manifest", href: `/site.webmanifest?v=${ICON_VERSION}` },
     ],
   }),
   shellComponent: RootShell,
