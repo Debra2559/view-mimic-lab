@@ -3,7 +3,7 @@
 > **看山引路，画境作答**  
 > 把知乎的问题和故事，画成一段可以走进去的互动影游。
 
-**在线 Demo**：https://view-mimic-lab.lovable.app/answer/rewind  
+**在线 Demo**：https://kanshan-huajing-65152.app.workbuddy.host/
 **GitHub**：https://github.com/Debra2559/view-mimic-lab
 
 **产品说明书**: https://mcnh3urui6xv.feishu.cn/wiki/Ws6Hw6b4lirAPQkdNwscQU9mnb3
