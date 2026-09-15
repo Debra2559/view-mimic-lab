@@ -1,3 +1,4 @@
+import { CARD_QR_HINT } from "@/lib/share-target";
 /**
  * 金句闪卡（L3）：不是所有文章都值得做完整世界线，
  * 但几乎任何一条好内容都能被提炼成一句"标题党 + 一个悬念"。
@@ -47,7 +48,7 @@ export const FLASH_CARDS: FlashCardData[] = [
     category: "法治",
     colors: ["#0a1020", "#16233c"],
     accent: "#ff3b47",
-    qrHint: "扫码查看详细通报",
+    qrHint: CARD_QR_HINT,
   },
   {
     id: "flash-pangdonglai",
@@ -59,7 +60,7 @@ export const FLASH_CARDS: FlashCardData[] = [
     category: "商业",
     colors: ["#08191b", "#123330"],
     accent: "#2fd6b0",
-    qrHint: "扫码看这场争论的两种答案",
+    qrHint: CARD_QR_HINT,
   },
   {
     id: "flash-qingchao",
@@ -71,7 +72,7 @@ export const FLASH_CARDS: FlashCardData[] = [
     category: "历史",
     colors: ["#1a1206", "#3d2a0c"],
     accent: "#ffb03a",
-    qrHint: "扫码看这 30 倍是怎么来的",
+    qrHint: CARD_QR_HINT,
   },
   {
     id: "flash-beida",

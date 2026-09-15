@@ -213,7 +213,7 @@ async function renderHeadlineCard(
   try {
     const qr = await loadImage(qrDataUrl);
     const size = 138;
-    drawQr(ctx, qr, W - pad - size, H - 98 - size, size, input.qrHint ?? "扫码查看详细通报", "right", W, pad);
+    drawQr(ctx, qr, W - pad - size, H - 98 - size, size, input.qrHint ?? CARD_QR_HINT, "right", W, pad);
   } catch {
     /* 二维码失败不阻塞 */
   }
@@ -322,7 +322,7 @@ async function renderQuoteCard(
     const size = 148;
     const boxX = W - pad - size - 8;
     const boxY = dividerY + 56;
-    drawQr(ctx, qr, boxX, boxY, size, input.qrHint ?? "扫码回到这句金句", "below", W, pad);
+    drawQr(ctx, qr, boxX, boxY, size, input.qrHint ?? CARD_QR_HINT, "below", W, pad);
   } catch {
     /* 二维码失败不阻塞 */
   }

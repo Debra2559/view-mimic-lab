@@ -1,6 +1,8 @@
 import { Check, Copy, Download, Loader2, MessageCircle, Send, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
+
+import { CARD_QR_TARGET } from "@/lib/share-target";
 import { toast } from "sonner";
 
 import { buildShareText, downloadDataUrl, generateEndingCard } from "@/lib/share-card";
@@ -23,7 +25,7 @@ export function ShareSheet({ story, ending, onClose }: { story: Story; ending: E
         if (!cancelled) setCardUrl(url);
       })
       .catch(() => toast.error("结局卡片生成失败"));
-    QRCode.toDataURL(pageUrl, { width: 220, margin: 1, color: { dark: "#0b1020", light: "#ffffff" } })
+    QRCode.toDataURL(CARD_QR_TARGET, { width: 220, margin: 1, color: { dark: "#0b1020", light: "#ffffff" } })
       .then((url) => {
         if (!cancelled) setQrUrl(url);
       })
@@ -31,7 +33,7 @@ export function ShareSheet({ story, ending, onClose }: { story: Story; ending: E
     return () => {
       cancelled = true;
     };
-  }, [story, ending, pageUrl]);
+  }, [story, ending]);
 
   const copyText = async () => {
     try {
@@ -150,7 +152,7 @@ export function ShareSheet({ story, ending, onClose }: { story: Story; ending: E
         {tab === "wechat" && (
           <div className="mt-4 rounded-2xl border border-story-ink/10 bg-story-night/50 p-4 text-center">
             <p className="text-[13.5px] leading-relaxed text-story-ink/75">
-              保存卡片后发给好友，或让朋友扫码直接进入这个世界线：
+              保存卡片后发给好友，或让朋友扫码打开《看山画境》的作品页：
             </p>
             <div className="mx-auto mt-3 w-fit rounded-xl bg-white p-2">
               {qrUrl ? (

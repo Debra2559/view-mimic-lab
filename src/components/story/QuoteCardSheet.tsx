@@ -1,6 +1,8 @@
 import { Check, Copy, Download, Loader2, MessageCircle, Send, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
+
+import { CARD_QR_TARGET } from "@/lib/share-target";
 import { toast } from "sonner";
 
 import { generateQuoteCard, type QuoteCardInput } from "@/lib/flash-card";
@@ -29,7 +31,8 @@ export function QuoteCardSheet({
 
   useEffect(() => {
     let cancelled = false;
-    QRCode.toDataURL(shareUrl, {
+    // 二维码落到知乎黑客松作品页（统一常量，见 lib/share-target.ts）
+    QRCode.toDataURL(CARD_QR_TARGET, {
       width: 240,
       margin: 1,
       color: { dark: "#1a1a1a", light: "#ffffff" },
@@ -45,7 +48,7 @@ export function QuoteCardSheet({
     return () => {
       cancelled = true;
     };
-  }, [inputKey, shareUrl]);
+  }, [inputKey]);
 
   const copyText = async () => {
     try {
@@ -106,7 +109,7 @@ export function QuoteCardSheet({
         </div>
 
         <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
-          卡片自带二维码——朋友扫码打开，会直接落在这一句所在的位置。
+          卡片自带二维码——朋友扫码可打开《看山画境》的作品页。
         </p>
 
         <div className="mt-4 grid grid-cols-3 gap-2.5">
