@@ -11,12 +11,12 @@ import { getPost } from "@/lib/feed";
 export const Route = createFileRoute("/world/$storyId")({
   head: () => ({
     meta: [
-      { title: "进入这条世界线 · 互动回答世界" },
+      { title: "进入这条世界线 · 看山画境" },
       {
         name: "description",
         content: "朋友分享给你的互动世界线：睁开眼睛，你的每个选择都会改写故事走向。",
       },
-      { property: "og:title", content: "进入这条世界线 · 互动回答世界" },
+      { property: "og:title", content: "进入这条世界线 · 看山画境" },
       {
         property: "og:description",
         content: "朋友分享给你的互动世界线：睁开眼睛，你的每个选择都会改写故事走向。",

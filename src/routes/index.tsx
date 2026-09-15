@@ -36,12 +36,12 @@ import { zhihuAuthState } from "@/lib/zhihu/zhihu.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "推荐 — 穿越乎" },
+      { title: "推荐 — 看山画境" },
       {
         name: "description",
         content: "知乎风格推荐流：每一个「如果」的回答背后，都藏着一条可以穿越的世界线。",
       },
-      { property: "og:title", content: "推荐 — 穿越乎" },
+      { property: "og:title", content: "推荐 — 看山画境" },
       { property: "og:description", content: "每一个「如果」的回答背后，都藏着一条可以穿越的世界线。" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

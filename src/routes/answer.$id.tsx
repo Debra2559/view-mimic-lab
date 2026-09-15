@@ -35,14 +35,14 @@ export const Route = createFileRoute("/answer/$id")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "回答不存在 — 穿越乎" }, { name: "robots", content: "noindex" }] };
+      return { meta: [{ title: "回答不存在 — 看山画境" }, { name: "robots", content: "noindex" }] };
     }
     const { post, article } = loaderData;
-    const title = post?.title ?? article?.title ?? "穿越乎";
+    const title = post?.title ?? article?.title ?? "看山画境";
     const description = (post?.excerpt ?? article?.excerpt ?? "").slice(0, 150);
     return {
       meta: [
-        { title: `${title} — 穿越乎` },
+        { title: `${title} — 看山画境` },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
