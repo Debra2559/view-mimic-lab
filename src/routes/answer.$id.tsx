@@ -19,7 +19,6 @@ import { toast } from "sonner";
 import { StoryWorld } from "@/components/story/StoryWorld";
 import { LoginPromptSheet, useZhihuAuth } from "@/components/story/LoginGate";
 import { QuoteCardSheet } from "@/components/story/QuoteCardSheet";
-import { CARD_QR_HINT } from "@/lib/share-target";
 import { Button } from "@/components/ui/button";
 import { getContributors, getPost, type SideAnswer } from "@/lib/feed";
 import { getArticle } from "@/lib/articles";
@@ -398,7 +397,7 @@ function AnswerPage() {
             meta: `${post.author} · 知乎回答`,
             label: "划 线 金 句",
             colors: ["#2a3a5a", "#3d5a9a"],
-            qrHint: CARD_QR_HINT,
+            qrHint: "扫码回到原文这一句",
           }}
           shareUrl={`${window.location.origin}/answer/${post.id}?hl=${selection.paraIndex}`}
           shareText={`在知乎读到一句：「${selection.text}」——出自「${post.title}」。`}

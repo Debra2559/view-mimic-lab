@@ -109,7 +109,7 @@ export function QuoteCardSheet({
         </div>
 
         <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground">
-          卡片自带二维码——朋友扫码可打开《看山画境》的作品页。
+          卡片自带二维码——朋友扫码打开，会直接落在这一句所在的位置。
         </p>
 
         <div className="mt-4 grid grid-cols-3 gap-2.5">

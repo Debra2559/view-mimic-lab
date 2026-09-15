@@ -7,5 +7,7 @@
 export const CARD_QR_TARGET =
   "https://www.zhihu.com/hackathon/project/120106?activity_code=zhihu_hackathon_2026_p2";
 
-/** 二维码旁的引导语：**必须跟着落点一起改**，否则文案会误导扫码的人 */
-export const CARD_QR_HINT = "扫码看《看山画境》作品页";
+/**
+ * 关于二维码旁的引导语：**故意保留"标题党"风格**（「扫码回到这句金句」「扫码查看详细通报」等），
+ * 这是产品要求——钩子优先，别为了跟落点对齐去"修正"它。
+ */
